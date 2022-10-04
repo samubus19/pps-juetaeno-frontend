@@ -11,10 +11,10 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { ImageListItem } from "@mui/material";
 import logoJUETAENO from "../assets/logoJUETAENO.svg";
-import { height } from "@mui/system";
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { loginUsuario } from "../store/slices/usuarios";
 
 function Copyright() {
   return (
@@ -30,6 +30,12 @@ function Copyright() {
 }
 
 export default function LoginForm() {
+  
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(loginUsuario({usuario: "samuel", contrasenia : "123456"}))
+  }, [])
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
