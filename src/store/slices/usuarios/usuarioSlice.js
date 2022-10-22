@@ -18,13 +18,16 @@ export const usuarioSlice = createSlice({
       state.isLoading = true
     },
     setUser : (state, action) => {
-      state.isLoading = false
       state.usuario   = action.payload.usuario
       state.token     = action.payload.token
+    },
+    setRequestStatus    : (state, action) => {
+      state.isLoading     = false
+      state.requestStatus = action.payload.requestStatus
     }
     
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { startLoadingUsers, setUser } = usuarioSlice.actions
+export const { startLoadingUsers, setUser, setRequestStatus } = usuarioSlice.actions

@@ -1,11 +1,19 @@
 import { juetaenoApi } from '../../../api/juetaeno-backend-api';
 import { setPersonas, setRequestStatus, startLoadingPersonas } from './personaSlice';
 
+const mToken = localStorage.getItem("token")
+
 export const getPersonaPorNumero = (nroDocumento) => {
     return async (dispatch, getState) => {
         try {
             dispatch(startLoadingPersonas())
-            const resp = await juetaenoApi.get(`/person/${nroDocumento}`);
+            const resp = await juetaenoApi.get(`/person/${nroDocumento}`,
+                {
+                    headers : {
+                        'Authorization' : mToken
+                    },
+                    
+                });
             dispatch(setRequestStatus({requestStatus : resp.status}))
             dispatch(setPersonas({personas : resp.data}))   
         } catch (error) {
@@ -19,14 +27,21 @@ export const crearNuevaPersona = (body) => {
         try {
             dispatch(startLoadingPersonas())
 
-            const resp = await juetaenoApi.post(`/person`, {
-                nombre          : body.nombre,
-                apellido        : body.apellido,
-                tipoDocumento   : body.tipoDocumento,
-                nroDocumento    : body.nroDocumento,
-                fechaNacimiento : body.fechaNacimiento,
-                nroTelefono     : body.nroTelefono
-            });
+            const resp = await juetaenoApi.post(`/person`,
+                {
+                    nombre          : body.nombre,
+                    apellido        : body.apellido,
+                    tipoDocumento   : body.tipoDocumento,
+                    nroDocumento    : body.nroDocumento,
+                    fechaNacimiento : body.fechaNacimiento,
+                    nroTelefono     : body.nroTelefono
+                } ,
+                {
+                    headers : {
+                        'Authorization' : mToken
+                    }
+                
+                });
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
             console.log(error);            
