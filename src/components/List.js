@@ -1,54 +1,49 @@
 import * as React from "react";
-
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
+import { useNavigate } from "react-router-dom";
 
 const SelectedListItem = (props) => {
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const navigate = useNavigate();
 
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
+  const redirect = (e) => {
+    switch (JSON.parse(localStorage.getItem("usuario")).area.toUpperCase()) {
+      case "LEGALES":
+        navigate("/legales");
+        break;
+      case "MIEMBROS":
+        navigate("/miembros");
+        break;
 
-    switch (index) {
-      case 0:
-        props.history.push("/");
+      case "ADMIN":
+        navigate("/admin");
         break;
-      case 1:
-        props.history.push("/Venta");
-        break;
-      case 2:
-        props.history.push("/Stock");
-        break;
-      case 3:
-        props.history.push("/Proveedores");
+
+      case "MESAENTRADA":
+        navigate("/mesaentrada");
         break;
       default:
-        return 0;
+        break;
     }
   };
 
   return (
     <Box sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
       <List component="nav" aria-label="main mailbox folders">
-        <ListItemButton
-          selected={selectedIndex === 0}
-          onClick={(event) => handleListItemClick(event, 0)}
-        >
+        <ListItemButton onClick={redirect}>
           <ListItemText primary="Inicio" />
         </ListItemButton>
         <ListItemButton
-          selected={selectedIndex === 1}
-          onClick={(event) => handleListItemClick(event, 1)}
+          onClick={() => {
+            navigate("/busqueda");
+          }}
         >
           <ListItemText primary="Consulta" />
         </ListItemButton>
 
-        <ListItemButton
-          selected={selectedIndex === 2}
-          onClick={(event) => handleListItemClick(event, 2)}
-        >
+        <ListItemButton onClick={() => {}}>
           <ListItemText primary="Tutorial" />
         </ListItemButton>
       </List>

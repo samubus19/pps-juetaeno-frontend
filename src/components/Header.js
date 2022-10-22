@@ -1,5 +1,5 @@
 import * as React from "react";
-import { makeStyles, styled, useTheme } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,7 +12,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import List from "./List";
-//test
 import AccountMenu from "./AccountMenu";
 
 const drawerWidth = 240;
@@ -62,16 +61,17 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-
 export default function PersistentDrawerLeft() {
-  const theme = useTheme();
-  //const clases = useStyle();
-  const [open, setOpen] = React.useState(false);
+  let usuario = {};
+  !!localStorage.getItem("usuario")
+    ? (usuario = JSON.parse(localStorage.getItem("usuario")))
+    : (usuario = { usuario: "" });
 
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -87,6 +87,7 @@ export default function PersistentDrawerLeft() {
             onClick={handleDrawerOpen}
             edge="start"
             sx={{ mr: 2, ...(open && { display: "none" }) }}
+            disabled={!!!usuario.usuario}
           >
             <MenuIcon />
           </IconButton>

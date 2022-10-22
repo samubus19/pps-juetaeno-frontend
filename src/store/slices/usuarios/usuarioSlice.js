@@ -21,6 +21,8 @@ export const usuarioSlice = createSlice({
       state.isLoading = false
       state.usuario   = action.payload.usuario
       state.token     = action.payload.token
+      localStorage.setItem("usuario", JSON.stringify(state.usuario));
+      localStorage.setItem("token", JSON.stringify(state.token));
     }
     
   },

@@ -10,14 +10,26 @@ import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
 
 export default function AccountMenu() {
+  let usuario = {};
+  !!localStorage.getItem("usuario")
+    ? (usuario = JSON.parse(localStorage.getItem("usuario")))
+    : (usuario = { usuario: "" });
+  let resp = !!usuario.usuario ? "" : "none";
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const logOut = () => {
+    localStorage.clear();
+    window.location.href = window.location.href;
+  };
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+
+
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
@@ -29,8 +41,11 @@ export default function AccountMenu() {
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
+            disabled={!!!usuario.usuario}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+            <Avatar
+              sx={{ width: 32, height: 32, display: resp }}
+            ></Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -70,10 +85,10 @@ export default function AccountMenu() {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem>
-          <Avatar /> Profile
+          <Avatar /> {usuario.usuario}
         </MenuItem>
         <Divider />
-        <MenuItem>
+        <MenuItem onClick={logOut}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
