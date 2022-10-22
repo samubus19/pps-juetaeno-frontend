@@ -1,7 +1,8 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 //import all views
 import AdminMainForm from "./views/AdminMainForm";
@@ -30,27 +31,89 @@ const theme = createTheme({
 });
 
 function App() {
+  let usuario = {};
+  !!localStorage.getItem("usuario")
+    ? (usuario = JSON.parse(localStorage.getItem("usuario")))
+    : (usuario = { area: "" });
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Header></Header>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LoginForm />} />
+
+      <Routes>
+        <Route path="/" element={<LoginForm />} />
+        <Route
+          element={
+            <ProtectedRoute
+              isAllowed={
+                !!usuario.usuario &&
+                usuario.area.toUpperCase().includes("LEGALES")
+              }
+            />
+          }
+        >
           <Route path="/mesaentrada" element={<MesaEntradaForm />} />
           <Route
             path="/mesaentrada/nuevodocumento"
             element={<NewDocumentsForm />}
           />
-          <Route path="/legales" element={<LegalesForm />} />
-          <Route path="/miembros" element={<MiembrosForm />} />
-          <Route path="/busqueda" element={<SearchDocumentsForm />} />
+        </Route>
+
+        <Route
+          path="/legales"
+          element={
+            <ProtectedRoute
+              redirectTo="/"
+              isAllowed={
+                !!usuario.usuario &&
+                usuario.area.toUpperCase().includes("LEGALES")
+              }
+            >
+              <LegalesForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/miembros"
+          element={
+            <ProtectedRoute
+              redirectTo="/"
+              isAllowed={
+                !!usuario.usuario &&
+                usuario.area.toUpperCase().includes("LEGALES")
+              }
+            >
+              <MiembrosForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/busqueda"
+          element={
+            <ProtectedRoute redirectTo="/" isAllowed={!!usuario.usuario}>
+              <SearchDocumentsForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          element={
+            <ProtectedRoute
+              isAllowed={
+                !!usuario.usuario &&
+                usuario.area.toUpperCase().includes("LEGALES")
+              }
+            />
+          }
+        >
           <Route path="/admin" element={<AdminMainForm />} />
           <Route path="/admin/nuevousuario" element={<AdminUsersForm />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </BrowserRouter>
+        </Route>
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
     </ThemeProvider>
   );
 }
+
 export default App;

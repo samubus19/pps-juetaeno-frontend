@@ -10,12 +10,19 @@ import TabPanel from "../components/TabPanel";
 import { Stack } from "@mui/system";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-const tipoDocumento = [
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
+const estado = [{ label: "PASE" }];
+const area = [{ label: "legales" }, { label: "Miembros de Junta" }];
+const filterType = [
   { label: "EXP (expediente)" },
   { label: "NO (notas)" },
   { label: "REC (reclamos)" },
   { label: "CES (ceses)" },
 ];
+
+
 
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
@@ -56,6 +63,15 @@ const mainFeaturedPost = {
 
 export default function MesaEntradaForm() {
   const [value, setValue] = React.useState(0);
+  const navigate = useNavigate();
+  //son los datos para la busqueda que se deben mapear despues
+  const [filterBy, setFilterBy] = useState("");
+  const filterBySearch = (filterData) => {
+    setFilterBy(filterData);
+  };
+
+  const cheked = (e) => {};
+
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -64,7 +80,7 @@ export default function MesaEntradaForm() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
-              <Search />
+              <Search filterType={filterType} filterBySearch={filterBySearch} />
               <Divider />
               <div style={{ height: 400, width: "100%" }}>
                 <DataGrid
@@ -106,20 +122,37 @@ export default function MesaEntradaForm() {
                   >
                     <Grid item xs={1} />
                     <Grid item xs={2}>
-                      <Button variant="contained" fullWidth>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        onClick={() => {
+                          navigate("/busqueda");
+                        }}
+                      >
                         Buscar Documento
                       </Button>
                     </Grid>
                     <Grid item xs={1} />
                     <Grid item xs={2}>
-                      <Button variant="contained" fullWidth>
-                        {" "}
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        onClick={() => {
+                          navigate("/mesaentrada/nuevodocumento", {});
+                        }}
+                      >
                         Nuevo Documento
                       </Button>
                     </Grid>
                     <Grid item xs={1} />
                     <Grid item xs={2}>
-                      <Button variant="contained" fullWidth>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        onClick={() => {
+                          navigate("/mesaentrada/nuevodocumento");
+                        }}
+                      >
                         Editar Documento
                       </Button>
                     </Grid>
@@ -143,7 +176,7 @@ export default function MesaEntradaForm() {
                         disablePortal
                         fullWidth
                         id="combo-box-demo"
-                        options={tipoDocumento}
+                        options={estado}
                         renderInput={(params) => (
                           <TextField {...params} label="Estado" />
                         )}
@@ -152,11 +185,18 @@ export default function MesaEntradaForm() {
                         disablePortal
                         fullWidth
                         id="combo-box-demo"
-                        options={tipoDocumento}
+                        options={area}
                         renderInput={(params) => (
                           <TextField {...params} label="Area" />
                         )}
                       />
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        onClick={() => setValue(0)}
+                      >
+                        Guardar
+                      </Button>
                       <Button
                         variant="contained"
                         fullWidth

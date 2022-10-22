@@ -1,8 +1,9 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
+import { Avatar, Button, CssBaseline, TextField } from "@mui/material";
+//import Avatar from "@mui/material/Avatar";
+//import Button from "@mui/material/Button";
+//import CssBaseline from "@mui/material/CssBaseline";
+//import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
@@ -12,10 +13,10 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import logoJUETAENO from "../assets/logoJUETAENO.svg";
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import { loginUsuario } from "../store/slices/usuarios";
-
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
@@ -30,20 +31,52 @@ function Copyright() {
 }
 
 export default function LoginForm() {
-  
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(loginUsuario({usuario: "samuel", contrasenia : "123456"}))
-  }, [])
+  const { usuario } = useSelector((state) => state.usuario);
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    if (!!data.get("email") & !!data.get("password")) {
+      dispatch(
+        loginUsuario({
+          usuario: data.get("email"),
+          contrasenia: data.get("password"),
+        })
+      );
+    } else {
+      alert("complete los campos");
+    }
   };
+
+  useEffect(() => {
+    if (!!localStorage.getItem("usuario")) {
+      switch (JSON.parse(localStorage.getItem("usuario")).area.toUpperCase()) {
+        case "LEGALES":
+          navigate("/legales");
+          break;
+        case "MIEMBROS":
+          navigate("/miembros");
+          break;
+
+        case "ADMIN":
+          navigate("/admin");
+          break;
+
+        case "MESAENTRADA":
+          navigate("/mesaentrada");
+          break;
+        default:
+          break;
+      }
+    }
+  }, []);
+
+  if (!!usuario.area) {
+    window.location.href = window.location.href;
+  }
 
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>

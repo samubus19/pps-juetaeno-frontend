@@ -1,11 +1,22 @@
 import MainFeaturedPost from "../components/MainFeaturedPost";
 import Footer from "../components/Footer";
 import React from "react";
+import { useState } from "react";
 import { Divider, Grid } from "@mui/material";
 import Box from "@mui/system/Box";
 import Search from "../components/Search";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
+
+const filterType = [
+  { label: "EXP (expediente)" },
+  { label: "NO (notas)" },
+  { label: "REC (reclamos)" },
+  { label: "CES (ceses)" },
+];
+
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
   { field: "firstName", headerName: "First name", width: 130 },
@@ -44,6 +55,36 @@ const mainFeaturedPost = {
 };
 
 export default function SearchDocumentsForm() {
+  const navigate = useNavigate();
+  const redirect = (e) => {
+    switch (JSON.parse(localStorage.getItem("usuario")).area.toUpperCase()) {
+      case "LEGALES":
+        navigate("/legales");
+        break;
+      case "MIEMBROS":
+        navigate("/miembros");
+        break;
+
+      case "ADMIN":
+        navigate("/admin");
+        break;
+
+      case "MESAENTRADA":
+        navigate("/mesaentrada");
+        break;
+      default:
+        break;
+    }
+  };
+
+
+  //son los datos para la busqueda que se deben mapear despues
+  const [filterBy, setFilterBy] = useState("");
+  const filterBySearch = (filterData) => {
+    setFilterBy(filterData);
+  };
+
+
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -52,8 +93,11 @@ export default function SearchDocumentsForm() {
         <Grid container spacing={2}>
           <Grid item xs={2}></Grid>
           <Grid item xs={8}>
+            <Button variant="contained" onClick={redirect}>
+              Volver
+            </Button>
             <Paper elevation={3}>
-              <Search />
+              <Search filterType={filterType} filterBySearch={filterBySearch} />
               <Divider />
               <div style={{ height: 400, width: "100%" }}>
                 <DataGrid

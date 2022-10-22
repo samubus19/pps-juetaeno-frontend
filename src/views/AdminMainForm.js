@@ -6,6 +6,13 @@ import Box from "@mui/system/Box";
 import Search from "../components/Search";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const filterType = [
+  { label: "Nombre" },
+  { label: "Apellido" },
+];
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
   { field: "firstName", headerName: "First name", width: 130 },
@@ -44,6 +51,12 @@ const mainFeaturedPost = {
 };
 
 export default function AdminMainForm() {
+  const navigate = useNavigate();
+  const [filterBy, setFilterBy] = useState("");
+  const filterBySearch = (filterData) => {
+    setFilterBy(filterData);
+  };
+
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -52,7 +65,7 @@ export default function AdminMainForm() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
-              <Search />
+              <Search filterType={filterType} filterBySearch={filterBySearch} />
               <Divider />
               <div style={{ height: 400, width: "100%" }}>
                 <DataGrid
@@ -94,15 +107,27 @@ export default function AdminMainForm() {
                 >
                   <Grid item xs={1} />
                   <Grid item xs={2}>
-                    <Button variant="contained" fullWidth>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={() => {
+                        navigate("/admin/nuevousuario");
+                      }}
+                    >
                       Nuevo Usuario
                     </Button>
                   </Grid>
                   <Grid item xs={1} />
                   <Grid item xs={2}>
-                    <Button variant="contained" fullWidth>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={() => {
+                        navigate("/admin/nuevousuario");
+                      }}
+                    >
                       {" "}
-                     Editar Usuario
+                      Editar Usuario
                     </Button>
                   </Grid>
                   <Grid item xs={1} />

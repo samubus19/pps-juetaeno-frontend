@@ -20,10 +20,14 @@ export const usuarioSlice = createSlice({
     setUser : (state, action) => {
       state.usuario   = action.payload.usuario
       state.token     = action.payload.token
+
     },
     setRequestStatus    : (state, action) => {
       state.isLoading     = false
       state.requestStatus = action.payload.requestStatus
+      localStorage.setItem("usuario", JSON.stringify(state.usuario));
+      localStorage.setItem("token", JSON.stringify(state.token));
+
     }
     
   },
