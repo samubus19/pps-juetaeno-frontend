@@ -1,7 +1,7 @@
 import { juetaenoApi } from '../../../api/juetaeno-backend-api';
 import { setUser, startLoadingUsers, setRequestStatus } from './usuarioSlice';
 
-const mToken = localStorage.getItem("token")
+const mToken = JSON.parse(localStorage.getItem("token"))
 
 export const loginUsuario = (body) => {
     return async (dispatch, getState) => {
@@ -11,10 +11,6 @@ export const loginUsuario = (body) => {
             usuario     : body.usuario,
             email       : body.email,
             contrasenia : body.contrasenia 
-        },{
-            headers : {
-                'Authorization' : mToken
-            }
         })
           .catch(function (error) {
             if (error.response) {
@@ -36,28 +32,28 @@ export const loginUsuario = (body) => {
            
           });
 
-        dispatch(setRequestStatus({requestStatus : resp.status})) 
-        dispatch(setUser({usuario : resp.data.usuario, token : resp.data.token}))
+          dispatch(setUser({usuario : resp.data.usuario, token : resp.data.token}))
+          dispatch(setRequestStatus({requestStatus : resp.status})) 
     }
 } 
 
 export const crearNuevoUsuario = (body) => {
     return async (dispatch, getState) => {
     try {
-        dispatch(startLoadingUsers())
-        const resp = await juetaenoApi.post(`/users/login`, {
+        // dispatch(startLoadingUsers())
+        const resp = await juetaenoApi.post(`/users`, {
             usuario     : body.usuario,
             email       : body.email,
             contrasenia : body.contrasenia,
             area        : body.area,
             rol         : body.rol,
-            idPersona   : body.idPersona
+            fkPersona   : body.fkPersona
         },{
             headers : {
                 'Authorization' : mToken
             }
-        });
-
+        })
+        console.log(resp)
         dispatch(setRequestStatus({requestStatus : resp.status}))  
       }  
       catch(error) {

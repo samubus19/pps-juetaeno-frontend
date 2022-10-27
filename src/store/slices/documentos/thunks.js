@@ -1,7 +1,7 @@
 import { juetaenoApi } from '../../../api/juetaeno-backend-api';
 import { setDocuments, setRequestStatus, startLoadingDocuments } from './documentoSlice';
 
-const mToken = localStorage.getItem("token")
+const mToken = JSON.parse(localStorage.getItem("token"))
 
 export const getDocumentos = () => {
     return async (dispatch, getState) => {

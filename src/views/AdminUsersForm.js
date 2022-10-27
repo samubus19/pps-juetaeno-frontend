@@ -1,13 +1,18 @@
-import MainFeaturedPost from "../components/MainFeaturedPost";
-import Footer from "../components/Footer";
-import React, { useState } from "react";
-import { Button, Divider, Grid, Typography } from "@mui/material";
-import Box from "@mui/system/Box";
-import TextField from "@mui/material/TextField";
-import Paper from "@mui/material/Paper";
-import Autocomplete from "@mui/material/Autocomplete";
-import { Stack } from "@mui/system";
-import { useNavigate } from "react-router-dom";
+import MainFeaturedPost                           from "../components/MainFeaturedPost";
+import Footer                                     from "../components/Footer";
+import React, { useState }                        from "react";
+import { Button, Divider, Grid, Typography }      from "@mui/material";
+import Box                                        from "@mui/system/Box";
+import TextField                                  from "@mui/material/TextField";
+import Paper                                      from "@mui/material/Paper";
+import Autocomplete                               from "@mui/material/Autocomplete";
+import { Stack }                                  from "@mui/system";
+import { useNavigate }                            from "react-router-dom";
+import { useDispatch, useSelector }               from "react-redux";
+import { crearNuevaPersona, getPersonaPorNumero } from '../store/slices/personas';
+import { crearNuevoUsuario }                      from '../store/slices/usuarios';
+import { DateTime, luxon }                                  from 'luxon';
+import { useEffect } from "react";
 
 const mainFeaturedPost = {
   area: "Administrador - Nuevo Usuario",
@@ -21,7 +26,11 @@ const area = [
 const rol = [{ label: "USUARIO" }, { label: "ADMIN" }];
 const tipoDocumento = [{ label: "DNI" }, { label: "LC" }];
 export default function NewUsersFrom() {
-  const navigate = useNavigate();
+  
+  const { personas, isLoading } = useSelector((state) => state.persona);
+  const dispatch     = useDispatch();
+  const navigate     = useNavigate();
+  
   const [inputValue, setInputValue] = useState({
     Area: "",
     Rol: "",
@@ -36,24 +45,36 @@ export default function NewUsersFrom() {
   const tipoDocumentoChange = (event, newTipoDocumento) => {
     setInputValue({ ...inputValue, TipoDocumento: newTipoDocumento });
   };
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      usuario: data.get("usuario"),
-      mail: data.get("mail"),
-      constrasenia: data.get("contrasenia"),
-      area: inputValue.Area,
-      rol: inputValue.Rol,
-      nombre: data.get("nombre"),
-      apellido: data.get("apellido"),
-      tipoDocumento: inputValue.TipoDocumento,
-      ndocumento: data.get("ndocumento"),
-      fecha: data.get("fecha"),
-      telefono: data.get("telefono"),
-    });
-  };
+  const handleSubmit = async (event) => {
+    try {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      
+      const bodyPersona = {
+        nombre          : data.get("nombre"),
+        apellido        : data.get("apellido"),
+        tipoDocumento   : inputValue.TipoDocumento,
+        nroDocumento    : data.get("ndocumento"),
+        fechaNacimiento : DateTime.fromISO(data.get("fecha")).toFormat('dd/LL/yyyy'),
+        nroTelefono     : data.get("telefono"),
+      }
 
+      const bodyUsuario = {
+        usuario         : data.get("usuario"),
+        email           : data.get("mail"),
+        contrasenia     : data.get("contrasenia"),
+        area            : inputValue.Area,
+        rol             : JSON.parse(localStorage.getItem("usuario")).rol,
+        fkPersona       : bodyPersona.nroDocumento
+      }
+
+      dispatch(crearNuevaPersona(bodyPersona))
+      dispatch(crearNuevoUsuario(bodyUsuario))
+    } catch (error) {
+      console.log(error)
+    }
+   
+  }
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
