@@ -11,22 +11,19 @@ export const usuarioSlice = createSlice({
   initialState,
   reducers: {
     startLoadingUsers: (state) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
       state.isLoading = true
     },
     setUser : (state, action) => {
       state.usuario   = action.payload.usuario
       state.token     = action.payload.token
-
+      localStorage.setItem("usuario", JSON.stringify(state.usuario));
+      localStorage.setItem("token", JSON.stringify(state.token));
     },
     setRequestStatus    : (state, action) => {
       state.isLoading     = false
       state.requestStatus = action.payload.requestStatus
-      localStorage.setItem("usuario", JSON.stringify(state.usuario));
-      localStorage.setItem("token", JSON.stringify(state.token));
+      /*localStorage.setItem("usuario", JSON.stringify(state.usuario));
+      localStorage.setItem("token", JSON.stringify(state.token));*/
 
     }
     

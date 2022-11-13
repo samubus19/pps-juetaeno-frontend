@@ -1,7 +1,13 @@
-import { juetaenoApi } from '../../../api/juetaeno-backend-api';
-import { setDocuments, setRequestStatus, startLoadingDocuments } from './documentoSlice';
 
-const mToken = localStorage.getItem("token")
+import { juetaenoApi } from '../../../api/juetaeno-backend-api';
+import {
+  setDocuments,
+  setRequestStatus,
+  startLoadingDocuments,
+  setShowDocuments,
+} from "./documentoSlice";
+
+const mToken = JSON.parse( localStorage.getItem("token"))
 
 export const getDocumentos = () => {
     return async (dispatch, getState) => {
@@ -14,8 +20,27 @@ export const getDocumentos = () => {
                 },
                 
             });
+            //console.log(resp.data)
+            const documento = resp.data.mensaje
+            const vector = []
+            for (let i = 0; i < documento.length; i++) {
+              for (let j = 0; j < documento[i].historial.length; j++) {
+                const e = {
+                  _id: documento[i]._id,
+                  tipoDocumento: documento[i].tipoDocumento,
+                  nroDocumento: documento[i].nroDocumento,
+                  descripcion: documento[i].descripcion,
+                  fechaIngreso: documento[i].historial[j].fechaIngreso,
+                  fechaSalida: documento[i].historial[j].fechaSalida,
+                  sede: documento[i].historial[j].sede,
+                  destino: documento[i].historial[j].destino,
+                  estado: documento[i].historial[j].estado,
+                };
+                vector.push(e);
+              }
+            }
             
-            dispatch(setDocuments({documentos : resp.data}))
+            dispatch(setDocuments({documentos : resp.data.mensaje, showDocumentos: vector}))
             dispatch(setRequestStatus({requestStatus : resp.status}))
         } catch (error) {
             console.log(error);

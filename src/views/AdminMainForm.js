@@ -1,27 +1,42 @@
+import React, { useEffect, useState } from "react";
 import MainFeaturedPost from "../components/MainFeaturedPost";
 import Footer from "../components/Footer";
-import React from "react";
-import { Button, Divider, Grid, Typography } from "@mui/material";
-import Box from "@mui/system/Box";
-import Search from "../components/Search";
-import { DataGrid } from "@mui/x-data-grid";
-import Paper from "@mui/material/Paper";
-import { useState } from "react";
+import TabPanel from "../components/TabPanel";
+import { renderCellExpand } from "../components/CellExpand";
+import {
+  Button,
+  Divider,
+  Grid,
+  Typography,
+  Paper,
+  Autocomplete,
+  TextField,
+} from "@mui/material";
+import { Stack, Box } from "@mui/system";
+import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-const filterType = [
-  { label: "Nombre" },
-  { label: "Apellido" },
-];
 const columns = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "firstName", headerName: "First name", width: 130 },
-  { field: "lastName", headerName: "Last name", width: 130 },
+  { field: "id", headerName: "ID", width: 70, renderCell: renderCellExpand },
+  {
+    field: "firstName",
+    headerName: "First name",
+    width: 130,
+    renderCell: renderCellExpand,
+  },
+  {
+    field: "lastName",
+    headerName: "Last name",
+    width: 130,
+    renderCell: renderCellExpand,
+  },
   {
     field: "age",
     headerName: "Age",
     type: "number",
     width: 90,
+    renderCell: renderCellExpand,
   },
   {
     field: "fullName",
@@ -31,6 +46,7 @@ const columns = [
     width: 160,
     valueGetter: (params) =>
       `${params.row.firstName || ""} ${params.row.lastName || ""}`,
+    renderCell: renderCellExpand,
   },
 ];
 
@@ -47,15 +63,13 @@ const rows = [
 ];
 
 const mainFeaturedPost = {
-  area: "Administrador",
+  area: "Interfaz de Administrador",
 };
 
 export default function AdminMainForm() {
   const navigate = useNavigate();
-  const [filterBy, setFilterBy] = useState("");
-  const filterBySearch = (filterData) => {
-    setFilterBy(filterData);
-  };
+  //es el id seleccionado para enviar a editar
+  const [selectionId, setSelectionId] = useState([]);
 
   return (
     <React.Fragment>
@@ -65,15 +79,40 @@ export default function AdminMainForm() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
-              <Search filterType={filterType} filterBySearch={filterBySearch} />
               <Divider />
-              <div style={{ height: 400, width: "100%" }}>
+              <div style={{ height: 450, width: "100%" }}>
                 <DataGrid
+                  localeText={
+                    esES.components.MuiDataGrid.defaultProps.localeText
+                  }
+                  getRowId={(r) => r.id}
                   rows={rows}
                   columns={columns}
                   pageSize={5}
                   rowsPerPageOptions={[5]}
                   checkboxSelection
+                  selectionModel={selectionId}
+                  onSelectionModelChange={(selection) => {
+                    if (selection.length > 1) {
+                      const selectionSet = new Set(selectionId);
+                      const result = selection.filter(
+                        (s) => !selectionSet.has(s)
+                      );
+
+                      setSelectionId(result);
+                    } else {
+                      setSelectionId(selection);
+                    }
+                  }}
+                  components={{ Toolbar: GridToolbar }}
+                  componentsProps={{
+                    toolbar: {
+                      showQuickFilter: true,
+                      quickFilterProps: { debounceMs: 500 },
+                      csvOptions: { disableToolbarButton: true },
+                      printOptions: { disableToolbarButton: true },
+                    },
+                  }}
                 />
               </div>
             </Paper>
@@ -83,6 +122,7 @@ export default function AdminMainForm() {
               <Box sx={{ height: 450, width: "100%" }}>
                 <Paper
                   component="form"
+                  elevation={0}
                   sx={{
                     p: "2px 4px",
                     display: "flex",

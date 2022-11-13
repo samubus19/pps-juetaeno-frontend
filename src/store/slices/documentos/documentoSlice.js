@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   isLoading     : false,
   documentos    : [],
+  showDocumentos:[],
   requestStatus : 0
 }
 
@@ -19,6 +20,8 @@ export const documentoSlice = createSlice({
     },
     setDocuments : (state, action) => {
       state.documentos    = action.payload.documentos
+      state.showDocumentos = action.payload.showDocumentos;
+     
     },
     setRequestStatus    : (state, action) => {
       state.isLoading     = false
@@ -28,4 +31,4 @@ export const documentoSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { startLoadingDocuments, setDocuments, setRequestStatus } = documentoSlice.actions
+export const { startLoadingDocuments, setDocuments, setRequestStatus, setShowDocuments } = documentoSlice.actions
