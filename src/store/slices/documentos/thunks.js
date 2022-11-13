@@ -7,7 +7,9 @@ import {
   setShowDocuments,
 } from "./documentoSlice";
 
-const mToken = JSON.parse( localStorage.getItem("token"))
+
+const mToken = JSON.parse(localStorage.getItem("token"))
+
 
 export const getDocumentos = () => {
     return async (dispatch, getState) => {
@@ -43,6 +45,7 @@ export const getDocumentos = () => {
             dispatch(setDocuments({documentos : resp.data.mensaje, showDocumentos: vector}))
             dispatch(setRequestStatus({requestStatus : resp.status}))
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status})) 
             console.log(error);
         }
     }
@@ -62,6 +65,7 @@ export const getDocumentoPorNumero = (nroDocumento) => {
             dispatch(setDocuments({documentos : resp.data}))
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status})) 
             console.log(error)
         }
     }
@@ -73,10 +77,11 @@ export const crearNuevoDocumento = (body) => {
             dispatch(startLoadingDocuments())
 
             const resp = await juetaenoApi.post(`/files`, {
-                nroDocumento  : body.nroDocumento,
-                tipoDocumento : body.tipoDocumento,
-                descripcion   : body.descripcion,
-                destino       : body.destino,
+                nroDocumento      : body.nroDocumento,
+                tipoDocumento     : body.tipoDocumento,
+                descripcion       : body.descripcion,
+                destino           : body.destino,
+                idUsuarioFirmante : JSON.parse(localStorage.getItem("usuario"))._id
             },
             {
                 headers : {
@@ -86,6 +91,7 @@ export const crearNuevoDocumento = (body) => {
             });
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status})) 
             console.log(error);            
         }
     }
@@ -108,6 +114,7 @@ export const actualizarEstadoDocumento = (nroDocumento, body) => {
             });
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status})) 
             console.log(error);            
         }
     }
@@ -132,6 +139,7 @@ export const editarDocumento = (nroDocumento, body) => {
             });
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status})) 
             console.log(error);            
         }
     }

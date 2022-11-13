@@ -1,7 +1,8 @@
 import { juetaenoApi } from '../../../api/juetaeno-backend-api';
 import { setPersonas, setRequestStatus, startLoadingPersonas } from './personaSlice';
 
-const mToken = localStorage.getItem("token")
+const mToken = JSON.parse(localStorage.getItem("token"))
+
 
 export const getPersonaPorNumero = (nroDocumento) => {
     return async (dispatch, getState) => {
@@ -14,9 +15,10 @@ export const getPersonaPorNumero = (nroDocumento) => {
                     },
                     
                 });
-            dispatch(setRequestStatus({requestStatus : resp.status}))
             dispatch(setPersonas({personas : resp.data}))   
+            dispatch(setRequestStatus({requestStatus : resp.status}))
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status}))
             console.log(error);            
         }
     }
@@ -38,12 +40,13 @@ export const crearNuevaPersona = (body) => {
                 } ,
                 {
                     headers : {
-                        'Authorization' : mToken
+                        'authorization' : mToken
                     }
                 
                 });
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status}))
             console.log(error);            
         }
     }

@@ -22,8 +22,6 @@ export const usuarioSlice = createSlice({
     setRequestStatus    : (state, action) => {
       state.isLoading     = false
       state.requestStatus = action.payload.requestStatus
-      /*localStorage.setItem("usuario", JSON.stringify(state.usuario));
-      localStorage.setItem("token", JSON.stringify(state.token));*/
 
     }
     

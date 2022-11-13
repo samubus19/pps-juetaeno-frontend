@@ -1,7 +1,7 @@
 import { juetaenoApi } from '../../../api/juetaeno-backend-api';
 import { setUser, startLoadingUsers, setRequestStatus } from "./usuarioSlice";
 
-const mToken = localStorage.getItem("token")
+const mToken = JSON.parse(localStorage.getItem("token"))
 
 export const loginUsuario = (body) => {
     return async (dispatch, getState) => {
@@ -11,10 +11,6 @@ export const loginUsuario = (body) => {
             usuario     : body.usuario,
             email       : body.email,
             contrasenia : body.contrasenia 
-        },{
-            headers : {
-                'Authorization' : mToken
-            }
         })
           .catch(function (error) {
             if (error.response) {
@@ -24,45 +20,48 @@ export const loginUsuario = (body) => {
               console.log(error.response.data);
               console.log(error.response.status);
               console.log(error.response.headers);
+              dispatch(setRequestStatus({requestStatus : error.response.status}))
             } else if (error.request) {
               // La petición fue hecha pero no se recibió respuesta
               // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
               // http.ClientRequest en node.js
+              dispatch(setRequestStatus({requestStatus : error.response.status}))
               console.log(error.request);
             } else {
+              dispatch(setRequestStatus({requestStatus : error.response.status})) 
               // Algo paso al preparar la petición que lanzo un Error
               console.log("Error", error.message);
             }
            
           });
 
-        dispatch(setRequestStatus({ requestStatus: resp.status })); 
-        dispatch(
-          setUser({ usuario: resp.data.usuario, token: resp.data.token })
-        );
+          dispatch(setUser({usuario : resp.data.usuario, token : resp.data.token}))
+          dispatch(setRequestStatus({requestStatus : resp.status})) 
+
     }
 } 
 
 export const crearNuevoUsuario = (body) => {
     return async (dispatch, getState) => {
     try {
-        dispatch(startLoadingUsers())
-        const resp = await juetaenoApi.post(`/users/login`, {
+        // dispatch(startLoadingUsers())
+        const resp = await juetaenoApi.post(`/users`, {
             usuario     : body.usuario,
             email       : body.email,
             contrasenia : body.contrasenia,
             area        : body.area,
             rol         : body.rol,
-            idPersona   : body.idPersona
+            fkPersona   : body.fkPersona
         },{
             headers : {
                 'Authorization' : mToken
             }
-        });
-
+        })
+        console.log(resp)
         dispatch(setRequestStatus({requestStatus : resp.status}))  
       }  
       catch(error) {
+        dispatch(setRequestStatus({requestStatus : error.response.status})) 
         console.log(error);
       }
     }
@@ -82,6 +81,8 @@ export const actualizarContrasenia = (body, params) => {
 
         dispatch(setRequestStatus({requestStatus : resp.status}))  
         } catch(error) {
+          dispatch(setRequestStatus({requestStatus : error.response.status})) 
+
           console.log(error)
         }
     }
