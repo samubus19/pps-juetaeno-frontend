@@ -1,5 +1,5 @@
 import { juetaenoApi } from '../../../api/juetaeno-backend-api';
-import { setUser, startLoadingUsers, setRequestStatus } from './usuarioSlice';
+import { setUser, startLoadingUsers, setRequestStatus } from "./usuarioSlice";
 
 const mToken = JSON.parse(localStorage.getItem("token"))
 
@@ -37,6 +37,7 @@ export const loginUsuario = (body) => {
 
           dispatch(setUser({usuario : resp.data.usuario, token : resp.data.token}))
           dispatch(setRequestStatus({requestStatus : resp.status})) 
+
     }
 } 
 

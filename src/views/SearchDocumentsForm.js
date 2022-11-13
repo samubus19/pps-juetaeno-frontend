@@ -1,53 +1,45 @@
+import React, { useEffect, useState } from "react";
 import MainFeaturedPost from "../components/MainFeaturedPost";
 import Footer from "../components/Footer";
-import React from "react";
-import { useState } from "react";
-import { Divider, Grid } from "@mui/material";
-import Box from "@mui/system/Box";
-import Search from "../components/Search";
-import { DataGrid } from "@mui/x-data-grid";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
+import { renderCellExpand } from "../components/CellExpand";
+import { getDocumentos } from "../store/slices/documentos";
+import { Button, Divider, Grid, Paper } from "@mui/material";
+import { Box } from "@mui/system";
+import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-
-const filterType = [
-  { label: "EXP (expediente)" },
-  { label: "NO (notas)" },
-  { label: "REC (reclamos)" },
-  { label: "CES (ceses)" },
-];
+import { useDispatch, useSelector } from "react-redux";
 
 const columns = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "firstName", headerName: "First name", width: 130 },
-  { field: "lastName", headerName: "Last name", width: 130 },
   {
-    field: "age",
-    headerName: "Age",
-    type: "number",
-    width: 90,
+    field: "tipoDocumento",
+    headerName: "Tipo ",
+    width: 130,
+    renderCell: renderCellExpand,
   },
   {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ""} ${params.row.lastName || ""}`,
+    field: "nroDocumento",
+    headerName: "Numero",
+    width: 130,
+    renderCell: renderCellExpand,
   },
-];
-
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
+  {
+    field: "sede",
+    headerName: "Sede",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
+  {
+    field: "fechaIngreso",
+    headerName: "Fecha de Ingreso",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
+  {
+    field: "descripcion",
+    headerName: "Descripcion",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
 ];
 
 const mainFeaturedPost = {
@@ -55,6 +47,10 @@ const mainFeaturedPost = {
 };
 
 export default function SearchDocumentsForm() {
+  const { showDocumentos = [] } = useSelector((state) => state.documento);
+  const dispatch = useDispatch();
+  //es el id seleccionado para enviar a editar
+  const [selectionId, setSelectionId] = useState([]);
   const navigate = useNavigate();
   const redirect = (e) => {
     switch (JSON.parse(localStorage.getItem("usuario")).area.toUpperCase()) {
@@ -76,14 +72,9 @@ export default function SearchDocumentsForm() {
         break;
     }
   };
-
-
-  //son los datos para la busqueda que se deben mapear despues
-  const [filterBy, setFilterBy] = useState("");
-  const filterBySearch = (filterData) => {
-    setFilterBy(filterData);
-  };
-
+  useEffect(() => {
+    dispatch(getDocumentos());
+  }, []);
 
   return (
     <React.Fragment>
@@ -97,15 +88,40 @@ export default function SearchDocumentsForm() {
               Volver
             </Button>
             <Paper elevation={3}>
-              <Search filterType={filterType} filterBySearch={filterBySearch} />
               <Divider />
               <div style={{ height: 400, width: "100%" }}>
                 <DataGrid
-                  rows={rows}
+                  localeText={
+                    esES.components.MuiDataGrid.defaultProps.localeText
+                  }
+                  getRowId={(r) => r._id}
+                  rows={showDocumentos}
                   columns={columns}
                   pageSize={5}
                   rowsPerPageOptions={[5]}
                   checkboxSelection
+                  selectionModel={selectionId}
+                  onSelectionModelChange={(selection) => {
+                    if (selection.length > 1) {
+                      const selectionSet = new Set(selectionId);
+                      const result = selection.filter(
+                        (s) => !selectionSet.has(s)
+                      );
+
+                      setSelectionId(result);
+                    } else {
+                      setSelectionId(selection);
+                    }
+                  }}
+                  components={{ Toolbar: GridToolbar }}
+                  componentsProps={{
+                    toolbar: {
+                      showQuickFilter: true,
+                      quickFilterProps: { debounceMs: 500 },
+                      csvOptions: { disableToolbarButton: true },
+                      printOptions: { disableToolbarButton: true },
+                    },
+                  }}
                 />
               </div>
             </Paper>

@@ -13,7 +13,7 @@ import { crearNuevoDocumento }               from "../store/slices/documentos/th
 import { formatearArea }                     from "../helpers/Area-formatter";
 
 const mainFeaturedPost = {
-  area: "Mesa de entrada - Nuevo Documento",
+  area: "Area: Mesa de entrada - Nuevo Documento",
 };
 const tiposDocumento = [
   { label : "EXP (expediente)" },
@@ -106,6 +106,7 @@ export default function NewDocumentsFrom() {
               <div style={{ height: 450, width: "100%" }}>
                 <Paper
                   component="form"
+                  elevation={0}
                   sx={{
                     p: "2px 4px",
                     display: "flex",
@@ -118,6 +119,7 @@ export default function NewDocumentsFrom() {
                     Nuevo Documento - Datos
                   </Typography>
                 </Paper>
+                <Divider />
                 <Box p={1} pt={3}>
                   <Stack spacing={2}>
                     <Autocomplete
@@ -170,6 +172,7 @@ export default function NewDocumentsFrom() {
               <Box sx={{ height: 450, width: "100%" }}>
                 <Paper
                   component="form"
+                  elevation={0}
                   sx={{
                     p: "2px 4px",
                     display: "flex",
@@ -199,7 +202,13 @@ export default function NewDocumentsFrom() {
                   </Grid>
                   <Grid item xs={1} />
                   <Grid item xs={2}>
-                    <Button variant="contained" fullWidth onClick={()=>{navigate("/mesaentrada");}}>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={() => {
+                        navigate("/mesaentrada");
+                      }}
+                    >
                       Cancelar
                     </Button>
                   </Grid>

@@ -22,7 +22,7 @@ function MainFeaturedPost(props) {
         backgroundImage: `url(${logo})`,
       }}
     >
-      {/* Increase the priority of the hero background image */}
+      
       {<img style={{ display: "none" }} src={logo} alt={post.imageText} />}
       <Box
         sx={{
@@ -49,7 +49,7 @@ function MainFeaturedPost(props) {
               color="inherit"
               gutterBottom
             >
-              S.G.T.I.D.
+              Si.G.T.I.D.
             </Typography>
             <Typography variant="h6" color="inherit" paragraph>
               (Sistema de Gestion de Trafico Interno de Documentos)
@@ -69,8 +69,5 @@ MainFeaturedPost.propTypes = {
     area: PropTypes.string.isRequired,
   }).isRequired,
 };
-/** esto se debe pegar en cada pagina 
-  area: "Area: Mesa de entrada",
-};
- */
+
 export default MainFeaturedPost;

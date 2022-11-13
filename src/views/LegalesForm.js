@@ -1,74 +1,73 @@
+import React, { useEffect, useState } from "react";
 import MainFeaturedPost from "../components/MainFeaturedPost";
 import Footer from "../components/Footer";
-import React, { useState } from "react";
-import { Button, Divider, Grid, Typography } from "@mui/material";
-import Box from "@mui/system/Box";
-import Search from "../components/Search";
-import { DataGrid } from "@mui/x-data-grid";
-import Paper from "@mui/material/Paper";
 import TabPanel from "../components/TabPanel";
-import { Stack } from "@mui/system";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
+import { renderCellExpand } from "../components/CellExpand";
+import { getDocumentos } from "../store/slices/documentos";
+import {
+  Button,
+  Divider,
+  Grid,
+  Typography,
+  Paper,
+  Autocomplete,
+  TextField,
+} from "@mui/material";
+import { Stack, Box } from "@mui/system";
+import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+// en area se debe poner el nombre tal cual se guarde en el back
+const area = "Legales";
 const estado = [{ label: "PASE" }, { label: "FINALIZADO" }];
-const area = [{ label: "Mesa de Entrada" }, { label: "Miembros de Junta" }];
-const filterType = [
-  { label: "EXP (expediente)" },
-  { label: "NO (notas)" },
-  { label: "REC (reclamos)" },
-  { label: "CES (ceses)" },
+const areaDestino = [
+  { label: "Mesa de Entrada" },
+  { label: "Miembros de Junta" },
 ];
-
 const columns = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "firstName", headerName: "First name", width: 130 },
-  { field: "lastName", headerName: "Last name", width: 130 },
   {
-    field: "age",
-    headerName: "Age",
-    type: "number",
-    width: 90,
+    field: "tipoDocumento",
+    headerName: "Tipo ",
+    width: 130,
+    renderCell: renderCellExpand,
   },
   {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ""} ${params.row.lastName || ""}`,
+    field: "nroDocumento",
+    headerName: "Numero",
+    width: 130,
+    renderCell: renderCellExpand,
+  },
+  {
+    field: "sede",
+    headerName: "Sede",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
+  {
+    field: "fechaIngreso",
+    headerName: "Fecha de Ingreso",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
+  {
+    field: "descripcion",
+    headerName: "Descripcion",
+    width: 200,
+    renderCell: renderCellExpand,
   },
 ];
-
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
-
-const mainFeaturedPost = {
-  area: "Legales",
-};
+const mainFeaturedPost = { area: "Area: Legales" };
 
 export default function LegalesForm() {
+  const { showDocumentos = [] } = useSelector((state) => state.documento);
+  const dispatch = useDispatch();
   const [value, setValue] = React.useState(0);
+  //es el id seleccionado para enviar a editar
+  const [selectionId, setSelectionId] = useState([]);
   const navigate = useNavigate();
-  //son los datos para la busqueda que se deben mapear despues
-  const [filterBy, setFilterBy] = useState("");
-  const filterBySearch = (filterData) =>{
-    setFilterBy(filterData);
-  }
-  const cheked = (e) => {
-   console.log(filterBy);
-  };
+  useEffect(() => {
+    dispatch(getDocumentos());
+  }, []);
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -77,18 +76,42 @@ export default function LegalesForm() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
-              <Search
-                filterType={filterType}
-                filterBySearch={filterBySearch}
-              />
               <Divider />
-              <div style={{ height: 400, width: "100%" }}>
+              <div style={{ height: 450, width: "100%" }}>
                 <DataGrid
-                  rows={rows}
+                  localeText={
+                    esES.components.MuiDataGrid.defaultProps.localeText
+                  }
+                  getRowId={(r) => r._id}
+                  rows={showDocumentos.filter(
+                    (documento) => documento.sede === area
+                  )}
                   columns={columns}
                   pageSize={5}
                   rowsPerPageOptions={[5]}
                   checkboxSelection
+                  selectionModel={selectionId}
+                  onSelectionModelChange={(selection) => {
+                    if (selection.length > 1) {
+                      const selectionSet = new Set(selectionId);
+                      const result = selection.filter(
+                        (s) => !selectionSet.has(s)
+                      );
+
+                      setSelectionId(result);
+                    } else {
+                      setSelectionId(selection);
+                    }
+                  }}
+                  components={{ Toolbar: GridToolbar }}
+                  componentsProps={{
+                    toolbar: {
+                      showQuickFilter: true,
+                      quickFilterProps: { debounceMs: 500 },
+                      csvOptions: { disableToolbarButton: true },
+                      printOptions: { disableToolbarButton: true },
+                    },
+                  }}
                 />
               </div>
             </Paper>
@@ -98,6 +121,7 @@ export default function LegalesForm() {
               <Box sx={{ height: 450, width: "100%" }}>
                 <Paper
                   component="form"
+                  elevation={0}
                   sx={{
                     p: "2px 4px",
                     display: "flex",
@@ -163,7 +187,7 @@ export default function LegalesForm() {
                         disablePortal
                         fullWidth
                         id="combo-box-demo"
-                        options={area}
+                        options={areaDestino}
                         renderInput={(params) => (
                           <TextField {...params} label="Area" />
                         )}

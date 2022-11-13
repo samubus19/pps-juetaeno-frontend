@@ -7,6 +7,11 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import Divider from "@mui/material/Divider";
 import Autocomplete from "@mui/material/Autocomplete";
 
+/**
+ * de este modo se llama en otros formularios 
+   <Search filterType={filterType} filterBySearch={filterBySearch} />
+ */
+
 export default function Search({ filterBySearch, filterType }) {
   const [inputValue, setInputValue] = React.useState("");
   const handleChange = (event, newInputValue) => {
