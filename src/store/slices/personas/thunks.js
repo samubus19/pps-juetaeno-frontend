@@ -18,6 +18,7 @@ export const getPersonaPorNumero = (nroDocumento) => {
             dispatch(setPersonas({personas : resp.data}))   
             dispatch(setRequestStatus({requestStatus : resp.status}))
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status}))
             console.log(error);            
         }
     }
@@ -45,6 +46,7 @@ export const crearNuevaPersona = (body) => {
                 });
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status}))
             console.log(error);            
         }
     }

@@ -1,39 +1,90 @@
-import MainFeaturedPost from "../components/MainFeaturedPost";
-import Footer from "../components/Footer";
-import React from "react";
+import MainFeaturedPost                      from "../components/MainFeaturedPost";
+import Footer                                from "../components/Footer";
+import React, {useState}                     from "react";
 import { Button, Divider, Grid, Typography } from "@mui/material";
-import Box from "@mui/system/Box";
-import TextField from "@mui/material/TextField";
-import Paper from "@mui/material/Paper";
-import Autocomplete from "@mui/material/Autocomplete";
-import { Stack } from "@mui/system";
-import { useNavigate } from "react-router-dom";
+import Box                                   from "@mui/system/Box";
+import TextField                             from "@mui/material/TextField";
+import Paper                                 from "@mui/material/Paper";
+import Autocomplete                          from "@mui/material/Autocomplete";
+import { Stack }                             from "@mui/system";
+import { useNavigate }                       from "react-router-dom";
+import { useDispatch, useSelector }          from "react-redux";
+import { crearNuevoDocumento }               from "../store/slices/documentos/thunks";
+import { formatearArea }                     from "../helpers/Area-formatter";
 
 const mainFeaturedPost = {
   area: "Mesa de entrada - Nuevo Documento",
 };
-const tipoDocumento = [
-  { label: "EXP (expediente)" },
-  { label: "NO (notas)" },
-  { label: "REC (reclamos)" },
-  { label: "CES (ceses)" },
+const tiposDocumento = [
+  { label : "EXP (expediente)" },
+  { label : "NO (notas)" },
+  { label : "REC (reclamos)" },
+  { label : "CES (ceses)" },
 ];
 
+const destinos = [
+  {label : "Legales"},
+  {label : "Miembros de Junta"},
+  {label : "Secretaria"}
+]
+
 export default function NewDocumentsFrom() {
-  const navigate = useNavigate();
-  const [inputValue, setInputValue] = React.useState("");
-   const handleChange = (event, newInputValue) => {
-     setInputValue(newInputValue.split(" ")[0]);
-   };
+
+  const { isLoading, requestStatus } = useSelector((state) => state.documento);
+  const dispatch                     = useDispatch();
+  const navigate                     = useNavigate();
+
+  const [inputValue, setInputValue]  = useState({
+    tipoDocumento : "",
+    destino       : ""
+  });
+  
+  const destinoChange = (event, newDestino) => {
+    setInputValue({ ...inputValue, destino : newDestino });
+  };
+  const tipoDocumentoChange = (event, newTipoDocumento) => {
+    setInputValue({ ...inputValue, tipoDocumento : newTipoDocumento });
+  };
+
+  const validarCampos = (data) => {
+    
+  }
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      documentType: inputValue,
-      numeroDoc: data.get("numeroDoc"),
-      fecha: data.get("fecha"),
-      description: data.get("description")
-    });
+
+    try {
+      if(!inputValue.tipoDocumento || inputValue.tipoDocumento === ""){
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
+      if(!data.get("numeroDoc") || data.get("numeroDoc") === ""){
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
+      if(!inputValue.destino || inputValue.destino === ""){
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
+      if(!data.get("description") || data.get("description") === "") {
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
+      
+      const bodyNuevoDocumento = {
+        tipoDocumento : inputValue.tipoDocumento.split(" ")[0].trim(),
+        nroDocumento  : data.get("numeroDoc").trim(),
+        destino       : formatearArea(inputValue.destino.trim()),
+        descripcion   : data.get("description").trim()
+      };
+      
+      dispatch(crearNuevoDocumento(bodyNuevoDocumento));
+
+    
+    } catch (error) {
+      console.log(error);      
+    }
+    
   };
 
   return (
@@ -73,10 +124,10 @@ export default function NewDocumentsFrom() {
                       disablePortal
                       id="typeDoc"
                       name="typeDoc"
-                      inputValue={inputValue}
-                      onInputChange={handleChange}
+                      inputValue={inputValue.tipoDocumento}
+                      onInputChange={tipoDocumentoChange}
                       fullWidth
-                      options={tipoDocumento}
+                      options={tiposDocumento}
                       renderInput={(params) => (
                         <TextField {...params} label="Tipo de documento" />
                       )}
@@ -85,21 +136,21 @@ export default function NewDocumentsFrom() {
                       fullWidth
                       required
                       id="numeroDoc"
-                      label="Numero de documeno"
+                      label="Numero de documento"
                       name="numeroDoc"
                       margin="dense"
                     />
-                    <TextField
-                      fullWidth
-                      required
-                      id="fecha"
-                      label="Fecha de creacion"
-                      name="fecha"
-                      type="date"
-                      margin="dense"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
+                    <Autocomplete
+                        disablePortal
+                        id="destino"
+                        name="destino"
+                        inputValue={inputValue.destino}
+                        onInputChange={destinoChange}
+                        fullWidth
+                        options={destinos}
+                        renderInput={(params) => (
+                        <TextField {...params} label="Destino" />
+                      )}
                     />
                     <TextField
                       required

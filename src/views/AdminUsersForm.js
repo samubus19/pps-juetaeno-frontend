@@ -11,30 +11,30 @@ import { useNavigate }                            from "react-router-dom";
 import { useDispatch, useSelector }               from "react-redux";
 import { crearNuevaPersona, getPersonaPorNumero } from '../store/slices/personas';
 import { crearNuevoUsuario }                      from '../store/slices/usuarios';
-import { DateTime, luxon }                                  from 'luxon';
-import { useEffect } from "react";
+import { DateTime, luxon }                        from 'luxon';
+import { useEffect }                              from "react";
 
 const mainFeaturedPost = {
-  area: "Administrador - Nuevo Usuario",
+  area    : "Administrador - Nuevo Usuario",
 };
 const area = [
-  { label: "LEGALES" },
-  { label: "MIEMBROS" },
-  { label: "MESAENTRADA" },
-  { label: "ADMIN" },
+  { label : "LEGALES" },
+  { label : "MIEMBROS" },
+  { label : "MESAENTRADA" },
+  { label : "ADMIN" },
 ];
-const rol = [{ label: "USUARIO" }, { label: "ADMIN" }];
+const rol           = [{ label: "USUARIO" }, { label: "ADMIN" }];
 const tipoDocumento = [{ label: "DNI" }, { label: "LC" }];
 export default function NewUsersFrom() {
   
   const { personas, isLoading } = useSelector((state) => state.persona);
-  const dispatch     = useDispatch();
-  const navigate     = useNavigate();
+  const dispatch                = useDispatch();
+  const navigate                = useNavigate();
   
   const [inputValue, setInputValue] = useState({
-    Area: "",
-    Rol: "",
-    TipoDocumento: "",
+    Area          : "",
+    Rol           : "",
+    TipoDocumento : "",
   });
   const areaChange = (event, newArea) => {
     setInputValue({ ...inputValue, Area: newArea });
@@ -49,7 +49,33 @@ export default function NewUsersFrom() {
     try {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
+
+      if(!data.get("nombre") || data.get("nombre") === ""){
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
+      if(!data.get("apellido") || data.get("apellido") === ""){
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
+      if(!inputValue.TipoDocumento || inputValue.TipoDocumento === ""){
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
+      if(!data.get("ndocumento") || data.get("ndocumento") === ""){
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
+      if(!data.get("fecha") || data.get("fecha") === ""){
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
+      if(!data.get("telefono") || data.get("telefono") === ""){
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
       
+
       const bodyPersona = {
         nombre          : data.get("nombre"),
         apellido        : data.get("apellido"),

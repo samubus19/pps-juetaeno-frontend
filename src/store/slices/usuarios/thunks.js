@@ -20,12 +20,15 @@ export const loginUsuario = (body) => {
               console.log(error.response.data);
               console.log(error.response.status);
               console.log(error.response.headers);
+              dispatch(setRequestStatus({requestStatus : error.response.status}))
             } else if (error.request) {
               // La petición fue hecha pero no se recibió respuesta
               // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
               // http.ClientRequest en node.js
+              dispatch(setRequestStatus({requestStatus : error.response.status}))
               console.log(error.request);
             } else {
+              dispatch(setRequestStatus({requestStatus : error.response.status})) 
               // Algo paso al preparar la petición que lanzo un Error
               console.log("Error", error.message);
             }
@@ -57,6 +60,7 @@ export const crearNuevoUsuario = (body) => {
         dispatch(setRequestStatus({requestStatus : resp.status}))  
       }  
       catch(error) {
+        dispatch(setRequestStatus({requestStatus : error.response.status})) 
         console.log(error);
       }
     }
@@ -76,6 +80,8 @@ export const actualizarContrasenia = (body, params) => {
 
         dispatch(setRequestStatus({requestStatus : resp.status}))  
         } catch(error) {
+          dispatch(setRequestStatus({requestStatus : error.response.status})) 
+
           console.log(error)
         }
     }

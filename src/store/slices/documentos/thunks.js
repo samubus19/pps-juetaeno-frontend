@@ -18,6 +18,7 @@ export const getDocumentos = () => {
             dispatch(setDocuments({documentos : resp.data}))
             dispatch(setRequestStatus({requestStatus : resp.status}))
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status})) 
             console.log(error);
         }
     }
@@ -37,6 +38,7 @@ export const getDocumentoPorNumero = (nroDocumento) => {
             dispatch(setDocuments({documentos : resp.data}))
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status})) 
             console.log(error)
         }
     }
@@ -48,10 +50,11 @@ export const crearNuevoDocumento = (body) => {
             dispatch(startLoadingDocuments())
 
             const resp = await juetaenoApi.post(`/files`, {
-                nroDocumento  : body.nroDocumento,
-                tipoDocumento : body.tipoDocumento,
-                descripcion   : body.descripcion,
-                destino       : body.destino,
+                nroDocumento      : body.nroDocumento,
+                tipoDocumento     : body.tipoDocumento,
+                descripcion       : body.descripcion,
+                destino           : body.destino,
+                idUsuarioFirmante : JSON.parse(localStorage.getItem("usuario"))._id
             },
             {
                 headers : {
@@ -61,6 +64,7 @@ export const crearNuevoDocumento = (body) => {
             });
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status})) 
             console.log(error);            
         }
     }
@@ -83,6 +87,7 @@ export const actualizarEstadoDocumento = (nroDocumento, body) => {
             });
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status})) 
             console.log(error);            
         }
     }
@@ -107,6 +112,7 @@ export const editarDocumento = (nroDocumento, body) => {
             });
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
+            dispatch(setRequestStatus({requestStatus : error.response.status})) 
             console.log(error);            
         }
     }
