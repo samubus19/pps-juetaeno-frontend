@@ -6,6 +6,7 @@ import {
   startLoadingDocuments,
   setShowDocuments,
 } from "./documentoSlice";
+import { formatearArea } from '../../../helpers/Area-formatter';
 
 
 const mToken = JSON.parse(localStorage.getItem("token"))
@@ -35,7 +36,6 @@ export const getDocumentos = () => {
                   fechaIngreso: documento[i].historial[j].fechaIngreso,
                   fechaSalida: documento[i].historial[j].fechaSalida,
                   sede: documento[i].historial[j].sede,
-                  destino: documento[i].historial[j].destino,
                   estado: documento[i].historial[j].estado,
                 };
                 vector.push(e);
@@ -80,7 +80,6 @@ export const crearNuevoDocumento = (body) => {
                 nroDocumento      : body.nroDocumento,
                 tipoDocumento     : body.tipoDocumento,
                 descripcion       : body.descripcion,
-                destino           : body.destino,
                 idUsuarioFirmante : JSON.parse(localStorage.getItem("usuario"))._id
             },
             {
@@ -129,7 +128,6 @@ export const editarDocumento = (nroDocumento, body) => {
                 nroDocumento  : body.nroDocumento,
                 tipoDocumento : body.tipoDocumento,
                 descripcion   : body.descripcion,
-                destino       : body.destino,
             },
             {
                 headers : {

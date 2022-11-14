@@ -17,8 +17,9 @@ import { Stack, Box } from "@mui/system";
 import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
 // en area se debe poner el nombre tal cual se guarde en el back
-const area = "MesaEntrada";
+const area = "Mesa de Entrada";
 const estado = [{ label: "PASE" }];
 const areaDestino = [{ label: "legales" }, { label: "Miembros de Junta" }];
 

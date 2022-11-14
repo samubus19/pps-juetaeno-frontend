@@ -22,11 +22,6 @@ const tiposDocumento = [
   { label : "CES (ceses)" },
 ];
 
-const destinos = [
-  {label : "Legales"},
-  {label : "Miembros de Junta"},
-  {label : "Secretaria"}
-]
 
 export default function NewDocumentsFrom() {
 
@@ -36,19 +31,14 @@ export default function NewDocumentsFrom() {
 
   const [inputValue, setInputValue]  = useState({
     tipoDocumento : "",
-    destino       : ""
   });
   
-  const destinoChange = (event, newDestino) => {
-    setInputValue({ ...inputValue, destino : newDestino });
-  };
+ 
   const tipoDocumentoChange = (event, newTipoDocumento) => {
     setInputValue({ ...inputValue, tipoDocumento : newTipoDocumento });
   };
 
-  const validarCampos = (data) => {
-    
-  }
+ 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -62,10 +52,6 @@ export default function NewDocumentsFrom() {
         alert("Debe completar todos los campos olbigatorios");
         return
       }
-      if(!inputValue.destino || inputValue.destino === ""){
-        alert("Debe completar todos los campos olbigatorios");
-        return
-      }
       if(!data.get("description") || data.get("description") === "") {
         alert("Debe completar todos los campos olbigatorios");
         return
@@ -74,7 +60,6 @@ export default function NewDocumentsFrom() {
       const bodyNuevoDocumento = {
         tipoDocumento : inputValue.tipoDocumento.split(" ")[0].trim(),
         nroDocumento  : data.get("numeroDoc").trim(),
-        destino       : formatearArea(inputValue.destino.trim()),
         descripcion   : data.get("description").trim()
       };
       
@@ -103,7 +88,7 @@ export default function NewDocumentsFrom() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
-              <div style={{ height: 450, width: "100%" }}>
+              <div style={{ height: 350, width: "100%" }}>
                 <Paper
                   component="form"
                   elevation={0}
@@ -141,18 +126,6 @@ export default function NewDocumentsFrom() {
                       label="Numero de documento"
                       name="numeroDoc"
                       margin="dense"
-                    />
-                    <Autocomplete
-                        disablePortal
-                        id="destino"
-                        name="destino"
-                        inputValue={inputValue.destino}
-                        onInputChange={destinoChange}
-                        fullWidth
-                        options={destinos}
-                        renderInput={(params) => (
-                        <TextField {...params} label="Destino" />
-                      )}
                     />
                     <TextField
                       required

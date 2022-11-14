@@ -1,5 +1,5 @@
-import MainFeaturedPost                           from "../components/MainFeaturedPost";
-import Footer                                     from "../components/Footer";
+import MainFeaturedPost                           from "../../components/MainFeaturedPost";
+import Footer                                     from "../../components/Footer";
 import React, { useState }                        from "react";
 import { Button, Divider, Grid, Typography }      from "@mui/material";
 import Box                                        from "@mui/system/Box";
@@ -9,13 +9,13 @@ import Autocomplete                               from "@mui/material/Autocomple
 import { Stack }                                  from "@mui/system";
 import { useNavigate }                            from "react-router-dom";
 import { useDispatch, useSelector }               from "react-redux";
-import { crearNuevaPersona, getPersonaPorNumero } from '../store/slices/personas';
-import { crearNuevoUsuario }                      from '../store/slices/usuarios';
+import { crearNuevaPersonaAsync, getPersonaPorNumeroAsync } from '../../store/slices/personas';
+import { crearNuevoUsuario, crearNuevoUsuarioAsync }                      from '../../store/slices/usuarios';
 import { DateTime, luxon }                        from 'luxon';
 import { useEffect }                              from "react";
 
 const mainFeaturedPost = {
-  area    : "Administrador - Nuevo Usuario",
+  area    : `Administrador - Nuevo Usuario `,
 };
 const area = [
   { label : "LEGALES" },
@@ -24,17 +24,17 @@ const area = [
   { label : "ADMIN" },
 ];
 const rol           = [{ label: "USUARIO" }, { label: "ADMIN" }];
-const tipoDocumento = [{ label: "DNI" }, { label: "LC" }];
-export default function NewUsersFrom() {
+export default function FormDatosUsuario() {
   
-  const { personas, isLoading } = useSelector((state) => state.persona);
-  const dispatch                = useDispatch();
-  const navigate                = useNavigate();
+  const persona       = useSelector((state) => state.persona.personas);
+  const isLoading     = useSelector((state) => state.persona.isLoading);
+  const requestStatus = useSelector((state) => state.persona.requestStatus);
+  const dispatch      = useDispatch();
+  const navigate      = useNavigate();
   
   const [inputValue, setInputValue] = useState({
     Area          : "",
     Rol           : "",
-    TipoDocumento : "",
   });
   const areaChange = (event, newArea) => {
     setInputValue({ ...inputValue, Area: newArea });
@@ -42,60 +42,43 @@ export default function NewUsersFrom() {
   const rolChange = (event, newRol) => {
     setInputValue({ ...inputValue, Rol: newRol });
   };
-  const tipoDocumentoChange = (event, newTipoDocumento) => {
-    setInputValue({ ...inputValue, TipoDocumento: newTipoDocumento });
-  };
+
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
 
-      if(!data.get("nombre") || data.get("nombre") === ""){
+      if(!data.get("usuario") || data.get("usuario") === ""){
         alert("Debe completar todos los campos olbigatorios");
         return
       }
-      if(!data.get("apellido") || data.get("apellido") === ""){
+      if(!data.get("mail") || data.get("mail") === ""){
         alert("Debe completar todos los campos olbigatorios");
         return
       }
-      if(!inputValue.TipoDocumento || inputValue.TipoDocumento === ""){
+      if(!inputValue.Area || inputValue.Area === ""){
         alert("Debe completar todos los campos olbigatorios");
         return
       }
-      if(!data.get("ndocumento") || data.get("ndocumento") === ""){
-        alert("Debe completar todos los campos olbigatorios");
-        return
-      }
-      if(!data.get("fecha") || data.get("fecha") === ""){
-        alert("Debe completar todos los campos olbigatorios");
-        return
-      }
-      if(!data.get("telefono") || data.get("telefono") === ""){
+      if(!data.get("contrasenia") || data.get("contrasenia") === ""){
         alert("Debe completar todos los campos olbigatorios");
         return
       }
       
+      
 
-      const bodyPersona = {
-        nombre          : data.get("nombre"),
-        apellido        : data.get("apellido"),
-        tipoDocumento   : inputValue.TipoDocumento,
-        nroDocumento    : data.get("ndocumento"),
-        fechaNacimiento : DateTime.fromISO(data.get("fecha")).toFormat('dd/LL/yyyy'),
-        nroTelefono     : data.get("telefono"),
-      }
-
-      const bodyUsuario = {
+    const bodyUsuario = {
         usuario         : data.get("usuario"),
         email           : data.get("mail"),
         contrasenia     : data.get("contrasenia"),
         area            : inputValue.Area,
         rol             : JSON.parse(localStorage.getItem("usuario")).rol,
-        fkPersona       : bodyPersona.nroDocumento
-      }
+        idPersona       : persona.persona._id
+    }
 
-      dispatch(crearNuevaPersona(bodyPersona))
-      dispatch(crearNuevoUsuario(bodyUsuario))
+    dispatch(crearNuevoUsuarioAsync(bodyUsuario))
+        .then(() => navigate("/admin"))
+
     } catch (error) {
       console.log(error)
     }
@@ -104,7 +87,6 @@ export default function NewUsersFrom() {
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
-
       <Box
         sx={{ flexGrow: 1 }}
         pt={2}
@@ -117,7 +99,7 @@ export default function NewUsersFrom() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
-              <div style={{ height: 1000, width: "100%" }}>
+              <div style={{ height: 450, width: "100%" }}>
                 <Paper
                   component="form"
                   sx={{
@@ -129,7 +111,7 @@ export default function NewUsersFrom() {
                   }}
                 >
                   <Typography variant="h6" p={1}>
-                    Datos del Usuario
+                    Datos del Usuario 
                   </Typography>
                 </Paper>
                 <Box p={1} pt={3} pb={3}>
@@ -177,75 +159,6 @@ export default function NewUsersFrom() {
                     />
                   </Stack>
                 </Box>
-                <Divider />
-                <Paper
-                  component="form"
-                  sx={{
-                    p: "2px 4px",
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    height: 47,
-                  }}
-                >
-                  <Typography variant="h6" p={1}>
-                    Datos Personales
-                  </Typography>
-                </Paper>
-                <Box p={1} pt={3} pb={3}>
-                  <Stack spacing={2}>
-                    <TextField
-                      fullWidth
-                      label="Nombre"
-                      id="nombre"
-                      name="nombre"
-                      margin="dense"
-                    />
-                    <TextField
-                      fullWidth
-                      label="Apellido"
-                      id="apellido"
-                      name="apellido"
-                      margin="dense"
-                    />
-                    <Autocomplete
-                      disablePortal
-                      fullWidth
-                      id="tipoDocumento"
-                      inputValue={inputValue.TipoDocumento}
-                      onInputChange={tipoDocumentoChange}
-                      options={tipoDocumento}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Tipo de Documento" />
-                      )}
-                    />
-                    <TextField
-                      fullWidth
-                      label="Nº Documento"
-                      id="ndocumento"
-                      name="ndocumento"
-                      margin="dense"
-                    />
-                    <TextField
-                      id="fecha"
-                      name="fecha"
-                      label="Fecha de Nacimiento"
-                      type="date"
-                      fullWidth
-                      margin="dense"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                    <TextField
-                      fullWidth
-                      label="Telefono"
-                      id="telefono"
-                      name="telefono"
-                      margin="dense"
-                    />
-                  </Stack>
-                </Box>
               </div>
             </Paper>
           </Grid>
@@ -263,7 +176,7 @@ export default function NewUsersFrom() {
                   }}
                 >
                   <Typography variant="h6" p={1}>
-                    Opciones:
+                    Opciones: 
                   </Typography>
                 </Paper>
                 <Divider />
@@ -290,7 +203,7 @@ export default function NewUsersFrom() {
                         navigate("/admin");
                       }}
                     >
-                      Cancelar
+                      Cancelar 
                     </Button>
                   </Grid>
                   <Grid item xs={1} />

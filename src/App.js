@@ -6,7 +6,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 
 //import all views
 import AdminMainForm from "./views/AdminMainForm";
-import AdminUsersForm from "./views/AdminUsersForm";
+import AdminUsersForm from "./views/FormCrearNuevoUsuario.js/AdminUsersForm";
 import LegalesForm from "./views/LegalesForm";
 import LoginForm from "./views/LoginForm";
 import MesaEntradaForm from "./views/MesaEntradaForm";
@@ -14,6 +14,7 @@ import MiembrosForm from "./views/MiembrosForm";
 import NewDocumentsForm from "./views/NewDocumentsForm";
 import SearchDocumentsForm from "./views/SearchDocumentsForm";
 import NotFoundPage from "./views/NotFoundPage";
+import FormDatosUsuario from "./views/FormCrearNuevoUsuario.js/FormDatosUsuario";
 
 const theme = createTheme({
   palette: {
@@ -109,6 +110,7 @@ function App() {
         >
           <Route path="/admin" element={<AdminMainForm />} />
           <Route path="/admin/nuevousuario" element={<AdminUsersForm />} />
+          <Route path="/admin/nuevousuario2" element={<FormDatosUsuario />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

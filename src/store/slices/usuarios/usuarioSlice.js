@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { crearNuevoUsuarioAsync } from './thunks'
 
 const initialState = {
   isLoading : false,
@@ -22,10 +23,17 @@ export const usuarioSlice = createSlice({
     setRequestStatus    : (state, action) => {
       state.isLoading     = false
       state.requestStatus = action.payload.requestStatus
-
     }
-    
   },
+  extraReducers : builder => {
+    builder.addCase(crearNuevoUsuarioAsync.fulfilled, (state,action) => {
+      state.isLoading     = false
+      state.requestStatus = action.payload.status
+    })
+    builder.addCase(crearNuevoUsuarioAsync.pending, (state, action) => {
+      state.isLoading     = true
+    })
+  }
 })
 
 // Action creators are generated for each case reducer function

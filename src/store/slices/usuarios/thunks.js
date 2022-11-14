@@ -1,3 +1,4 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import { juetaenoApi } from '../../../api/juetaeno-backend-api';
 import { setUser, startLoadingUsers, setRequestStatus } from "./usuarioSlice";
 
@@ -41,8 +42,7 @@ export const loginUsuario = (body) => {
     }
 } 
 
-export const crearNuevoUsuario = (body) => {
-    return async (dispatch, getState) => {
+export const crearNuevoUsuarioAsync = createAsyncThunk( 'usuario/crearNuevoUsuarioAsync' ,async (body, {getState, dispatch}) => {
     try {
         // dispatch(startLoadingUsers())
         const resp = await juetaenoApi.post(`/users`, {
@@ -51,21 +51,21 @@ export const crearNuevoUsuario = (body) => {
             contrasenia : body.contrasenia,
             area        : body.area,
             rol         : body.rol,
-            fkPersona   : body.fkPersona
+            idPersona   : body.idPersona
         },{
             headers : {
                 'Authorization' : mToken
             }
         })
         console.log(resp)
-        dispatch(setRequestStatus({requestStatus : resp.status}))  
+        return resp
+        // dispatch(setRequestStatus({requestStatus : resp.status}))  
       }  
       catch(error) {
         dispatch(setRequestStatus({requestStatus : error.response.status})) 
         console.log(error);
       }
-    }
-} 
+}) 
 
 export const actualizarContrasenia = (body, params) => {
     return async (dispatch, getState) => {
