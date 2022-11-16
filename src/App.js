@@ -3,7 +3,6 @@ import Header from "./components/Header";
 import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-
 //import all views
 import AdminMainForm from "./views/AdminMainForm";
 import AdminUsersForm from "./views/FormCrearNuevoUsuario.js/AdminUsersForm";
@@ -15,6 +14,7 @@ import NewDocumentsForm from "./views/NewDocumentsForm";
 import SearchDocumentsForm from "./views/SearchDocumentsForm";
 import NotFoundPage from "./views/NotFoundPage";
 import FormDatosUsuario from "./views/FormCrearNuevoUsuario.js/FormDatosUsuario";
+import EditDocumentsFrom from "./views/EditDocumentsForm";
 
 const theme = createTheme({
   palette: {
@@ -59,6 +59,10 @@ function App() {
             path="/mesaentrada/nuevodocumento"
             element={<NewDocumentsForm />}
           />
+          <Route
+            path="/mesaentrada/editardocumento/:docId"
+            element={<EditDocumentsFrom />}
+          />
         </Route>
 
         <Route
@@ -102,8 +106,7 @@ function App() {
           element={
             <ProtectedRoute
               isAllowed={
-                !!usuario.usuario &&
-                usuario.area.toUpperCase().includes("LEGALES")
+                !!usuario.usuario && usuario.rol.toUpperCase().includes("ADMIN")
               }
             />
           }

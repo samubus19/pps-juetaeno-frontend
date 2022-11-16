@@ -3,7 +3,8 @@ import MainFeaturedPost from "../components/MainFeaturedPost";
 import Footer from "../components/Footer";
 import TabPanel from "../components/TabPanel";
 import { renderCellExpand } from "../components/CellExpand";
-import { getDocumentos } from "../store/slices/documentos";
+import { getDocumentos, actualizarEstadoDocumento } from "../store/slices/documentos";
+import { upperFormatearArea } from "../helpers/Area-UpperFormater";
 import {
   Button,
   Divider,
@@ -19,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 // en area se debe poner el nombre tal cual se guarde en el back
 const area = "Legales";
-const estado = [{ label: "PASE" }, { label: "FINALIZADO" }];
+const estado = [{ label: "En Pase" }, { label: "Finalizado" }];
 const areaDestino = [
   { label: "Mesa de Entrada" },
   { label: "Miembros de Junta" },
@@ -59,15 +60,67 @@ const columns = [
 const mainFeaturedPost = { area: "Area: Legales" };
 
 export default function LegalesForm() {
-  const { showDocumentos = [] } = useSelector((state) => state.documento);
+  const { showDocumentos = [], requestStatus } = useSelector((state) => state.documento);
   const dispatch = useDispatch();
   const [value, setValue] = React.useState(0);
-  //es el id seleccionado para enviar a editar
+  //es el id seleccionado 
   const [selectionId, setSelectionId] = useState([]);
+  //body para actualizar estado
+  const [estadoValue, setEstadoValue] = useState({
+    estado: "",
+    areaDestino: "",
+    _id: "",
+  });
   const navigate = useNavigate();
+
+  const estadoChange = (event, estado) => {
+    setEstadoValue({ ...estadoValue, estado: estado });
+  };
+  const areaDestinoChange = (event, areaDestino) => {
+    setEstadoValue({ ...estadoValue, areaDestino: areaDestino });
+  };
   useEffect(() => {
     dispatch(getDocumentos());
   }, []);
+
+
+const handleSubmit = (event) => {
+  event.preventDefault();
+  try {
+    if (!estadoValue.estado || estadoValue.estado === "") {
+      alert("Debe completar todos los campos olbigatorios");
+      return;
+    }
+    if (!estadoValue.areaDestino || estadoValue.areaDestino === "") {
+      alert("Debe completar todos los campos olbigatorios");
+      return;
+    }
+    if (!estadoValue._id || estadoValue._id === "") {
+      alert("Debe completar todos los campos olbigatorios");
+      return;
+    }
+
+    const bodyActualizarEstado = {
+      nuevoEstado: estadoValue.estado,
+      sede: upperFormatearArea(estadoValue.areaDestino),
+      _id: estadoValue._id,
+    };
+
+    dispatch(actualizarEstadoDocumento(bodyActualizarEstado));
+
+    try {
+      if (requestStatus === 200) {
+        window.location.href = window.location.href;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+ 
+};
+
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -99,8 +152,17 @@ export default function LegalesForm() {
                       );
 
                       setSelectionId(result);
+                      setEstadoValue({
+                        ...estadoValue,
+                        _id: result[0],
+                      });
                     } else {
                       setSelectionId(selection);
+
+                      setEstadoValue({
+                        ...estadoValue,
+                        _id: selection[0],
+                      });
                     }
                   }}
                   components={{ Toolbar: GridToolbar }}
@@ -163,6 +225,7 @@ export default function LegalesForm() {
                       <Button
                         variant="contained"
                         fullWidth
+                        disabled={!selectionId.length}
                         onClick={() => setValue(1)}
                       >
                         Actualizar Estado
@@ -179,6 +242,7 @@ export default function LegalesForm() {
                         fullWidth
                         id="combo-box-demo"
                         options={estado}
+                        onInputChange={estadoChange}
                         renderInput={(params) => (
                           <TextField {...params} label="Estado" />
                         )}
@@ -188,6 +252,7 @@ export default function LegalesForm() {
                         fullWidth
                         id="combo-box-demo"
                         options={areaDestino}
+                        onInputChange={areaDestinoChange}
                         renderInput={(params) => (
                           <TextField {...params} label="Area" />
                         )}
@@ -195,7 +260,7 @@ export default function LegalesForm() {
                       <Button
                         variant="contained"
                         fullWidth
-                        onClick={() => setValue(0)}
+                        onClick={handleSubmit}
                       >
                         Guardar
                       </Button>

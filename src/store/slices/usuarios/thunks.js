@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { juetaenoApi } from '../../../api/juetaeno-backend-api';
-import { setUser, startLoadingUsers, setRequestStatus } from "./usuarioSlice";
+import { setUser, startLoadingUsers, setRequestStatus, setListadoUsuarios } from "./usuarioSlice";
 
 const mToken = JSON.parse(localStorage.getItem("token"))
 
@@ -87,3 +87,44 @@ export const actualizarContrasenia = (body, params) => {
         }
     }
 } 
+
+
+
+export const getUsuarios = () => {
+  return async (dispatch, getState) => {
+    try {
+      dispatch(startLoadingUsers());
+      const resp = await juetaenoApi.get(`/users`, {
+        headers: {
+          Authorization: mToken,
+        },
+      });
+       const usuarios = resp.data.mensaje
+       const vector = []
+       for (let i = 0; i < usuarios.length; i++) {
+        let e = {
+          _id             : usuarios[i]._id,
+          usuario         : usuarios[i].usuario,
+          email           : usuarios[i].email,
+          area            : usuarios[i].area,
+          rol             : usuarios[i].rol,
+          nombre          : usuarios[i].idPersona.nombre,
+          apellido        : usuarios[i].idPersona.apellido, 
+          tipoDocumento   : usuarios[i].idPersona.tipoDocumento,
+          nroDocumento    : usuarios[i].idPersona.nroDocumento,
+          fechaNacimiento : usuarios[i].idPersona.fechaNacimiento,
+          nroTelefono     : usuarios[i].idPersona.nroTelefono
+        }
+        vector.push(e)
+       }
+       console.log(vector)
+      dispatch(
+        setListadoUsuarios({ listadoUsuarios: vector })
+      );
+      dispatch(setRequestStatus({ requestStatus: resp.status }));
+    } catch (error) {
+      dispatch(setRequestStatus({ requestStatus: error.response.status }));
+      console.log(error);
+    }
+  };
+}; 

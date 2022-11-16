@@ -10,7 +10,7 @@ import { Stack }                                  from "@mui/system";
 import { useNavigate }                            from "react-router-dom";
 import { useDispatch, useSelector }               from "react-redux";
 import { crearNuevaPersonaAsync, getPersonaPorNumeroAsync } from '../../store/slices/personas';
-import { DateTime        }                        from 'luxon';
+import { DateTime}                        from 'luxon';
 
 const mainFeaturedPost = {
   area    : `Administrador - Nuevo Usuario `,

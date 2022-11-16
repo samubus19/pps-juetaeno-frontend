@@ -1,11 +1,11 @@
 const formatearArea = (area) => {
-    if(area.toLowerCase() === "MiembrosJunta".toLowerCase()) {
+    if(area.toLowerCase() === "MIEMBROSJUNTA".toLowerCase()) {
         return "Miembros de Junta"
-    }else if(area.toLowerCase() === "Legales".toLowerCase()) {
+    }else if(area.toLowerCase() === "LEGALES".toLowerCase()) {
         return "Legales"
-    }else if(area.toLowerCase() === "Secretaria".toLowerCase()) {
+    }else if(area.toLowerCase() === "SECRETARIA".toLowerCase()) {
         return "Secretaria"
-    }else if(area.toLowerCase() === "MesaEntrada".toLowerCase()) {
+    }else if(area.toLowerCase() === "MESAENTRADA".toLowerCase()) {
         return "Mesa de Entrada"
     }
 }
