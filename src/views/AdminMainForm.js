@@ -16,61 +16,36 @@ import { Stack, Box } from "@mui/system";
 import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { getUsuarios } from "../store/slices/usuarios/thunks";
 
 const columns = [
-  { field: "id", headerName: "ID", width: 70, renderCell: renderCellExpand },
-  {
-    field: "firstName",
-    headerName: "First name",
-    width: 130,
-    renderCell: renderCellExpand,
-  },
-  {
-    field: "lastName",
-    headerName: "Last name",
-    width: 130,
-    renderCell: renderCellExpand,
-  },
-  {
-    field: "age",
-    headerName: "Age",
-    type: "number",
-    width: 90,
-    renderCell: renderCellExpand,
-  },
-  {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ""} ${params.row.lastName || ""}`,
-    renderCell: renderCellExpand,
-  },
+  { field: "usuario", headerName: "Usuario", width: 90, renderCell: renderCellExpand },
+  { field: "email", headerName: "Email", width: 90, renderCell: renderCellExpand },
+  { field: "area",  headerName: "Area",  width: 90, renderCell: renderCellExpand},
+  { field: "rol",   headerName: "Rol",   width: 90, renderCell: renderCellExpand},
+  { field: "nombre",   headerName: "Nombre",   width: 90, renderCell: renderCellExpand},
+  { field: "apellido",   headerName: "Apellido",   width: 90, renderCell: renderCellExpand},
+  { field: "tipoDocumento",   headerName: "Tipo documento",   width: 90, renderCell: renderCellExpand},
+  { field: "nroDocumento",   headerName: "Numero documento",   width: 90, renderCell: renderCellExpand},
+  { field: "fechaNacimiento",   headerName: "Fecha nacimiento",   width: 90, renderCell: renderCellExpand},
+  { field: "nroTelefono",   headerName: "Telefono",   width: 90, renderCell: renderCellExpand},
+ 
 ];
 
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
 
 const mainFeaturedPost = {
   area: "Interfaz de Administrador",
 };
 
 export default function AdminMainForm() {
+   const { listadoUsuarios = [], requestStatus } = useSelector((state) => state.usuario);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   //es el id seleccionado para enviar a editar
   const [selectionId, setSelectionId] = useState([]);
-
+  useEffect(() => {
+    dispatch(getUsuarios());
+  }, []);
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -85,8 +60,8 @@ export default function AdminMainForm() {
                   localeText={
                     esES.components.MuiDataGrid.defaultProps.localeText
                   }
-                  getRowId={(r) => r.id}
-                  rows={rows}
+                  getRowId={(r) => r._id}
+                  rows={listadoUsuarios}
                   columns={columns}
                   pageSize={5}
                   rowsPerPageOptions={[5]}
@@ -170,13 +145,6 @@ export default function AdminMainForm() {
                       Editar Usuario
                     </Button>
                   </Grid>
-                  <Grid item xs={1} />
-                  <Grid item xs={2}>
-                    <Button variant="contained" fullWidth>
-                      Eliminar Usuario
-                    </Button>
-                  </Grid>
-                  <Grid item xs={1} />
                 </Grid>
               </Box>
             </Paper>

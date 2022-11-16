@@ -1,19 +1,21 @@
 import MainFeaturedPost from "../components/MainFeaturedPost";
 import Footer from "../components/Footer";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Divider, Grid, Typography } from "@mui/material";
 import Box from "@mui/system/Box";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Stack } from "@mui/system";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { crearNuevoDocumento } from "../store/slices/documentos/thunks";
-import { formatearArea } from "../helpers/Area-formatter";
+import {
+  editarDocumento,
+  getDocumentos,
+} from "../store/slices/documentos/thunks";
 
 const mainFeaturedPost = {
-  area: "Area: Mesa de entrada - Nuevo Documento",
+  area: "Area: Mesa de entrada - Editar Documento",
 };
 const tiposDocumento = [
   { label: "EXP (expediente)" },
@@ -22,18 +24,26 @@ const tiposDocumento = [
   { label: "CES (ceses)" },
 ];
 
-export default function NewDocumentsFrom() {
-  const { isLoading, requestStatus } = useSelector((state) => state.documento);
+export default function EditDocumentsFrom() {
+  const selectionId = useLocation();
+  const documentId = selectionId.pathname.split("/")[3];
+  const {
+    showDocumentos = [],
+    isLoading,
+    requestStatus,
+  } = useSelector((state) => state.documento);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const [inputValue, setInputValue] = useState({
     tipoDocumento: "",
   });
-
   const tipoDocumentoChange = (event, newTipoDocumento) => {
     setInputValue({ ...inputValue, tipoDocumento: newTipoDocumento });
   };
+  useEffect(() => {
+    dispatch(getDocumentos());
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -53,13 +63,14 @@ export default function NewDocumentsFrom() {
         return;
       }
 
-      const bodyNuevoDocumento = {
+      const bodyEditarDocumento = {
+        _id: documentId,
         tipoDocumento: inputValue.tipoDocumento.split(" ")[0].trim(),
         nroDocumento: data.get("numeroDoc").trim(),
         descripcion: data.get("description").trim(),
       };
 
-      dispatch(crearNuevoDocumento(bodyNuevoDocumento));
+      dispatch(editarDocumento(bodyEditarDocumento));
     } catch (error) {
       console.log(error);
     }
@@ -107,6 +118,15 @@ export default function NewDocumentsFrom() {
                       inputValue={inputValue.tipoDocumento}
                       onInputChange={tipoDocumentoChange}
                       fullWidth
+                      defaultValue={
+                        tiposDocumento.filter(
+                          (tipo) =>
+                            tipo.label.split(" ")[0].trim() ===
+                            showDocumentos.filter(
+                              (documento) => documento._id === documentId
+                            )[0].tipoDocumento
+                        )[0]
+                      }
                       options={tiposDocumento}
                       renderInput={(params) => (
                         <TextField {...params} label="Tipo de documento" />
@@ -115,6 +135,11 @@ export default function NewDocumentsFrom() {
                     <TextField
                       fullWidth
                       required
+                      defaultValue={
+                        showDocumentos.filter(
+                          (documento) => documento._id === documentId
+                        )[0].nroDocumento
+                      }
                       id="numeroDoc"
                       label="Numero de documento"
                       name="numeroDoc"
@@ -125,6 +150,11 @@ export default function NewDocumentsFrom() {
                       id="description"
                       name="description"
                       label="Descripción"
+                      defaultValue={
+                        showDocumentos.filter(
+                          (documento) => documento._id === documentId
+                        )[0].descripcion
+                      }
                       multiline
                       rows={4}
                     />

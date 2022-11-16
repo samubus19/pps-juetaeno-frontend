@@ -4,7 +4,6 @@ import {
   setDocuments,
   setRequestStatus,
   startLoadingDocuments,
-  setShowDocuments,
 } from "./documentoSlice";
 import { formatearArea } from '../../../helpers/Area-formatter';
 
@@ -23,23 +22,33 @@ export const getDocumentos = () => {
                 },
                 
             });
-            //console.log(resp.data)
+          
             const documento = resp.data.mensaje
             const vector = []
             for (let i = 0; i < documento.length; i++) {
-              for (let j = 0; j < documento[i].historial.length; j++) {
                 const e = {
                   _id: documento[i]._id,
                   tipoDocumento: documento[i].tipoDocumento,
                   nroDocumento: documento[i].nroDocumento,
                   descripcion: documento[i].descripcion,
-                  fechaIngreso: documento[i].historial[j].fechaIngreso,
-                  fechaSalida: documento[i].historial[j].fechaSalida,
-                  sede: documento[i].historial[j].sede,
-                  estado: documento[i].historial[j].estado,
+                  fechaIngreso: documento[i].historial[documento[i].historial.length - 1].fechaIngreso,
+                  fechaSalida: documento[i].historial[documento[i].historial.length - 1].fechaSalida,
+                  sede: formatearArea(documento[i].historial[documento[i].historial.length - 1].sede),
+                  estado:
+                    documento[i].historial[documento[i].historial.length - 1]
+                      .estado,
+                  UsuarioFirmante:
+                    documento[i].historial[documento[i].historial.length - 1]
+                      .idUsuarioFirmante.idPersona.nombre +
+                    " " +
+                    documento[i].historial[documento[i].historial.length - 1]
+                      .idUsuarioFirmante.idPersona.apellido +
+                    " DNI: " +
+                    documento[i].historial[documento[i].historial.length - 1]
+                      .idUsuarioFirmante.idPersona.nroDocumento,
                 };
                 vector.push(e);
-              }
+            
             }
             
             dispatch(setDocuments({documentos : resp.data.mensaje, showDocumentos: vector}))
@@ -80,7 +89,7 @@ export const crearNuevoDocumento = (body) => {
                 nroDocumento      : body.nroDocumento,
                 tipoDocumento     : body.tipoDocumento,
                 descripcion       : body.descripcion,
-                idUsuarioFirmante : JSON.parse(localStorage.getItem("usuario"))._id
+                idUsuarioFirmante : JSON.parse(localStorage.getItem("usuario"))._id,
             },
             {
                 headers : {
@@ -96,21 +105,24 @@ export const crearNuevoDocumento = (body) => {
     }
 }
 
-export const actualizarEstadoDocumento = (nroDocumento, body) => {
+export const actualizarEstadoDocumento = (body) => {
     return async (dispatch, getState) => {
         try {
-            dispatch(startLoadingDocuments())
-
-            const resp = await juetaenoApi.put(`/files/state/${nroDocumento}`, {
-                nuevoEstado : body.nuevoEstado,
-                destino     : body.destino,
-            },
-            {
-                headers : {
-                    'Authorization' : mToken
+      
+           const resp = await juetaenoApi.put(
+              `/files/state`,
+              {
+                 _id: body._id,
+                 nuevoEstado: body.nuevoEstado,
+                 sede: body.sede,
+                 idUsuarioFirmante: JSON.parse(localStorage.getItem("usuario"))._id,
+              },
+              {
+                headers: {
+                  Authorization: mToken,
                 },
-                
-            });
+              }
+            );
             dispatch(setRequestStatus({requestStatus : resp.status}))   
         } catch (error) {
             dispatch(setRequestStatus({requestStatus : error.response.status})) 
@@ -119,12 +131,13 @@ export const actualizarEstadoDocumento = (nroDocumento, body) => {
     }
 }
 
-export const editarDocumento = (nroDocumento, body) => {
+export const editarDocumento = (body) => {
     return async (dispatch, getState) => {
         try {
             dispatch(startLoadingDocuments())
 
-            const resp = await juetaenoApi.put(`/files/${nroDocumento}`, {
+            const resp = await juetaenoApi.put(`/files`, {
+                _id           : body._id,
                 nroDocumento  : body.nroDocumento,
                 tipoDocumento : body.tipoDocumento,
                 descripcion   : body.descripcion,

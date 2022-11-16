@@ -3,7 +3,8 @@ import MainFeaturedPost from "../components/MainFeaturedPost";
 import Footer from "../components/Footer";
 import TabPanel from "../components/TabPanel";
 import { renderCellExpand } from "../components/CellExpand";
-import { getDocumentos } from "../store/slices/documentos";
+import { upperFormatearArea } from "../helpers/Area-UpperFormater";
+import { getDocumentos, actualizarEstadoDocumento } from "../store/slices/documentos";
 import {
   Button,
   Divider,
@@ -20,8 +21,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 // en area se debe poner el nombre tal cual se guarde en el back
 const area = "Mesa de Entrada";
-const estado = [{ label: "PASE" }];
-const areaDestino = [{ label: "legales" }, { label: "Miembros de Junta" }];
+const estado = [{ label: "En Pase" }];
+const areaDestino = [{ label: "Legales" }, { label: "Miembros de Junta" }];
 
 const columns = [
   {
@@ -61,16 +62,68 @@ const mainFeaturedPost = {
 };
 
 export default function MesaEntradaForm() {
-  const { showDocumentos = [] } = useSelector((state) => state.documento);
+  const { showDocumentos = [], requestStatus } = useSelector((state) => state.documento);
   const dispatch = useDispatch();
   const [value, setValue] = React.useState(0);
   //es el id seleccionado para enviar a editar
   const [selectionId, setSelectionId] = useState([]);
+  //body para actualizar estado
+  const [estadoValue, setEstadoValue] = useState({
+    estado: "",
+    areaDestino: "",
+    _id: "",
+  });
+
   const navigate = useNavigate();
   useEffect(() => {
     dispatch(getDocumentos());
   }, []);
-  console.log(selectionId);
+
+  const estadoChange = (event, estado) => {
+    setEstadoValue({ ...estadoValue, estado: estado });
+  };
+  const areaDestinoChange = (event, areaDestino) => {
+    setEstadoValue({ ...estadoValue, areaDestino: areaDestino });
+  };
+
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    try {
+      if (!estadoValue.estado || estadoValue.estado === "") {
+        alert("Debe completar todos los campos olbigatorios");
+        return;
+      }
+      if (!estadoValue.areaDestino || estadoValue.areaDestino === "") {
+        alert("Debe completar todos los campos olbigatorios");
+        return;
+      }
+       if (!estadoValue._id || estadoValue._id === "") {
+         alert("Debe completar todos los campos olbigatorios");
+         return;
+       }
+      
+      const bodyActualizarEstado = {
+        nuevoEstado: estadoValue.estado,
+        sede: upperFormatearArea(estadoValue.areaDestino),
+        _id: estadoValue._id,
+      };
+     
+      dispatch(actualizarEstadoDocumento(bodyActualizarEstado));
+
+      try {
+        if(requestStatus === 200){
+          window.location.href = window.location.href;
+        }
+        
+      } catch (error) {
+        console.log(error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -102,8 +155,17 @@ export default function MesaEntradaForm() {
                       );
 
                       setSelectionId(result);
+                      setEstadoValue({
+                        ...estadoValue,
+                        _id: result[0],
+                      });
                     } else {
                       setSelectionId(selection);
+
+                      setEstadoValue({
+                        ...estadoValue,
+                        _id: selection[0],
+                      });
                     }
                   }}
                   components={{ Toolbar: GridToolbar }}
@@ -165,7 +227,7 @@ export default function MesaEntradaForm() {
                         variant="contained"
                         fullWidth
                         onClick={() => {
-                          navigate("/mesaentrada/nuevodocumento", {});
+                          navigate("/mesaentrada/nuevodocumento");
                         }}
                       >
                         Nuevo Documento
@@ -178,7 +240,9 @@ export default function MesaEntradaForm() {
                         variant="contained"
                         fullWidth
                         onClick={() => {
-                          navigate("/mesaentrada/nuevodocumento");
+                          navigate(
+                            `/mesaentrada/editardocumento/${selectionId}`
+                          );
                         }}
                       >
                         Editar Documento
@@ -206,6 +270,7 @@ export default function MesaEntradaForm() {
                         fullWidth
                         id="combo-box-demo"
                         options={estado}
+                        onInputChange={estadoChange}
                         renderInput={(params) => (
                           <TextField {...params} label="Estado" />
                         )}
@@ -215,6 +280,7 @@ export default function MesaEntradaForm() {
                         fullWidth
                         id="combo-box-demo"
                         options={areaDestino}
+                        onInputChange={areaDestinoChange}
                         renderInput={(params) => (
                           <TextField {...params} label="Area" />
                         )}
@@ -222,7 +288,7 @@ export default function MesaEntradaForm() {
                       <Button
                         variant="contained"
                         fullWidth
-                        onClick={() => setValue(0)}
+                        onClick={handleSubmit}
                       >
                         Guardar
                       </Button>
