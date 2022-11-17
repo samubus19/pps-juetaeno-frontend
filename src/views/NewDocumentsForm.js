@@ -1,5 +1,6 @@
 import MainFeaturedPost from "../components/MainFeaturedPost";
 import Footer from "../components/Footer";
+import AlertDialogSlide from "../components/Mensaje";
 import React, { useState } from "react";
 import { Button, Divider, Grid, Typography } from "@mui/material";
 import Box from "@mui/system/Box";
@@ -11,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { crearNuevoDocumento } from "../store/slices/documentos/thunks";
 import { formatearArea } from "../helpers/Area-formatter";
+import { useBeforeunload } from "react-beforeunload";
+
 
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Nuevo Documento",
@@ -23,14 +26,14 @@ const tiposDocumento = [
 ];
 
 export default function NewDocumentsFrom() {
-  const { isLoading, requestStatus } = useSelector((state) => state.documento);
+  const { isLoading, requestNewStatus } = useSelector((state) => state.documento);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [openPopup, setPopup] = useState(false);
 
   const [inputValue, setInputValue] = useState({
     tipoDocumento: "",
   });
-
   const tipoDocumentoChange = (event, newTipoDocumento) => {
     setInputValue({ ...inputValue, tipoDocumento: newTipoDocumento });
   };
@@ -64,7 +67,24 @@ export default function NewDocumentsFrom() {
       console.log(error);
     }
   };
+  useBeforeunload(()=>"reload")
+  
+  try {
+    if (requestNewStatus === 201) {
+      navigate("/mesaentrada");
+    }
+  } catch (error) {
+    console.log(error);
+  }
 
+ 
+ const setOpenPopup =(isTrue) =>{
+    setPopup(isTrue)
+ }
+ const cancel = () =>{
+  setPopup(true)
+ }
+ 
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -168,13 +188,7 @@ export default function NewDocumentsFrom() {
                   </Grid>
                   <Grid item xs={1} />
                   <Grid item xs={2}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={() => {
-                        navigate("/mesaentrada");
-                      }}
-                    >
+                    <Button variant="contained" fullWidth onClick={cancel}>
                       Cancelar
                     </Button>
                   </Grid>
@@ -185,6 +199,7 @@ export default function NewDocumentsFrom() {
           </Grid>
         </Grid>
       </Box>
+      <AlertDialogSlide openPopup={openPopup} setOpenPopup ={setOpenPopup}/>
       <Footer />
     </React.Fragment>
   );

@@ -1,6 +1,7 @@
 import MainFeaturedPost from "../components/MainFeaturedPost";
 import Footer from "../components/Footer";
-import React, { useEffect, useState } from "react";
+import AlertDialogSlide from "../components/Mensaje";
+import React, { useState } from "react";
 import { Button, Divider, Grid, Typography } from "@mui/material";
 import Box from "@mui/system/Box";
 import TextField from "@mui/material/TextField";
@@ -9,10 +10,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { Stack } from "@mui/system";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  editarDocumento,
-  getDocumentos,
-} from "../store/slices/documentos/thunks";
+import { editarDocumento } from "../store/slices/documentos/thunks";
+import { useBeforeunload } from "react-beforeunload";
 
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Editar Documento",
@@ -25,25 +24,18 @@ const tiposDocumento = [
 ];
 
 export default function EditDocumentsFrom() {
-  const selectionId = useLocation();
-  const documentId = selectionId.pathname.split("/")[3];
-  const {
-    showDocumentos = [],
-    isLoading,
-    requestStatus,
-  } = useSelector((state) => state.documento);
-
+  const { requestEditStatus } = useSelector((state) => state.documento);
+  const selectionData = useLocation();
+  const documentId = selectionData.state[0]._id;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+   const [openPopup, setPopup] = useState(false);
   const [inputValue, setInputValue] = useState({
     tipoDocumento: "",
   });
   const tipoDocumentoChange = (event, newTipoDocumento) => {
     setInputValue({ ...inputValue, tipoDocumento: newTipoDocumento });
   };
-  useEffect(() => {
-    dispatch(getDocumentos());
-  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -71,10 +63,26 @@ export default function EditDocumentsFrom() {
       };
 
       dispatch(editarDocumento(bodyEditarDocumento));
+   
     } catch (error) {
       console.log(error);
     }
   };
+ const setOpenPopup = (isTrue) => {
+   setPopup(isTrue);
+ };
+
+  const cancelar = () => {
+    setPopup(true);
+  };
+  useBeforeunload(() => "You'll lose your data!");
+     try {
+       if (requestEditStatus === 200) {
+         navigate("/mesaentrada");
+       }
+     } catch (error) {
+       console.log(error);
+     }
 
   return (
     <React.Fragment>
@@ -118,15 +126,7 @@ export default function EditDocumentsFrom() {
                       inputValue={inputValue.tipoDocumento}
                       onInputChange={tipoDocumentoChange}
                       fullWidth
-                      defaultValue={
-                        tiposDocumento.filter(
-                          (tipo) =>
-                            tipo.label.split(" ")[0].trim() ===
-                            showDocumentos.filter(
-                              (documento) => documento._id === documentId
-                            )[0].tipoDocumento
-                        )[0]
-                      }
+                      defaultValue={selectionData.state[0].tipoDocumento}
                       options={tiposDocumento}
                       renderInput={(params) => (
                         <TextField {...params} label="Tipo de documento" />
@@ -135,11 +135,7 @@ export default function EditDocumentsFrom() {
                     <TextField
                       fullWidth
                       required
-                      defaultValue={
-                        showDocumentos.filter(
-                          (documento) => documento._id === documentId
-                        )[0].nroDocumento
-                      }
+                      defaultValue={selectionData.state[0].nroDocumento}
                       id="numeroDoc"
                       label="Numero de documento"
                       name="numeroDoc"
@@ -150,11 +146,7 @@ export default function EditDocumentsFrom() {
                       id="description"
                       name="description"
                       label="Descripción"
-                      defaultValue={
-                        showDocumentos.filter(
-                          (documento) => documento._id === documentId
-                        )[0].descripcion
-                      }
+                      defaultValue={selectionData.state[0].descripcion}
                       multiline
                       rows={4}
                     />
@@ -198,13 +190,7 @@ export default function EditDocumentsFrom() {
                   </Grid>
                   <Grid item xs={1} />
                   <Grid item xs={2}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={() => {
-                        navigate("/mesaentrada");
-                      }}
-                    >
+                    <Button variant="contained" fullWidth onClick={cancelar}>
                       Cancelar
                     </Button>
                   </Grid>
@@ -215,6 +201,7 @@ export default function EditDocumentsFrom() {
           </Grid>
         </Grid>
       </Box>
+      <AlertDialogSlide openPopup={openPopup} setOpenPopup={setOpenPopup} />
       <Footer />
     </React.Fragment>
   );

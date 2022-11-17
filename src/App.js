@@ -44,9 +44,11 @@ function App() {
 
       <Routes>
         <Route path="/" element={<LoginForm />} />
+
         <Route
           element={
             <ProtectedRoute
+              redirectTo="/"
               isAllowed={
                 !!usuario.usuario &&
                 usuario.area.toUpperCase().includes("LEGALES")
@@ -60,7 +62,7 @@ function App() {
             element={<NewDocumentsForm />}
           />
           <Route
-            path="/mesaentrada/editardocumento/:docId"
+            path="/mesaentrada/editardocumento"
             element={<EditDocumentsFrom />}
           />
         </Route>
@@ -105,6 +107,7 @@ function App() {
         <Route
           element={
             <ProtectedRoute
+              redirectTo="/"
               isAllowed={
                 !!usuario.usuario && usuario.rol.toUpperCase().includes("ADMIN")
               }
