@@ -59,9 +59,11 @@ function App() {
 
       <Routes>
         <Route path="/" element={<LoginForm />} />
+
         <Route
           element={
             <ProtectedRoute
+              redirectTo="/"
               isAllowed={
                 !!usuario.usuario &&
                 usuario.area.toUpperCase().includes("LEGALES")
@@ -120,6 +122,7 @@ function App() {
         <Route
           element={
             <ProtectedRoute
+              redirectTo="/"
               isAllowed={
                 !!usuario.usuario && usuario.rol.toUpperCase().includes("ADMIN")
               }

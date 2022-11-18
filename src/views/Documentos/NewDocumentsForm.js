@@ -22,14 +22,14 @@ const tiposDocumento = [
 ];
 
 export default function NewDocumentsFrom() {
-  const { isLoading, requestStatus } = useSelector((state) => state.documento);
+  const { isLoading, requestNewStatus } = useSelector((state) => state.documento);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [openPopup, setPopup] = useState(false);
 
   const [inputValue, setInputValue] = useState({
     tipoDocumento: "",
   });
-
   const tipoDocumentoChange = (event, newTipoDocumento) => {
     setInputValue({ ...inputValue, tipoDocumento: newTipoDocumento });
   };
@@ -63,7 +63,24 @@ export default function NewDocumentsFrom() {
       console.log(error);
     }
   };
+  useBeforeunload(()=>"reload")
+  
+  try {
+    if (requestNewStatus === 201) {
+      navigate("/mesaentrada");
+    }
+  } catch (error) {
+    console.log(error);
+  }
 
+ 
+ const setOpenPopup =(isTrue) =>{
+    setPopup(isTrue)
+ }
+ const cancel = () =>{
+  setPopup(true)
+ }
+ 
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -167,13 +184,7 @@ export default function NewDocumentsFrom() {
                   </Grid>
                   <Grid item xs={1} />
                   <Grid item xs={2}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={() => {
-                        navigate("/mesaentrada");
-                      }}
-                    >
+                    <Button variant="contained" fullWidth onClick={cancel}>
                       Cancelar
                     </Button>
                   </Grid>
@@ -184,6 +195,7 @@ export default function NewDocumentsFrom() {
           </Grid>
         </Grid>
       </Box>
+      <AlertDialogSlide openPopup={openPopup} setOpenPopup ={setOpenPopup}/>
       <Footer />
     </React.Fragment>
   );

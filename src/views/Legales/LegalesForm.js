@@ -42,6 +42,18 @@ const columns = [
     renderCell: renderCellExpand,
   },
   {
+    field: "descripcion",
+    headerName: "Descripcion",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
+  {
+    field: "estado",
+    headerName: "Estado",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
+  {
     field: "sede",
     headerName: "Sede",
     width: 200,
@@ -53,9 +65,10 @@ const columns = [
     width: 200,
     renderCell: renderCellExpand,
   },
+
   {
-    field: "descripcion",
-    headerName: "Descripcion",
+    field: "UsuarioFirmante",
+    headerName: "Firma",
     width: 200,
     renderCell: renderCellExpand,
   },

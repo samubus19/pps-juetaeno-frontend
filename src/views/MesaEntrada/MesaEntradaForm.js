@@ -19,6 +19,7 @@ import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
+
 // en area se debe poner el nombre tal cual se guarde en el back
 const area = "Mesa de Entrada";
 const estado = [{ label: "En Pase" }];
@@ -38,6 +39,18 @@ const columns = [
     renderCell: renderCellExpand,
   },
   {
+    field: "descripcion",
+    headerName: "Descripcion",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
+  {
+    field: "estado",
+    headerName: "Estado",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
+  {
     field: "sede",
     headerName: "Sede",
     width: 200,
@@ -49,9 +62,10 @@ const columns = [
     width: 200,
     renderCell: renderCellExpand,
   },
+
   {
-    field: "descripcion",
-    headerName: "Descripcion",
+    field: "UsuarioFirmante",
+    headerName: "Firma",
     width: 200,
     renderCell: renderCellExpand,
   },
@@ -62,11 +76,15 @@ const mainFeaturedPost = {
 };
 
 export default function MesaEntradaForm() {
-  const { showDocumentos = [], requestStatus } = useSelector((state) => state.documento);
+
+  const { showDocumentos = [], requestStatus } = useSelector(
+    (state) => state.documento
+  );
   const dispatch = useDispatch();
   const [value, setValue] = React.useState(0);
   //es el id seleccionado para enviar a editar
   const [selectionId, setSelectionId] = useState([]);
+  const [selectionRow, setSelectionRow] = useState([]);
   //body para actualizar estado
   const [estadoValue, setEstadoValue] = useState({
     estado: "",
@@ -86,7 +104,6 @@ export default function MesaEntradaForm() {
     setEstadoValue({ ...estadoValue, areaDestino: areaDestino });
   };
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
     try {
@@ -98,24 +115,24 @@ export default function MesaEntradaForm() {
         alert("Debe completar todos los campos olbigatorios");
         return;
       }
-       if (!estadoValue._id || estadoValue._id === "") {
-         alert("Debe completar todos los campos olbigatorios");
-         return;
-       }
-      
+      if (!estadoValue._id || estadoValue._id === "") {
+        alert("Debe completar todos los campos olbigatorios");
+        return;
+      }
+
       const bodyActualizarEstado = {
         nuevoEstado: estadoValue.estado,
         sede: upperFormatearArea(estadoValue.areaDestino),
         _id: estadoValue._id,
       };
-     
+
       dispatch(actualizarEstadoDocumento(bodyActualizarEstado));
 
       try {
-        if(requestStatus === 200){
-          window.location.href = window.location.href;
+        if (requestStatus === 200) {
+          //window.location.href = window.location.href;
+          window.location.reload();
         }
-        
       } catch (error) {
         console.log(error);
       }
@@ -123,7 +140,7 @@ export default function MesaEntradaForm() {
       console.log(error);
     }
   };
-
+//console.log(selectionRow[0].estado === "Iniciado"? true : false);
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -153,19 +170,25 @@ export default function MesaEntradaForm() {
                       const result = selection.filter(
                         (s) => !selectionSet.has(s)
                       );
-
                       setSelectionId(result);
                       setEstadoValue({
                         ...estadoValue,
                         _id: result[0],
                       });
+                      const selectedRow = showDocumentos.filter(
+                        (documento) => documento._id === result[0]
+                      );
+                      setSelectionRow(selectedRow);
                     } else {
                       setSelectionId(selection);
-
                       setEstadoValue({
                         ...estadoValue,
                         _id: selection[0],
                       });
+                      const selectedRow = showDocumentos.filter(
+                        (documento) => documento._id === selection[0]
+                      );
+                      setSelectionRow(selectedRow);
                     }
                   }}
                   components={{ Toolbar: GridToolbar }}
@@ -236,7 +259,9 @@ export default function MesaEntradaForm() {
                     <Grid item xs={1} />
                     <Grid item xs={2}>
                       <Button
-                        disabled={!selectionId.length}
+                        disabled={
+                          !selectionRow.length?  true : selectionRow[0].estado === "Iniciado"? false : true
+                        }
                         variant="contained"
                         fullWidth
                         onClick={() => {

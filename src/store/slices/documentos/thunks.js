@@ -97,9 +97,11 @@ export const crearNuevoDocumento = (body) => {
                 },
                 
             });
-            dispatch(setRequestStatus({requestStatus : resp.status}))   
+            dispatch(setRequestStatus({ requestNewStatus: resp.status }));   
         } catch (error) {
-            dispatch(setRequestStatus({requestStatus : error.response.status})) 
+            dispatch(
+              setRequestStatus({ requestNewStatus: error.response.status })
+            ); 
             console.log(error);            
         }
     }
@@ -148,9 +150,11 @@ export const editarDocumento = (body) => {
                 },
                 
             });
-            dispatch(setRequestStatus({requestStatus : resp.status}))   
+            dispatch(setRequestStatus({requestEditStatus : resp.status}))   
         } catch (error) {
-            dispatch(setRequestStatus({requestStatus : error.response.status})) 
+            dispatch(
+              setRequestStatus({ requestEditStatus: error.response.status })
+            ); 
             console.log(error);            
         }
     }

@@ -23,6 +23,18 @@ const columns = [
     renderCell: renderCellExpand,
   },
   {
+    field: "descripcion",
+    headerName: "Descripcion",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
+  {
+    field: "estado",
+    headerName: "Estado",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
+  {
     field: "sede",
     headerName: "Sede",
     width: 200,
@@ -35,8 +47,15 @@ const columns = [
     renderCell: renderCellExpand,
   },
   {
-    field: "descripcion",
-    headerName: "Descripcion",
+    field: "fechaSalida",
+    headerName: "Fecha de Salida",
+    width: 200,
+    renderCell: renderCellExpand,
+  },
+
+  {
+    field: "UsuarioFirmante",
+    headerName: "Firma",
     width: 200,
     renderCell: renderCellExpand,
   },
@@ -80,16 +99,18 @@ export default function SearchDocumentsForm() {
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
 
-      <Box sx={{ flexGrow: 1 }} p={2}>
+      <Box sx={{ flexGrow: 1 }} p={1}>
         <Grid container spacing={2}>
-          <Grid item xs={2}></Grid>
-          <Grid item xs={8}>
-            <Button variant="contained" onClick={redirect}>
-              Volver
-            </Button>
+          <Grid item xs={1}></Grid>
+          <Grid item xs={10}>
+            <div style={{ height: 40, width: "100%" }}>
+              <Button variant="contained" onClick={redirect}>
+                Volver
+              </Button>
+            </div>
             <Paper elevation={3}>
               <Divider />
-              <div style={{ height: 400, width: "100%" }}>
+              <div style={{ height: 500, width: "100%" }}>
                 <DataGrid
                   localeText={
                     esES.components.MuiDataGrid.defaultProps.localeText
@@ -97,7 +118,7 @@ export default function SearchDocumentsForm() {
                   getRowId={(r) => r._id}
                   rows={showDocumentos}
                   columns={columns}
-                  pageSize={5}
+                  pageSize={6}
                   rowsPerPageOptions={[5]}
                   checkboxSelection
                   selectionModel={selectionId}
@@ -126,7 +147,7 @@ export default function SearchDocumentsForm() {
               </div>
             </Paper>
           </Grid>
-          <Grid item xs={2}></Grid>
+          <Grid item xs={1}></Grid>
         </Grid>
       </Box>
       <Footer />

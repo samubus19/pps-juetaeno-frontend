@@ -36,15 +36,13 @@ export default function EditDocumentsFrom() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+   const [openPopup, setPopup] = useState(false);
   const [inputValue, setInputValue] = useState({
     tipoDocumento: "",
   });
   const tipoDocumentoChange = (event, newTipoDocumento) => {
     setInputValue({ ...inputValue, tipoDocumento: newTipoDocumento });
   };
-  useEffect(() => {
-    dispatch(getDocumentos());
-  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -72,10 +70,26 @@ export default function EditDocumentsFrom() {
       };
 
       dispatch(editarDocumento(bodyEditarDocumento));
+   
     } catch (error) {
       console.log(error);
     }
   };
+ const setOpenPopup = (isTrue) => {
+   setPopup(isTrue);
+ };
+
+  const cancelar = () => {
+    setPopup(true);
+  };
+  useBeforeunload(() => "You'll lose your data!");
+     try {
+       if (requestEditStatus === 200) {
+         navigate("/mesaentrada");
+       }
+     } catch (error) {
+       console.log(error);
+     }
 
   return (
     <React.Fragment>
@@ -119,15 +133,7 @@ export default function EditDocumentsFrom() {
                       inputValue={inputValue.tipoDocumento}
                       onInputChange={tipoDocumentoChange}
                       fullWidth
-                      defaultValue={
-                        tiposDocumento.filter(
-                          (tipo) =>
-                            tipo.label.split(" ")[0].trim() ===
-                            showDocumentos.filter(
-                              (documento) => documento._id === documentId
-                            )[0].tipoDocumento
-                        )[0]
-                      }
+                      defaultValue={selectionData.state[0].tipoDocumento}
                       options={tiposDocumento}
                       renderInput={(params) => (
                         <TextField {...params} label="Tipo de documento" />
@@ -136,11 +142,7 @@ export default function EditDocumentsFrom() {
                     <TextField
                       fullWidth
                       required
-                      defaultValue={
-                        showDocumentos.filter(
-                          (documento) => documento._id === documentId
-                        )[0].nroDocumento
-                      }
+                      defaultValue={selectionData.state[0].nroDocumento}
                       id="numeroDoc"
                       label="Numero de documento"
                       name="numeroDoc"
@@ -151,11 +153,7 @@ export default function EditDocumentsFrom() {
                       id="description"
                       name="description"
                       label="Descripción"
-                      defaultValue={
-                        showDocumentos.filter(
-                          (documento) => documento._id === documentId
-                        )[0].descripcion
-                      }
+                      defaultValue={selectionData.state[0].descripcion}
                       multiline
                       rows={4}
                     />
@@ -199,13 +197,7 @@ export default function EditDocumentsFrom() {
                   </Grid>
                   <Grid item xs={1} />
                   <Grid item xs={2}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={() => {
-                        navigate("/mesaentrada");
-                      }}
-                    >
+                    <Button variant="contained" fullWidth onClick={cancelar}>
                       Cancelar
                     </Button>
                   </Grid>
@@ -216,6 +208,7 @@ export default function EditDocumentsFrom() {
           </Grid>
         </Grid>
       </Box>
+      <AlertDialogSlide openPopup={openPopup} setOpenPopup={setOpenPopup} />
       <Footer />
     </React.Fragment>
   );
