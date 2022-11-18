@@ -1,5 +1,5 @@
-import MainFeaturedPost from "../components/MainFeaturedPost";
-import Footer from "../components/Footer";
+import MainFeaturedPost from "../../components/MainFeaturedPost";
+import Footer from "../../components/Footer";
 import React, { useState } from "react";
 import { Button, Divider, Grid, Typography } from "@mui/material";
 import Box from "@mui/system/Box";
@@ -9,8 +9,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { Stack } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { crearNuevoDocumento } from "../store/slices/documentos/thunks";
-import { formatearArea } from "../helpers/Area-formatter";
+import { crearNuevoDocumento } from "../../store/slices/documentos/thunks";
 
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Nuevo Documento",

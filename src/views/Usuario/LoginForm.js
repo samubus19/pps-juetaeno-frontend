@@ -12,9 +12,9 @@ import Box                          from "@mui/material/Box";
 import Grid                         from "@mui/material/Grid";
 import LockOutlinedIcon             from "@mui/icons-material/LockOutlined";
 import Typography                   from "@mui/material/Typography";
-import logoJUETAENO                 from "../assets/logoJUETAENO.svg";
+import logoJUETAENO                 from "../../assets/logoJUETAENO.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUsuario }             from "../store/slices/usuarios";
+import { loginUsuario }             from "../../store/slices/usuarios";
 import { useNavigate }              from "react-router-dom";
 import { useEffect }                from "react";
 function Copyright() {

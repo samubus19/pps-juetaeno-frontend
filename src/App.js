@@ -4,17 +4,20 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 //import all views
-import AdminMainForm from "./views/AdminMainForm";
-import AdminUsersForm from "./views/FormCrearNuevoUsuario.js/AdminUsersForm";
-import LegalesForm from "./views/LegalesForm";
-import LoginForm from "./views/LoginForm";
-import MesaEntradaForm from "./views/MesaEntradaForm";
-import MiembrosForm from "./views/MiembrosForm";
-import NewDocumentsForm from "./views/NewDocumentsForm";
-import SearchDocumentsForm from "./views/SearchDocumentsForm";
+import AdminMainForm from "./views/Admin/AdminMainForm";
+import AdminUsersForm from "./views/Admin/FormCrearNuevoUsuario/AdminUsersForm";
+import LegalesForm from "./views/Legales/LegalesForm";
+import LoginForm from "./views/Usuario/LoginForm";
+import MesaEntradaForm from "./views/MesaEntrada/MesaEntradaForm";
+import MiembrosForm from "./views/MiembrosJunta/MiembrosForm";
+import NewDocumentsForm from "./views/Documentos/NewDocumentsForm";
+import SearchDocumentsForm from "./views/Documentos/SearchDocumentsForm";
 import NotFoundPage from "./views/NotFoundPage";
-import FormDatosUsuario from "./views/FormCrearNuevoUsuario.js/FormDatosUsuario";
-import EditDocumentsFrom from "./views/EditDocumentsForm";
+import FormDatosUsuario from "./views/Admin/FormCrearNuevoUsuario/FormDatosUsuario";
+import EditDocumentsFrom from "./views/Documentos/EditDocumentsForm";
+import FormEditarUsuarioPersona from "./views/Admin/FormEditarUsuarioPersona";
+import { useDispatch, useSelector } from "react-redux";
+import { verificarTokenAsync } from "./store/slices/jwt/thunks";
 
 const theme = createTheme({
   palette: {
@@ -32,10 +35,22 @@ const theme = createTheme({
 });
 
 function App() {
+  const dispatch = useDispatch();
   let usuario = {};
-  !!localStorage.getItem("usuario")
-    ? (usuario = JSON.parse(localStorage.getItem("usuario")))
-    : (usuario = { area: "" });
+  if(localStorage.getItem("usuario") ) {
+    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))))
+    .then(resp => { 
+      if(!resp.payload.data.valido) {
+        localStorage.removeItem("usuario")
+        localStorage.removeItem("token")
+        return
+      } 
+      (usuario = JSON.parse(localStorage.getItem("usuario")));
+      return 
+    })
+    } else {
+      (usuario = { area: "" })
+    } 
 
   return (
     <ThemeProvider theme={theme}>
@@ -60,7 +75,7 @@ function App() {
             element={<NewDocumentsForm />}
           />
           <Route
-            path="/mesaentrada/editardocumento/:docId"
+            path="/mesaentrada/editardocumento"
             element={<EditDocumentsFrom />}
           />
         </Route>
@@ -114,6 +129,7 @@ function App() {
           <Route path="/admin" element={<AdminMainForm />} />
           <Route path="/admin/nuevousuario" element={<AdminUsersForm />} />
           <Route path="/admin/nuevousuario2" element={<FormDatosUsuario />} />
+          <Route path="/admin/editarusuario" element={<FormEditarUsuarioPersona />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

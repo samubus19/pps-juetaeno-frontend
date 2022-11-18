@@ -1,5 +1,5 @@
-import MainFeaturedPost from "../components/MainFeaturedPost";
-import Footer from "../components/Footer";
+import MainFeaturedPost from "../../components/MainFeaturedPost";
+import Footer from "../../components/Footer";
 import React, { useEffect, useState } from "react";
 import { Button, Divider, Grid, Typography } from "@mui/material";
 import Box from "@mui/system/Box";
@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   editarDocumento,
   getDocumentos,
-} from "../store/slices/documentos/thunks";
+} from "../../store/slices/documentos/thunks";
 
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Editar Documento",
@@ -26,7 +26,8 @@ const tiposDocumento = [
 
 export default function EditDocumentsFrom() {
   const selectionId = useLocation();
-  const documentId = selectionId.pathname.split("/")[3];
+  const documentId  = selectionId.state[0];
+  console.log(documentId)
   const {
     showDocumentos = [],
     isLoading,

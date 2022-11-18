@@ -2,11 +2,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import { usuarioSlice } from './slices/usuarios';
 import { personaSlice } from './slices/personas';
 import { documentoSlice } from './slices/documentos';
+import { jwtSlice } from './slices/jwt/JwtSlice';
 
 const reducer = {
   usuario   : usuarioSlice.reducer,
   persona   : personaSlice.reducer,
-  documento : documentoSlice.reducer
+  documento : documentoSlice.reducer,
+  jwttoken  : jwtSlice.reducer
 }
 
 export const store = configureStore({

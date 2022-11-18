@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import MainFeaturedPost from "../components/MainFeaturedPost";
-import Footer from "../components/Footer";
-import TabPanel from "../components/TabPanel";
-import { renderCellExpand } from "../components/CellExpand";
-import { getDocumentos, actualizarEstadoDocumento } from "../store/slices/documentos";
-import { upperFormatearArea } from "../helpers/Area-UpperFormater";
+import MainFeaturedPost from "../../components/MainFeaturedPost";
+import Footer from "../../components/Footer";
+import TabPanel from "../../components/TabPanel";
+import { renderCellExpand } from "../../components/CellExpand";
+import { upperFormatearArea } from "../../helpers/Area-UpperFormater";
+import { getDocumentos, actualizarEstadoDocumento } from "../../store/slices/documentos";
 import {
   Button,
   Divider,
@@ -18,13 +18,12 @@ import { Stack, Box } from "@mui/system";
 import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
 // en area se debe poner el nombre tal cual se guarde en el back
-const area = "Legales";
-const estado = [{ label: "En Pase" }, { label: "Finalizado" }];
-const areaDestino = [
-  { label: "Mesa de Entrada" },
-  { label: "Miembros de Junta" },
-];
+const area = "Mesa de Entrada";
+const estado = [{ label: "En Pase" }];
+const areaDestino = [{ label: "Legales" }, { label: "Miembros de Junta" }];
+
 const columns = [
   {
     field: "tipoDocumento",
@@ -57,13 +56,16 @@ const columns = [
     renderCell: renderCellExpand,
   },
 ];
-const mainFeaturedPost = { area: "Area: Legales" };
 
-export default function LegalesForm() {
+const mainFeaturedPost = {
+  area: "Area: Mesa de entrada",
+};
+
+export default function MesaEntradaForm() {
   const { showDocumentos = [], requestStatus } = useSelector((state) => state.documento);
   const dispatch = useDispatch();
   const [value, setValue] = React.useState(0);
-  //es el id seleccionado 
+  //es el id seleccionado para enviar a editar
   const [selectionId, setSelectionId] = useState([]);
   //body para actualizar estado
   const [estadoValue, setEstadoValue] = useState({
@@ -71,7 +73,11 @@ export default function LegalesForm() {
     areaDestino: "",
     _id: "",
   });
+
   const navigate = useNavigate();
+  useEffect(() => {
+    dispatch(getDocumentos());
+  }, []);
 
   const estadoChange = (event, estado) => {
     setEstadoValue({ ...estadoValue, estado: estado });
@@ -79,47 +85,44 @@ export default function LegalesForm() {
   const areaDestinoChange = (event, areaDestino) => {
     setEstadoValue({ ...estadoValue, areaDestino: areaDestino });
   };
-  useEffect(() => {
-    dispatch(getDocumentos());
-  }, []);
 
 
-const handleSubmit = (event) => {
-  event.preventDefault();
-  try {
-    if (!estadoValue.estado || estadoValue.estado === "") {
-      alert("Debe completar todos los campos olbigatorios");
-      return;
-    }
-    if (!estadoValue.areaDestino || estadoValue.areaDestino === "") {
-      alert("Debe completar todos los campos olbigatorios");
-      return;
-    }
-    if (!estadoValue._id || estadoValue._id === "") {
-      alert("Debe completar todos los campos olbigatorios");
-      return;
-    }
-
-    const bodyActualizarEstado = {
-      nuevoEstado: estadoValue.estado,
-      sede: upperFormatearArea(estadoValue.areaDestino),
-      _id: estadoValue._id,
-    };
-
-    dispatch(actualizarEstadoDocumento(bodyActualizarEstado));
-
+  const handleSubmit = (event) => {
+    event.preventDefault();
     try {
-      if (requestStatus === 200) {
-        window.location.href = window.location.href;
+      if (!estadoValue.estado || estadoValue.estado === "") {
+        alert("Debe completar todos los campos olbigatorios");
+        return;
+      }
+      if (!estadoValue.areaDestino || estadoValue.areaDestino === "") {
+        alert("Debe completar todos los campos olbigatorios");
+        return;
+      }
+       if (!estadoValue._id || estadoValue._id === "") {
+         alert("Debe completar todos los campos olbigatorios");
+         return;
+       }
+      
+      const bodyActualizarEstado = {
+        nuevoEstado: estadoValue.estado,
+        sede: upperFormatearArea(estadoValue.areaDestino),
+        _id: estadoValue._id,
+      };
+     
+      dispatch(actualizarEstadoDocumento(bodyActualizarEstado));
+
+      try {
+        if(requestStatus === 200){
+          window.location.href = window.location.href;
+        }
+        
+      } catch (error) {
+        console.log(error);
       }
     } catch (error) {
       console.log(error);
     }
-  } catch (error) {
-    console.log(error);
-  }
- 
-};
+  };
 
   return (
     <React.Fragment>
@@ -193,12 +196,11 @@ const handleSubmit = (event) => {
                   }}
                 >
                   <Typography variant="h6" p={1}>
-                    {" "}
                     Opciones:
                   </Typography>
                 </Paper>
-                <Divider />
                 <TabPanel value={value} index={0}>
+                  <Divider />
                   <Grid
                     container
                     spacing={3}
@@ -219,13 +221,40 @@ const handleSubmit = (event) => {
                         Buscar Documento
                       </Button>
                     </Grid>
-
                     <Grid item xs={1} />
                     <Grid item xs={2}>
                       <Button
                         variant="contained"
                         fullWidth
+                        onClick={() => {
+                          navigate("/mesaentrada/nuevodocumento");
+                        }}
+                      >
+                        Nuevo Documento
+                      </Button>
+                    </Grid>
+                    <Grid item xs={1} />
+                    <Grid item xs={2}>
+                      <Button
                         disabled={!selectionId.length}
+                        variant="contained"
+                        fullWidth
+                        onClick={() => {
+                          navigate(
+                            `/mesaentrada/editardocumento`,
+                            { state : selectionId }
+                          );
+                        }}
+                      >
+                        Editar Documento
+                      </Button>
+                    </Grid>
+                    <Grid item xs={1} />
+                    <Grid item xs={2}>
+                      <Button
+                        variant="contained"
+                        disabled={!selectionId.length}
+                        fullWidth
                         onClick={() => setValue(1)}
                       >
                         Actualizar Estado

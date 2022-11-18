@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import MainFeaturedPost from "../components/MainFeaturedPost";
-import Footer from "../components/Footer";
-import TabPanel from "../components/TabPanel";
-import { renderCellExpand } from "../components/CellExpand";
-import { getDocumentos, actualizarEstadoDocumento } from "../store/slices/documentos";
-import { upperFormatearArea } from "../helpers/Area-UpperFormater";
+import MainFeaturedPost from "../../components/MainFeaturedPost";
+import Footer from "../../components/Footer";
+import TabPanel from "../../components/TabPanel";
+import { renderCellExpand } from "../../components/CellExpand";
+import { getDocumentos, actualizarEstadoDocumento } from "../../store/slices/documentos";
+import { upperFormatearArea } from "../../helpers/Area-UpperFormater";
 import {
   Button,
   Divider,

@@ -1,5 +1,5 @@
-import MainFeaturedPost                           from "../../components/MainFeaturedPost";
-import Footer                                     from "../../components/Footer";
+import MainFeaturedPost                           from "../../../components/MainFeaturedPost";
+import Footer                                     from "../../../components/Footer";
 import React, { useState }                        from "react";
 import { Button, Divider, Grid, Typography }      from "@mui/material";
 import Box                                        from "@mui/system/Box";
@@ -9,22 +9,16 @@ import Autocomplete                               from "@mui/material/Autocomple
 import { Stack }                                  from "@mui/system";
 import { useNavigate }                            from "react-router-dom";
 import { useDispatch, useSelector }               from "react-redux";
-import { crearNuevaPersonaAsync, getPersonaPorNumeroAsync } from '../../store/slices/personas';
-import { crearNuevoUsuario, crearNuevoUsuarioAsync }                      from '../../store/slices/usuarios';
-import { DateTime, luxon }                        from 'luxon';
-import { useEffect }                              from "react";
+import { crearNuevaPersonaAsync, getPersonaPorNumeroAsync } from '../../../store/slices/personas';
+import { DateTime}                        from 'luxon';
 
 const mainFeaturedPost = {
   area    : `Administrador - Nuevo Usuario `,
 };
-const area = [
-  { label : "LEGALES" },
-  { label : "MIEMBROS" },
-  { label : "MESAENTRADA" },
-  { label : "ADMIN" },
-];
-const rol           = [{ label: "USUARIO" }, { label: "ADMIN" }];
-export default function FormDatosUsuario() {
+
+
+const tipoDocumento = [{ label: "DNI" }, { label: "LC" }];
+export default function NewUsersFrom() {
   
   const persona       = useSelector((state) => state.persona.personas);
   const isLoading     = useSelector((state) => state.persona.isLoading);
@@ -33,54 +27,58 @@ export default function FormDatosUsuario() {
   const navigate      = useNavigate();
   
   const [inputValue, setInputValue] = useState({
-    Area          : "",
-    Rol           : "",
+    TipoDocumento : "",
   });
-  const areaChange = (event, newArea) => {
-    setInputValue({ ...inputValue, Area: newArea });
-  };
-  const rolChange = (event, newRol) => {
-    setInputValue({ ...inputValue, Rol: newRol });
-  };
 
+  const tipoDocumentoChange = (event, newTipoDocumento) => {
+    setInputValue({ ...inputValue, TipoDocumento: newTipoDocumento });
+  };
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
 
-      if(!data.get("usuario") || data.get("usuario") === ""){
+      if(!data.get("nombre") || data.get("nombre") === ""){
         alert("Debe completar todos los campos olbigatorios");
         return
       }
-      if(!data.get("mail") || data.get("mail") === ""){
+      if(!data.get("apellido") || data.get("apellido") === ""){
         alert("Debe completar todos los campos olbigatorios");
         return
       }
-      if(!inputValue.Area || inputValue.Area === ""){
+      if(!inputValue.TipoDocumento || inputValue.TipoDocumento === ""){
         alert("Debe completar todos los campos olbigatorios");
         return
       }
-      if(!data.get("contrasenia") || data.get("contrasenia") === ""){
+      if(!data.get("ndocumento") || data.get("ndocumento") === ""){
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
+      if(!data.get("fecha") || data.get("fecha") === ""){
+        alert("Debe completar todos los campos olbigatorios");
+        return
+      }
+      if(!data.get("telefono") || data.get("telefono") === ""){
         alert("Debe completar todos los campos olbigatorios");
         return
       }
       
-      
 
-    const bodyUsuario = {
-        usuario         : data.get("usuario"),
-        email           : data.get("mail"),
-        contrasenia     : data.get("contrasenia"),
-        area            : inputValue.Area,
-        rol             : JSON.parse(localStorage.getItem("usuario")).rol,
-        idPersona       : persona.persona._id
-    }
+      const bodyPersona = {
+        nombre          : data.get("nombre"),
+        apellido        : data.get("apellido"),
+        tipoDocumento   : inputValue.TipoDocumento,
+        nroDocumento    : data.get("ndocumento"),
+        fechaNacimiento : DateTime.fromISO(data.get("fecha")).toFormat('dd/LL/yyyy'),
+        nroTelefono     : data.get("telefono"),
+      }
 
-    dispatch(crearNuevoUsuarioAsync(bodyUsuario))
-        .then(() => navigate("/admin"))
-
-    } catch (error) {
-      console.log(error)
+      dispatch(crearNuevaPersonaAsync(bodyPersona))
+        .then(() => dispatch(getPersonaPorNumeroAsync(bodyPersona.nroDocumento)))
+        .then(() => navigate('/admin/nuevousuario2'))
+        
+      } catch (error) {
+          console.log(error)
     }
    
   }
@@ -99,7 +97,7 @@ export default function FormDatosUsuario() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
-              <div style={{ height: 450, width: "100%" }}>
+              <div style={{ height: 510, width: "100%" }}>
                 <Paper
                   component="form"
                   sx={{
@@ -111,51 +109,60 @@ export default function FormDatosUsuario() {
                   }}
                 >
                   <Typography variant="h6" p={1}>
-                    Datos del Usuario 
+                    Datos Personales 
                   </Typography>
                 </Paper>
                 <Box p={1} pt={3} pb={3}>
                   <Stack spacing={2}>
                     <TextField
                       fullWidth
-                      label="Usuario"
-                      id="usuario"
-                      name="usuario"
+                      label="Nombre"
+                      id="nombre"
+                      name="nombre"
                       margin="dense"
                     />
                     <TextField
                       fullWidth
-                      label="Mail"
-                      id="mail"
-                      name="mail"
-                      margin="dense"
-                    />
-                    <TextField
-                      fullWidth
-                      label="Contraseña"
-                      id="constrasenia"
-                      name="contrasenia"
+                      label="Apellido"
+                      id="apellido"
+                      name="apellido"
                       margin="dense"
                     />
                     <Autocomplete
                       disablePortal
                       fullWidth
-                      id="area"
-                      onInputChange={areaChange}
-                      options={area}
+                      id="tipoDocumento"
+                      inputValue={inputValue.TipoDocumento}
+                      onInputChange={tipoDocumentoChange}
+                      options={tipoDocumento}
                       renderInput={(params) => (
-                        <TextField {...params} label="Area" />
+                        <TextField {...params} label="Tipo de Documento" />
                       )}
                     />
-                    <Autocomplete
-                      disablePortal
+                    <TextField
                       fullWidth
-                      id="rol"
-                      onInputChange={rolChange}
-                      options={rol}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Rol" />
-                      )}
+                      label="Nº Documento"
+                      id="ndocumento"
+                      name="ndocumento"
+                      margin="dense"
+                    />
+                    <TextField
+                      id="fecha"
+                      name="fecha"
+                      label="Fecha de Nacimiento"
+                      type="date"
+                      fullWidth
+                      margin="dense"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                    <TextField
+                      fullWidth
+                      label="Telefono"
+                      id="telefono"
+                      name="telefono"
+                      margin="dense"
                     />
                   </Stack>
                 </Box>
@@ -191,7 +198,7 @@ export default function FormDatosUsuario() {
                   <Grid item xs={1} />
                   <Grid item xs={2}>
                     <Button variant="contained" fullWidth type="sumbit">
-                      Guardar
+                      Continuar
                     </Button>
                   </Grid>
                   <Grid item xs={1} />
