@@ -71,7 +71,7 @@ export const actualizarContrasenia = (body, params) => {
     return async (dispatch, getState) => {
     try{
         dispatch(startLoadingUsers())
-        const resp = await juetaenoApi.pu(`/users/${params.idUsuario}`, {
+        const resp = await juetaenoApi.put(`/users/${params.idUsuario}`, {
             contrasenia : body.contrasenia,
         },{
             headers : {
@@ -88,17 +88,46 @@ export const actualizarContrasenia = (body, params) => {
     }
 } 
 
-
+export const editarUsuarioAsync = createAsyncThunk( 'usuario/editarUsuarioAsync' ,async (body, {getState, dispatch}) => {
+  try {
+      const resp     = await juetaenoApi.put(`/users/${body.idUsuario}`, {
+        usuario         : body.usuario,
+        email           : body.email,
+        area            : body.area,
+        rolEditado      : body.rolEditado,
+        rol             : JSON.parse(localStorage.getItem("usuario")).rol
+      },{
+          headers : {
+              'Authorization' : mToken
+          }
+      })
+      return resp
+    }  
+    catch(error) {
+      dispatch(setRequestStatus({requestStatus : error.response.status})) 
+      console.log(error);
+    }
+}) 
 
 export const getUsuarios = () => {
   return async (dispatch, getState) => {
     try {
       dispatch(startLoadingUsers());
-      const resp = await juetaenoApi.get(`/users`, {
-        headers: {
-          Authorization: mToken,
-        },
-      });
+     
+      const resp = await juetaenoApi(
+        {
+          method : "get",
+          url : "/users/all",
+          data : {
+            rol : JSON.parse(localStorage.getItem("usuario")).rol
+          },
+          headers : {
+            "Authorization" : mToken
+          }
+        }
+      );
+
+      
        const usuarios = resp.data.mensaje
        const vector = []
        for (let i = 0; i < usuarios.length; i++) {
@@ -128,3 +157,40 @@ export const getUsuarios = () => {
     }
   };
 }; 
+
+export const getUsuarioPorIdAsync =  createAsyncThunk("usuario/getUsuarioPorIdASync", async (idUsuario, {getState, dispatch}) => {
+  try {
+      
+    const resp = await juetaenoApi(
+      {
+        method  : "get",
+        url     : `/users/${idUsuario}`,
+        headers : {
+          "Authorization" : mToken
+        }
+      }
+    );
+    const result = {
+      mensaje : {
+        usuario         : resp.data.mensaje.usuario,
+        email           : resp.data.mensaje.email,
+        area            : resp.data.mensaje.area,
+        rol             : resp.data.mensaje.rol,
+        nombre          : resp.data.mensaje.idPersona.nombre,
+        apellido        : resp.data.mensaje.idPersona.apellido,
+        tipoDocumento   : resp.data.mensaje.idPersona.tipoDocumento,
+        nroDocumento    : resp.data.mensaje.idPersona.nroDocumento,
+        fechaNacimiento : resp.data.mensaje.idPersona.fechaNacimiento,
+        telefono        : resp.data.mensaje.idPersona.nroTelefono,
+        idPersona       : resp.data.mensaje.idPersona._id,
+      },
+      status : resp.status
+    }
+    return result
+
+  } catch (error) {
+    dispatch(setRequestStatus({ requestStatus: error.response.status }));
+    console.log(error);
+  }
+});
+    

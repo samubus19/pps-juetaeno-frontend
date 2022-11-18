@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import MainFeaturedPost from "../components/MainFeaturedPost";
-import Footer from "../components/Footer";
-import TabPanel from "../components/TabPanel";
-import { renderCellExpand } from "../components/CellExpand";
+import MainFeaturedPost from "../../components/MainFeaturedPost";
+import Footer from "../../components/Footer";
+import TabPanel from "../../components/TabPanel";
+import { renderCellExpand } from "../../components/CellExpand";
 import {
   Button,
   Divider,
@@ -16,7 +16,7 @@ import { Stack, Box } from "@mui/system";
 import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getUsuarios } from "../store/slices/usuarios/thunks";
+import { getUsuarios } from "../../store/slices/usuarios/thunks";
 
 const columns = [
   { field: "usuario", headerName: "Usuario", width: 90, renderCell: renderCellExpand },
@@ -138,7 +138,9 @@ export default function AdminMainForm() {
                       variant="contained"
                       fullWidth
                       onClick={() => {
-                        navigate("/admin/nuevousuario");
+                        navigate("/admin/editarusuario", {
+                          state : selectionId
+                        });
                       }}
                     >
                       {" "}

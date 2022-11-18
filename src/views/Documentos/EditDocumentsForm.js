@@ -1,7 +1,6 @@
-import MainFeaturedPost from "../components/MainFeaturedPost";
-import Footer from "../components/Footer";
-import AlertDialogSlide from "../components/Mensaje";
-import React, { useState } from "react";
+import MainFeaturedPost from "../../components/MainFeaturedPost";
+import Footer from "../../components/Footer";
+import React, { useEffect, useState } from "react";
 import { Button, Divider, Grid, Typography } from "@mui/material";
 import Box from "@mui/system/Box";
 import TextField from "@mui/material/TextField";
@@ -10,8 +9,10 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { Stack } from "@mui/system";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { editarDocumento } from "../store/slices/documentos/thunks";
-import { useBeforeunload } from "react-beforeunload";
+import {
+  editarDocumento,
+  getDocumentos,
+} from "../../store/slices/documentos/thunks";
 
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Editar Documento",
@@ -24,9 +25,15 @@ const tiposDocumento = [
 ];
 
 export default function EditDocumentsFrom() {
-  const { requestEditStatus } = useSelector((state) => state.documento);
-  const selectionData = useLocation();
-  const documentId = selectionData.state[0]._id;
+  const selectionId = useLocation();
+  const documentId  = selectionId.state[0];
+  console.log(documentId)
+  const {
+    showDocumentos = [],
+    isLoading,
+    requestStatus,
+  } = useSelector((state) => state.documento);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
    const [openPopup, setPopup] = useState(false);

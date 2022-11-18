@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import MainFeaturedPost from "../components/MainFeaturedPost";
-import Footer from "../components/Footer";
-import { renderCellExpand } from "../components/CellExpand";
-import { getDocumentos } from "../store/slices/documentos";
+import MainFeaturedPost from "../../components/MainFeaturedPost";
+import Footer from "../../components/Footer";
+import { renderCellExpand } from "../../components/CellExpand";
+import { getDocumentos } from "../../store/slices/documentos";
 import { Button, Divider, Grid, Paper } from "@mui/material";
 import { Box } from "@mui/system";
 import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";

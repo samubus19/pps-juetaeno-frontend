@@ -46,20 +46,24 @@ export const crearNuevaPersonaAsync = createAsyncThunk('persona/crearNuevaPerson
         console.log(error);            
     }
 }) 
-    
-// export const editarPersona = (nroDocumento, body) => {
-//     return async (dispatch, getState) => {
-//         dispatch(startLoadingDocuments())
-
-//         const resp = await juetaenoApi.post(`/files/${nroDocumento}`, {
-//             nroExpediente : body.nroExpediente,
-//             tipoDocumento : body.tipoDocumento,
-//             fechaIngreso  : body.fechaIngreso,
-//             fechaSalida   : body.fechaSalida,
-//             estadoActual  : body.estadoActual,
-//             descripcion   : body.descripcion,
-//             sedeActual    : body.sedeActual,
-//         });
-//         dispatch(setRequestStatus({requestStatus : resp.status}))
-//     }
-// }
+export const editarPersonaAsync = createAsyncThunk( 'persona/editarPersonaAsync' ,async (body, {getState, dispatch}) => {
+    try {
+        const resp     = await juetaenoApi.put(`/person/${body.idPersona}`, {
+            nombre          : body.nombre,
+            apellido        : body.apellido,
+            fechaNacimiento : body.fechaNacimiento,
+            nroTelefono     : body.nroTelefono,
+            rol             : JSON.parse(localStorage.getItem("usuario")).rol
+        },{
+            headers : {
+                'Authorization' : mToken
+            }
+        })
+        return resp
+        // dispatch(setRequestStatus({requestStatus : resp.status}))  
+      }  
+      catch(error) {
+        dispatch(setRequestStatus({requestStatus : error.response.status})) 
+        console.log(error);
+      }
+  }) 

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import {  crearNuevaPersonaAsync, getPersonaPorNumeroAsync } from './thunks'
+import {  crearNuevaPersonaAsync, editarPersonaAsync, getPersonaPorNumeroAsync } from './thunks'
 
 const initialState = {
   isLoading     : false,
@@ -42,6 +42,15 @@ export const personaSlice = createSlice({
     })
     builder.addCase(crearNuevaPersonaAsync.pending, (state, action) => {
       state.isLoading = true
+    })
+
+    builder.addCase(editarPersonaAsync.fulfilled, (state,action) => {
+      state.isLoading     = false
+      state.requestStatus = action.payload.status
+    })
+    builder.addCase(editarPersonaAsync.pending, (state, action) => {
+      state.isLoading = true
+      state.personas  = []
     })
   }
 })
