@@ -19,7 +19,6 @@ import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-
 // en area se debe poner el nombre tal cual se guarde en el back
 const area = "Mesa de Entrada";
 const estado = [{ label: "En Pase" }];
@@ -76,7 +75,6 @@ const mainFeaturedPost = {
 };
 
 export default function MesaEntradaForm() {
-
   const { showDocumentos = [], requestStatus } = useSelector(
     (state) => state.documento
   );
@@ -130,7 +128,6 @@ export default function MesaEntradaForm() {
 
       try {
         if (requestStatus === 200) {
-          //window.location.href = window.location.href;
           window.location.reload();
         }
       } catch (error) {
@@ -140,7 +137,7 @@ export default function MesaEntradaForm() {
       console.log(error);
     }
   };
-//console.log(selectionRow[0].estado === "Iniciado"? true : false);
+
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -149,7 +146,6 @@ export default function MesaEntradaForm() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
-              <Divider />
               <div style={{ height: 450, width: "100%" }}>
                 <DataGrid
                   localeText={
@@ -260,7 +256,11 @@ export default function MesaEntradaForm() {
                     <Grid item xs={2}>
                       <Button
                         disabled={
-                          !selectionRow.length?  true : selectionRow[0].estado === "Iniciado"? false : true
+                          !selectionRow.length
+                            ? true
+                            : selectionRow[0].estado === "Iniciado"
+                            ? false
+                            : true
                         }
                         variant="contained"
                         fullWidth

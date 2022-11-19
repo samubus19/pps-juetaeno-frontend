@@ -1,22 +1,19 @@
 import * as React from "react";
 import { Avatar, Button, CssBaseline, TextField } from "@mui/material";
-//import Avatar from "@mui/material/Avatar";
-//import Button from "@mui/material/Button";
-//import CssBaseline from "@mui/material/CssBaseline";
-//import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox                     from "@mui/material/Checkbox";
-import Link                         from "@mui/material/Link";
-import Paper                        from "@mui/material/Paper";
-import Box                          from "@mui/material/Box";
-import Grid                         from "@mui/material/Grid";
-import LockOutlinedIcon             from "@mui/icons-material/LockOutlined";
-import Typography                   from "@mui/material/Typography";
-import logoJUETAENO                 from "../../assets/logoJUETAENO.svg";
+import Checkbox from "@mui/material/Checkbox";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import logoJUETAENO from "../../assets/logoJUETAENO.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUsuario }             from "../../store/slices/usuarios";
-import { useNavigate }              from "react-router-dom";
-import { useEffect }                from "react";
+import { loginUsuario } from "../../store/slices/usuarios";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
@@ -31,9 +28,9 @@ function Copyright() {
 }
 
 export default function LoginForm() {
-  const dispatch    = useDispatch();
+  const dispatch = useDispatch();
   const { usuario } = useSelector((state) => state.usuario);
-  const navigate    = useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -42,8 +39,8 @@ export default function LoginForm() {
     if (!!data.get("email") & !!data.get("password")) {
       dispatch(
         loginUsuario({
-          usuario     : data.get("email"),
-          contrasenia : data.get("password"),
+          usuario: data.get("email"),
+          contrasenia: data.get("password"),
         })
       );
     } else {
@@ -75,7 +72,7 @@ export default function LoginForm() {
   }, []);
 
   if (!!usuario.area) {
-    window.location.href = window.location.href;
+    window.location.reload();
   }
 
   return (
@@ -87,11 +84,11 @@ export default function LoginForm() {
         sm={4}
         md={6}
         sx={{
-          backgroundRepeat   : "no-repeat",
-          backgroundColor    : "#9b0404 ",
-          backgroundSize     : "cover",
-          backgroundPosition : "center",
-          backgroundImage    : `url(${logoJUETAENO})`,
+          backgroundRepeat: "no-repeat",
+          backgroundColor: "#9b0404 ",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundImage: `url(${logoJUETAENO})`,
         }}
       >
         <Box
