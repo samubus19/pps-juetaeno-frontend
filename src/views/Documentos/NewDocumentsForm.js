@@ -7,12 +7,12 @@ import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Stack } from "@mui/system";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { crearNuevoDocumento } from "../../store/slices/documentos/thunks";
-import AlertDialogSlide from "../../components/Mensaje";
+import AlertDialogSlide from "../../components/Dialog";
 import { useBeforeunload } from "react-beforeunload";
 import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
+import AlertDialog from "../../components/Alert";
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Nuevo Documento",
 };
@@ -22,14 +22,26 @@ const tiposDocumento = [
   { label: "REC (reclamos)" },
   { label: "CES (ceses)" },
 ];
+const dialogMessage = {
+  title: "¿Desea cancelar la operacion?",
+  message:
+    "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+};
+const route = "/mesaentrada";
 
 export default function NewDocumentsFrom() {
-  const { isLoading, requestNewStatus } = useSelector(
-    (state) => state.documento
-  );
+
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [openPopup, setPopup] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState({
+    type: "",
+    title: "",
+    message: "",
+  });
+  const setOpenAlertDialog = (isTrue) => {
+    setOpenAlert(isTrue);
+  };
 
   const [inputValue, setInputValue] = useState({
     tipoDocumento: "",
@@ -39,24 +51,30 @@ export default function NewDocumentsFrom() {
   };
   useEffect(() => {
     dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
-   
   }, []);
-
+  const completeFromAlert = () => {
+    setAlertMessage({
+      type: "warning",
+      title: "Advertencia",
+      message: "Debe completar todos los campos obligatorios",
+    });
+    setOpenAlert(true);
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
     try {
       if (!inputValue.tipoDocumento || inputValue.tipoDocumento === "") {
-        alert("Debe completar todos los campos olbigatorios");
+        completeFromAlert();
         return;
       }
       if (!data.get("numeroDoc") || data.get("numeroDoc") === "") {
-        alert("Debe completar todos los campos olbigatorios");
+        completeFromAlert();
         return;
       }
       if (!data.get("description") || data.get("description") === "") {
-        alert("Debe completar todos los campos olbigatorios");
+        completeFromAlert();
         return;
       }
 
@@ -66,19 +84,40 @@ export default function NewDocumentsFrom() {
         descripcion: data.get("description").trim(),
       };
 
-      dispatch(crearNuevoDocumento(bodyNuevoDocumento));
+      dispatch(crearNuevoDocumento(bodyNuevoDocumento)).then((resp) => {
+        console.log(resp);
+        if (resp.status === 201) {
+          setAlertMessage({
+            type: "success",
+            title: "El documento fue añadido con exito",
+            message: "La operacion ha resultado exitosa, documento añadido",
+          });
+          setOpenAlert(true);
+        }else{
+          if (resp.response.status === 400) {
+            setAlertMessage({
+              type: "error",
+              title: "Ocurrio un error",
+              message: `${resp.response.data.mensaje}`,
+            });
+            setOpenAlert(true);
+          }else{
+           if (resp.response.status === 500) {
+              setAlertMessage({
+                type: "error",
+                title: "Ocurrio un error",
+                message: "Intentelo mas tarde o llame a personal tecnico. ",
+              });
+              setOpenAlert(true);
+           }
+          }
+        }
+      });
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   };
   //useBeforeunload(() => "reload");
-  try {
-    if (requestNewStatus === 201) {
-      navigate("/mesaentrada");
-    }
-  } catch (error) {
-    console.log(error);
-  }
 
   const setOpenPopup = (isTrue) => {
     setPopup(isTrue);
@@ -201,7 +240,18 @@ export default function NewDocumentsFrom() {
           </Grid>
         </Grid>
       </Box>
-      <AlertDialogSlide openPopup={openPopup} setOpenPopup={setOpenPopup} />
+      <AlertDialog
+        openAlert={openAlert}
+        setOpenAlertDialog={setOpenAlertDialog}
+        route={route}
+        content={alertMessage}
+      />
+      <AlertDialogSlide
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+        route={route}
+        content={dialogMessage}
+      />
       <Footer />
     </React.Fragment>
   );

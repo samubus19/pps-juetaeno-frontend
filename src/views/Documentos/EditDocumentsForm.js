@@ -7,15 +7,14 @@ import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Stack } from "@mui/system";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  editarDocumento,
-  getDocumentos,
-} from "../../store/slices/documentos/thunks";
+import { useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { editarDocumento } from "../../store/slices/documentos/thunks";
 import { useBeforeunload } from "react-beforeunload";
-import AlertDialogSlide from "../../components/Mensaje";
+import AlertDialogSlide from "../../components/Dialog";
 import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
+import AlertDialog from "../../components/Alert";
+
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Editar Documento",
 };
@@ -25,15 +24,29 @@ const tiposDocumento = [
   { label: "REC (reclamos)" },
   { label: "CES (ceses)" },
 ];
+const dialogMessage = {
+  title: "¿Desea cancelar la operacion?",
+  message:
+    "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+};
+const route = "/mesaentrada";
 
 export default function EditDocumentsFrom() {
   const selectionRow = useLocation();
   const selectionData = selectionRow.state[0];
-  console.log(selectionData);
-  const { requestEditStatus } = useSelector((state) => state.documento);
+
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState({
+    type: "",
+    title: "",
+    message: "",
+  });
+  const setOpenAlertDialog = (isTrue) => {
+    setOpenAlert(isTrue);
+  };
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+
   const [openPopup, setPopup] = useState(false);
   const [inputValue, setInputValue] = useState({
     tipoDocumento: "",
@@ -42,40 +55,32 @@ export default function EditDocumentsFrom() {
     setInputValue({ ...inputValue, tipoDocumento: newTipoDocumento });
   };
   useEffect(() => {
-    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))))
-      .then((resp) => {
-        console.log(resp)
-        /*if (resp.payload.status === 403) {
-          alert("invalido");
-          localStorage.clear();
-          window.location.reload();
-        }*/
-      })
-      .catch((error) => {
-        console.log(error)
-        /*if (resp.requestStatus === 403) {
-          alert("sos invalido");
-          localStorage.clear();
-          window.location.reload();
-        }*/
-      });
+    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
   }, []);
 
+  const completeFromAlert = () => {
+    setAlertMessage({
+      type: "warning",
+      title: "Advertencia",
+      message: "Debe completar todos los campos obligatorios",
+    });
+    setOpenAlert(true);
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
     try {
       if (!inputValue.tipoDocumento || inputValue.tipoDocumento === "") {
-        alert("Debe completar todos los campos olbigatorios");
+        completeFromAlert();
         return;
       }
       if (!data.get("numeroDoc") || data.get("numeroDoc") === "") {
-        alert("Debe completar todos los campos olbigatorios");
+        completeFromAlert();
         return;
       }
       if (!data.get("description") || data.get("description") === "") {
-        alert("Debe completar todos los campos olbigatorios");
+        completeFromAlert();
         return;
       }
 
@@ -86,7 +91,25 @@ export default function EditDocumentsFrom() {
         descripcion: data.get("description").trim(),
       };
 
-      dispatch(editarDocumento(bodyEditarDocumento));
+      dispatch(editarDocumento(bodyEditarDocumento)).then((resp) => {
+        if (resp.status === 200) {
+          setAlertMessage({
+            type: "success",
+            title: "El documento fue editado con exito",
+            message: "La operacion ha resultado exitosa, documento editado",
+          });
+          setOpenAlert(true);
+        } else {
+          if (resp.response.status === 500) {
+            setAlertMessage({
+              type: "error",
+              title: "Ocurrio un error",
+              message: "Intentelo mas tarde o llame a personal tecnico. ",
+            });
+            setOpenAlert(true);
+          }
+        }
+      });
     } catch (error) {
       console.log(error);
     }
@@ -98,14 +121,10 @@ export default function EditDocumentsFrom() {
   const cancelar = () => {
     setPopup(true);
   };
-  //useBeforeunload(() => "You'll lose your data!");
-  try {
-    if (requestEditStatus === 200) {
-      navigate("/mesaentrada");
-    }
-  } catch (error) {
-    console.log(error);
-  }
+
+  /*useBeforeunload((e) => {
+    e.preventDefault()
+    setPopup(true)});*/
 
   return (
     <React.Fragment>
@@ -224,7 +243,18 @@ export default function EditDocumentsFrom() {
           </Grid>
         </Grid>
       </Box>
-      <AlertDialogSlide openPopup={openPopup} setOpenPopup={setOpenPopup} />
+      <AlertDialog
+        openAlert={openAlert}
+        setOpenAlertDialog={setOpenAlertDialog}
+        route={route}
+        content={alertMessage}
+      />
+      <AlertDialogSlide
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+        route={route}
+        content={dialogMessage}
+      />
       <Footer />
     </React.Fragment>
   );

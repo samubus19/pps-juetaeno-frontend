@@ -30,7 +30,6 @@ export default function FormEditarUsuarioPersona() {
     const dispatch      = useDispatch()
     const idUsuario     = useLocation().state[0]
     const usuario       = useSelector(state => state.usuario.usuario)
-    const isLoading     = useSelector(state => state.usuario.isLoading)
     const requestStatus = useSelector(state => state.usuario.requestStatus)
     
     useEffect(() => {
@@ -190,7 +189,6 @@ export default function FormEditarUsuarioPersona() {
                               id="nombre"
                               name="nombre"
                               margin="dense"
-                              // defaultValue={usuario.nombre}
                               defaultValue={usuario.nombre}
                             />
                             <TextField
