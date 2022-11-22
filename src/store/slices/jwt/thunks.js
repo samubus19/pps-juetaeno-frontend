@@ -21,14 +21,16 @@ export const verificarTokenAsync = createAsyncThunk(
         },
         status: resp.status,
       };*/
+      console.log(resp)
       return resp;
      
       
     } catch (error) {
       dispatch(setRequestStatus({ requestStatus: error.response.status }));
-     
-      localStorage.clear();
-      window.location.reload();
+      console.log(error)
+      return error.response
+      // localStorage.clear();
+      // window.location.reload();
       //console.log(error);
     }
   }

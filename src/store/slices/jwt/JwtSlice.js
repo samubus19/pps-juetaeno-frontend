@@ -30,8 +30,13 @@ export const jwtSlice = createSlice({
   extraReducers : builder => {
     builder.addCase(verificarTokenAsync.fulfilled, (state,action) => {
       state.isLoading     = false
-      state.requestStatus = action.payload.status
-      state.valido        = action.payload.data.valido
+      if(action.payload) {
+        state.requestStatus = action.payload.status
+        state.valido        = action.payload.data.valido
+      } else {
+        state.requestStatus = action.payload.data.status
+        state.valido        = action.payload.data.valido
+      }
     })
     builder.addCase(verificarTokenAsync.pending, (state, action) => {
       state.isLoading     = true
