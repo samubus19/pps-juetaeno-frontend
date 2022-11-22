@@ -17,14 +17,13 @@ export default function AlertDialogSlide(props) {
 
   const navigate = useNavigate();
 
-
   const handleClose = () => {
-   setOpenPopup(false)
+    setOpenPopup(false);
   };
 
   const handleAgree = () => {
-        navigate("/mesaentrada")
-  }
+    navigate("/mesaentrada");
+  };
 
   return (
     <div>
@@ -36,7 +35,7 @@ export default function AlertDialogSlide(props) {
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle>{"Desea cancelar la operacion"}</DialogTitle>
-      
+
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button onClick={handleAgree}>Aceptar</Button>

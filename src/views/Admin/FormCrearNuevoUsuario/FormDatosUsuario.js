@@ -13,7 +13,7 @@ import { crearNuevaPersonaAsync, getPersonaPorNumeroAsync } from '../../../store
 import { crearNuevoUsuario, crearNuevoUsuarioAsync }                      from '../../../store/slices/usuarios';
 import { DateTime, luxon }                        from 'luxon';
 import { useEffect }                              from "react";
-
+import { verificarTokenAsync } from "../../../store/slices/jwt/thunks";
 const mainFeaturedPost = {
   area    : `Administrador - Nuevo Usuario `,
 };
@@ -31,7 +31,9 @@ export default function FormDatosUsuario() {
   const requestStatus = useSelector((state) => state.persona.requestStatus);
   const dispatch      = useDispatch();
   const navigate      = useNavigate();
-  
+  useEffect(() => {
+    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
+  }, []);
   const [inputValue, setInputValue] = useState({
     Area          : "",
     Rol           : "",

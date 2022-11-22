@@ -17,6 +17,7 @@ import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUsuarios } from "../../store/slices/usuarios/thunks";
+import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 
 const columns = [
   { field: "usuario", headerName: "Usuario", width: 90, renderCell: renderCellExpand },
@@ -44,6 +45,7 @@ export default function AdminMainForm() {
   //es el id seleccionado para enviar a editar
   const [selectionId, setSelectionId] = useState([]);
   useEffect(() => {
+    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
     dispatch(getUsuarios());
   }, []);
   return (

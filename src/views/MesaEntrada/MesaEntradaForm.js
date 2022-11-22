@@ -4,7 +4,10 @@ import Footer from "../../components/Footer";
 import TabPanel from "../../components/TabPanel";
 import { renderCellExpand } from "../../components/CellExpand";
 import { upperFormatearArea } from "../../helpers/Area-UpperFormater";
-import { getDocumentos, actualizarEstadoDocumento } from "../../store/slices/documentos";
+import {
+  getDocumentos,
+  actualizarEstadoDocumento,
+} from "../../store/slices/documentos";
 import {
   Button,
   Divider,
@@ -18,6 +21,7 @@ import { Stack, Box } from "@mui/system";
 import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 
 // en area se debe poner el nombre tal cual se guarde en el back
 const area = "Mesa de Entrada";
@@ -92,6 +96,7 @@ export default function MesaEntradaForm() {
 
   const navigate = useNavigate();
   useEffect(() => {
+    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
     dispatch(getDocumentos());
   }, []);
 
@@ -265,10 +270,9 @@ export default function MesaEntradaForm() {
                         variant="contained"
                         fullWidth
                         onClick={() => {
-                          navigate(
-                            `/mesaentrada/editardocumento`,
-                            { state : selectionId }
-                          );
+                          navigate(`/mesaentrada/editardocumento`, {
+                            state: selectionRow,
+                          });
                         }}
                       >
                         Editar Documento

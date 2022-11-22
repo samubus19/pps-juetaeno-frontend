@@ -35,22 +35,11 @@ const theme = createTheme({
 });
 
 function App() {
-  const dispatch = useDispatch();
+ 
   let usuario = {};
-  if(localStorage.getItem("usuario") ) {
-    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))))
-    .then(resp => { 
-      if(!resp.payload.data.valido) {
-        localStorage.removeItem("usuario")
-        localStorage.removeItem("token")
-        return
-      } 
-      (usuario = JSON.parse(localStorage.getItem("usuario")));
-      return 
-    })
-    } else {
-      (usuario = { area: "" })
-    } 
+  !!localStorage.getItem("usuario")
+    ? (usuario = JSON.parse(localStorage.getItem("usuario")))
+    : (usuario = { area: "" });
 
   return (
     <ThemeProvider theme={theme}>
