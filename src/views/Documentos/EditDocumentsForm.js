@@ -15,7 +15,8 @@ import {
 } from "../../store/slices/documentos/thunks";
 import { useBeforeunload } from "react-beforeunload";
 import AlertDialogSlide from "../../components/Mensaje";
-import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
+import comprobarValidezJWT from '../../errors/ComprobarJWTtoken';
+
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Editar Documento",
 };
@@ -42,23 +43,16 @@ export default function EditDocumentsFrom() {
     setInputValue({ ...inputValue, tipoDocumento: newTipoDocumento });
   };
   useEffect(() => {
-    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))))
-      .then((resp) => {
-        console.log(resp)
-        /*if (resp.payload.status === 403) {
-          alert("invalido");
-          localStorage.clear();
-          window.location.reload();
-        }*/
-      })
-      .catch((error) => {
-        console.log(error)
-        /*if (resp.requestStatus === 403) {
-          alert("sos invalido");
-          localStorage.clear();
-          window.location.reload();
-        }*/
-      });
+      comprobarValidezJWT(dispatch);
+    // dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))))
+    //   .then((resp) => {
+    //     if(resp.payload.status === 403) {
+    //       alert("invalido")
+    //       localStorage.clear();
+    //       window.location.reload()
+    //     }
+    //   })
+      
   }, []);
 
   const handleSubmit = (event) => {
@@ -81,9 +75,9 @@ export default function EditDocumentsFrom() {
 
       const bodyEditarDocumento = {
         _id: selectionData._id,
-        tipoDocumento: inputValue.tipoDocumento.split(" ")[0].trim(),
-        nroDocumento: data.get("numeroDoc").trim(),
-        descripcion: data.get("description").trim(),
+        tipoDocumento : inputValue.tipoDocumento.split(" ")[0].trim(),
+        nroDocumento  : data.get("numeroDoc").trim(),
+        descripcion   : data.get("description").trim(),
       };
 
       dispatch(editarDocumento(bodyEditarDocumento));
