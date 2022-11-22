@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { editarUsuarioAsync, getUsuarioPorIdAsync } from "../../store/slices/usuarios/thunks";
 import { DateTime } from "luxon";
 import { editarPersonaAsync } from "../../store/slices/personas/thunks";
-
+import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 const mainFeaturedPost = {
   area: "Administrador - Editar Usuario",
 };
@@ -34,6 +34,7 @@ export default function FormEditarUsuarioPersona() {
     const requestStatus = useSelector(state => state.usuario.requestStatus)
     
     useEffect(() => {
+      dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
       dispatch(getUsuarioPorIdAsync(idUsuario))
     }, []);
     

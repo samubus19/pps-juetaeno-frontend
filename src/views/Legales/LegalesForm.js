@@ -18,7 +18,7 @@ import { Stack, Box } from "@mui/system";
 import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-
+import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 // en area se debe poner el nombre tal cual se guarde en el back
 const area = "Legales";
 const estado = [{ label: "En Pase" }, { label: "Finalizado" }];
@@ -78,6 +78,7 @@ const mainFeaturedPost = { area: "Area: Legales" };
 export default function LegalesForm() {
 
   const { showDocumentos = [], requestStatus } = useSelector((state) => state.documento);
+  const { valido } = useSelector((state) => state.jwttoken);
   const dispatch = useDispatch();
   const [value, setValue] = React.useState(0);
   //es el id seleccionado 
@@ -97,6 +98,7 @@ export default function LegalesForm() {
     setEstadoValue({ ...estadoValue, areaDestino: areaDestino });
   };
   useEffect(() => {
+    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
     dispatch(getDocumentos());
   }, []);
 

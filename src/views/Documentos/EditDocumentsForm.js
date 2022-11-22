@@ -13,7 +13,9 @@ import {
   editarDocumento,
   getDocumentos,
 } from "../../store/slices/documentos/thunks";
-
+import { useBeforeunload } from "react-beforeunload";
+import AlertDialogSlide from "../../components/Mensaje";
+import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Editar Documento",
 };
@@ -25,24 +27,39 @@ const tiposDocumento = [
 ];
 
 export default function EditDocumentsFrom() {
-  const selectionId = useLocation();
-  const documentId  = selectionId.state[0];
-  console.log(documentId)
-  const {
-    showDocumentos = [],
-    isLoading,
-    requestStatus,
-  } = useSelector((state) => state.documento);
+  const selectionRow = useLocation();
+  const selectionData = selectionRow.state[0];
+  console.log(selectionData);
+  const { requestEditStatus } = useSelector((state) => state.documento);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-   const [openPopup, setPopup] = useState(false);
+  const [openPopup, setPopup] = useState(false);
   const [inputValue, setInputValue] = useState({
     tipoDocumento: "",
   });
   const tipoDocumentoChange = (event, newTipoDocumento) => {
     setInputValue({ ...inputValue, tipoDocumento: newTipoDocumento });
   };
+  useEffect(() => {
+    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))))
+      .then((resp) => {
+        console.log(resp)
+        /*if (resp.payload.status === 403) {
+          alert("invalido");
+          localStorage.clear();
+          window.location.reload();
+        }*/
+      })
+      .catch((error) => {
+        console.log(error)
+        /*if (resp.requestStatus === 403) {
+          alert("sos invalido");
+          localStorage.clear();
+          window.location.reload();
+        }*/
+      });
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -63,33 +80,32 @@ export default function EditDocumentsFrom() {
       }
 
       const bodyEditarDocumento = {
-        _id: documentId,
+        _id: selectionData._id,
         tipoDocumento: inputValue.tipoDocumento.split(" ")[0].trim(),
         nroDocumento: data.get("numeroDoc").trim(),
         descripcion: data.get("description").trim(),
       };
 
       dispatch(editarDocumento(bodyEditarDocumento));
-   
     } catch (error) {
       console.log(error);
     }
   };
- const setOpenPopup = (isTrue) => {
-   setPopup(isTrue);
- };
+  const setOpenPopup = (isTrue) => {
+    setPopup(isTrue);
+  };
 
   const cancelar = () => {
     setPopup(true);
   };
-  useBeforeunload(() => "You'll lose your data!");
-     try {
-       if (requestEditStatus === 200) {
-         navigate("/mesaentrada");
-       }
-     } catch (error) {
-       console.log(error);
-     }
+  //useBeforeunload(() => "You'll lose your data!");
+  try {
+    if (requestEditStatus === 200) {
+      navigate("/mesaentrada");
+    }
+  } catch (error) {
+    console.log(error);
+  }
 
   return (
     <React.Fragment>
@@ -133,7 +149,7 @@ export default function EditDocumentsFrom() {
                       inputValue={inputValue.tipoDocumento}
                       onInputChange={tipoDocumentoChange}
                       fullWidth
-                      defaultValue={selectionData.state[0].tipoDocumento}
+                      defaultValue={selectionData.tipoDocumento}
                       options={tiposDocumento}
                       renderInput={(params) => (
                         <TextField {...params} label="Tipo de documento" />
@@ -142,7 +158,7 @@ export default function EditDocumentsFrom() {
                     <TextField
                       fullWidth
                       required
-                      defaultValue={selectionData.state[0].nroDocumento}
+                      defaultValue={selectionData.nroDocumento}
                       id="numeroDoc"
                       label="Numero de documento"
                       name="numeroDoc"
@@ -153,7 +169,7 @@ export default function EditDocumentsFrom() {
                       id="description"
                       name="description"
                       label="Descripción"
-                      defaultValue={selectionData.state[0].descripcion}
+                      defaultValue={selectionData.descripcion}
                       multiline
                       rows={4}
                     />

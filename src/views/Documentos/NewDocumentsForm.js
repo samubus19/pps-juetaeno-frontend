@@ -1,6 +1,6 @@
 import MainFeaturedPost from "../../components/MainFeaturedPost";
 import Footer from "../../components/Footer";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Divider, Grid, Typography } from "@mui/material";
 import Box from "@mui/system/Box";
 import TextField from "@mui/material/TextField";
@@ -10,7 +10,9 @@ import { Stack } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { crearNuevoDocumento } from "../../store/slices/documentos/thunks";
-
+import AlertDialogSlide from "../../components/Mensaje";
+import { useBeforeunload } from "react-beforeunload";
+import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Nuevo Documento",
 };
@@ -22,7 +24,9 @@ const tiposDocumento = [
 ];
 
 export default function NewDocumentsFrom() {
-  const { isLoading, requestNewStatus } = useSelector((state) => state.documento);
+  const { isLoading, requestNewStatus } = useSelector(
+    (state) => state.documento
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openPopup, setPopup] = useState(false);
@@ -33,6 +37,10 @@ export default function NewDocumentsFrom() {
   const tipoDocumentoChange = (event, newTipoDocumento) => {
     setInputValue({ ...inputValue, tipoDocumento: newTipoDocumento });
   };
+  useEffect(() => {
+    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
+   
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -63,8 +71,7 @@ export default function NewDocumentsFrom() {
       console.log(error);
     }
   };
-  useBeforeunload(()=>"reload")
-  
+  //useBeforeunload(() => "reload");
   try {
     if (requestNewStatus === 201) {
       navigate("/mesaentrada");
@@ -73,14 +80,13 @@ export default function NewDocumentsFrom() {
     console.log(error);
   }
 
- 
- const setOpenPopup =(isTrue) =>{
-    setPopup(isTrue)
- }
- const cancel = () =>{
-  setPopup(true)
- }
- 
+  const setOpenPopup = (isTrue) => {
+    setPopup(isTrue);
+  };
+  const cancel = () => {
+    setPopup(true);
+  };
+
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -195,7 +201,7 @@ export default function NewDocumentsFrom() {
           </Grid>
         </Grid>
       </Box>
-      <AlertDialogSlide openPopup={openPopup} setOpenPopup ={setOpenPopup}/>
+      <AlertDialogSlide openPopup={openPopup} setOpenPopup={setOpenPopup} />
       <Footer />
     </React.Fragment>
   );

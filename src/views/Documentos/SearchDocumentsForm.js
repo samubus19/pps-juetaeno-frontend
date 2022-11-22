@@ -8,7 +8,7 @@ import { Box } from "@mui/system";
 import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-
+import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 const columns = [
   {
     field: "tipoDocumento",
@@ -92,6 +92,7 @@ export default function SearchDocumentsForm() {
     }
   };
   useEffect(() => {
+    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
     dispatch(getDocumentos());
   }, []);
 

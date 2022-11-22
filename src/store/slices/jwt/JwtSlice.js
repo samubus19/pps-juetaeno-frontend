@@ -18,8 +18,9 @@ export const jwtSlice = createSlice({
       // immutable state based off those changes
       state.isLoading = true
     },
-    setValido : (state, action) => {
-      state.valido  = action.payload.data.valido
+   
+    setValido : (state, action) =>{
+      state.valido =action.payload.valido
     },
     setRequestStatus    : (state, action) => {
       state.isLoading     = false
@@ -39,5 +40,4 @@ export const jwtSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { startLoading, setValido, setRequestStatus } =
-  jwtSlice.actions;
+export const { startLoading, setValido, setRequestStatus } = jwtSlice.actions;

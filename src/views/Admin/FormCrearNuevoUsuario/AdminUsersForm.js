@@ -1,6 +1,6 @@
 import MainFeaturedPost                           from "../../../components/MainFeaturedPost";
 import Footer                                     from "../../../components/Footer";
-import React, { useState }                        from "react";
+import React, { useEffect, useState }                        from "react";
 import { Button, Divider, Grid, Typography }      from "@mui/material";
 import Box                                        from "@mui/system/Box";
 import TextField                                  from "@mui/material/TextField";
@@ -11,7 +11,7 @@ import { useNavigate }                            from "react-router-dom";
 import { useDispatch, useSelector }               from "react-redux";
 import { crearNuevaPersonaAsync, getPersonaPorNumeroAsync } from '../../../store/slices/personas';
 import { DateTime}                        from 'luxon';
-
+import { verificarTokenAsync } from "../../../store/slices/jwt/thunks";
 const mainFeaturedPost = {
   area    : `Administrador - Nuevo Usuario `,
 };
@@ -25,7 +25,9 @@ export default function NewUsersFrom() {
   const requestStatus = useSelector((state) => state.persona.requestStatus);
   const dispatch      = useDispatch();
   const navigate      = useNavigate();
-  
+  useEffect(() => {
+    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
+  }, []);
   const [inputValue, setInputValue] = useState({
     TipoDocumento : "",
   });
