@@ -70,3 +70,37 @@ export const editarPersonaAsync = createAsyncThunk( 'persona/editarPersonaAsync'
         return error;
       }
   }) 
+
+
+  export const eliminarPersonaAsync = createAsyncThunk( 'persona/eliminarPersonaAsync' ,async (body, {getState, dispatch}) => {
+    try {
+
+        const resp = await juetaenoApi(
+            {
+              method : "delete",
+              url : `/person/${body.idPersona}`,
+              data : {
+                rol : JSON.parse(localStorage.getItem("usuario")).rol
+              },
+              headers : {
+                "Authorization" : mToken
+              }
+            }
+          );
+
+        // const resp     = await juetaenoApi.delete(`/person/${body.idPersona}`, {
+        //     rol : JSON.parse(localStorage.getItem("usuario")).rol
+        // },{
+        //     headers : {
+        //         'Authorization' : mToken
+        //     }
+        // })
+        return resp
+        // dispatch(setRequestStatus({requestStatus : resp.status}))  
+      }  
+      catch(error) {
+        dispatch(setRequestStatus({requestStatus : error.response.status})) 
+        console.log(error);
+        return error;
+      }
+  }) 

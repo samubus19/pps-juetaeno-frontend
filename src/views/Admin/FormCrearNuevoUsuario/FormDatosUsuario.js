@@ -46,20 +46,11 @@ export default function FormDatosUsuario() {
   const setOpenPopup = (isTrue) => {
     setPopup(isTrue);
   };
-  const cancelar = () => {
-    /**
-     * !aca se debe emitir un dispatch para elimiar la persona usando el id pasado por parametro
-     */
-    setDialogMessage({
-      title: "¿Desea cancelar la operacion?",
-      message:
-        "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
-    });
-    setPopup(true);
-  };
+  
   const persona = useSelector((state) => state.persona.personas);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
   useEffect(() => {
     dispatch(
       verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
@@ -74,6 +65,22 @@ export default function FormDatosUsuario() {
       }
     });
   }, []);
+
+  const cancelar = () => {
+    /**
+     * !aca se debe emitir un dispatch para elimiar la persona usando el id pasado por parametro
+     */
+    
+    setDialogMessage({
+      title: "¿Desea cancelar la operacion?",
+      message:
+        "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+      eliminado : true,
+      idPersona : persona.persona._id
+    });
+    setPopup(true);
+  };
+
   const [inputValue, setInputValue] = useState({
     Area: "",
     Rol: "",

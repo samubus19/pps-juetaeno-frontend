@@ -7,6 +7,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { eliminarPersonaAsync } from "../store/slices/personas/thunks";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -16,6 +18,7 @@ export default function AlertDialogSlide(props) {
   const { openPopup, setOpenPopup, route, content } = props;
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleClose = () => {
     setOpenPopup(false);
@@ -26,8 +29,12 @@ export default function AlertDialogSlide(props) {
       localStorage.clear();
       window.location.reload();
     } else {
+      if(content.eliminado) {
+        dispatch(eliminarPersonaAsync({idPersona : content.idPersona}))
+      }
       navigate(`${route}`);
     }
+
   };
 
   return (
