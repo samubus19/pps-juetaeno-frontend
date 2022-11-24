@@ -30,20 +30,9 @@ const area = [
 ];
 const rol = [{ label: "USUARIO" }, { label: "ADMIN" }];
 const tipoDocumento = [{ label: "DNI" }, { label: "LC" }];
-const dialogMessage = {
-  title: "Desea cancelar la operacion",
-  message:
-    "todos los datos se perderan y sera redirigido al inbox de administrador",
-};
 const route = "/admin";
 export default function FormEditarUsuarioPersona() {
-  const [openPopup, setPopup] = useState(false);
-  const setOpenPopup = (isTrue) => {
-    setPopup(isTrue);
-  };
-  const cancel = () => {
-    setPopup(true);
-  };
+
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState({
     type: "",
@@ -54,12 +43,41 @@ export default function FormEditarUsuarioPersona() {
   const setOpenAlertDialog = (isTrue) => {
     setOpenAlert(isTrue);
   };
+  const [dialogMessage, setDialogMessage] = useState({
+    title: "",
+    message: "",
+    expirado: false,
+  });
+  const [openPopup, setPopup] = useState(false);
+  const setOpenPopup = (isTrue) => {
+    setPopup(isTrue);
+  };
+  const cancelar = () => {
+    setDialogMessage({
+      title: "¿Desea cancelar la operacion?",
+      message:
+        "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+    });
+    setPopup(true);
+  };
+
   const dispatch = useDispatch();
   const idUsuario = useLocation().state[0];
   const usuario = useSelector((state) => state.usuario.usuario);
 
   useEffect(() => {
-    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
+    dispatch(
+      verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
+    ).then((resp) => {
+      if (resp.payload.status === 403) {
+        setDialogMessage({
+          title: "Su sesion ha caducado",
+          message: "Por favor vuelva a ingresar al sistema",
+          expirado: true,
+        });
+        setPopup(true);
+      }
+    });
     dispatch(getUsuarioPorIdAsync(idUsuario));
   }, []);
 
@@ -329,7 +347,7 @@ export default function FormEditarUsuarioPersona() {
                       </Grid>
                       <Grid item xs={1} />
                       <Grid item xs={2}>
-                        <Button variant="contained" fullWidth onClick={cancel}>
+                        <Button variant="contained" fullWidth onClick={cancelar}>
                           Cancelar
                         </Button>
                       </Grid>

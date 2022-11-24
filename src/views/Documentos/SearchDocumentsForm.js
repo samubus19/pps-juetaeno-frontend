@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 import CircularIndeterminate from "../../components/Circular";
+import AlertDialogSlide from "../../components/Dialog";
 const columns = [
   {
     field: "tipoDocumento",
@@ -67,6 +68,15 @@ const mainFeaturedPost = {
 };
 
 export default function SearchDocumentsForm() {
+  const [dialogMessage, setDialogMessage] = useState({
+    title: "",
+    message: "",
+    expirado: false,
+  });
+  const [openPopup, setPopup] = useState(false);
+  const setOpenPopup = (isTrue) => {
+    setPopup(isTrue);
+  };
   const { showDocumentos = [] } = useSelector((state) => state.documento);
   const dispatch = useDispatch();
   //es el id seleccionado para enviar a editar
@@ -93,7 +103,18 @@ export default function SearchDocumentsForm() {
     }
   };
   useEffect(() => {
-    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
+    dispatch(
+      verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
+    ).then((resp) => {
+      if (resp.payload.status === 403) {
+        setDialogMessage({
+          title: "Su sesion ha caducado",
+          message: "Por favor vuelva a ingresar al sistema",
+          expirado: true,
+        });
+        setPopup(true);
+      }
+    });
     dispatch(getDocumentos());
   }, []);
 
@@ -157,6 +178,11 @@ export default function SearchDocumentsForm() {
           <Grid item xs={1}></Grid>
         </Grid>
       </Box>
+      <AlertDialogSlide
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+        content={dialogMessage}
+      />
       <Footer />
     </React.Fragment>
   );

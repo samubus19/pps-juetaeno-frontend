@@ -1,63 +1,82 @@
-import MainFeaturedPost                           from "../../../components/MainFeaturedPost";
-import Footer                                     from "../../../components/Footer";
-import React, { useState }                        from "react";
-import { Button, Divider, Grid, Typography }      from "@mui/material";
-import Box                                        from "@mui/system/Box";
-import TextField                                  from "@mui/material/TextField";
-import Paper                                      from "@mui/material/Paper";
-import Autocomplete                               from "@mui/material/Autocomplete";
-import { Stack }                                  from "@mui/system";
-import { useNavigate }                            from "react-router-dom";
-import { useDispatch, useSelector }               from "react-redux";
-import {  crearNuevoUsuarioAsync }                      from '../../../store/slices/usuarios';
-import { useEffect }                              from "react";
+import MainFeaturedPost from "../../../components/MainFeaturedPost";
+import Footer from "../../../components/Footer";
+import React, { useState } from "react";
+import { Button, Divider, Grid, Typography } from "@mui/material";
+import Box from "@mui/system/Box";
+import TextField from "@mui/material/TextField";
+import Paper from "@mui/material/Paper";
+import Autocomplete from "@mui/material/Autocomplete";
+import { Stack } from "@mui/system";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { crearNuevoUsuarioAsync } from "../../../store/slices/usuarios";
+import { useEffect } from "react";
 import { verificarTokenAsync } from "../../../store/slices/jwt/thunks";
 import AlertDialog from "../../../components/Alert";
 import AlertDialogSlide from "../../../components/Dialog";
 const mainFeaturedPost = {
-  area    : `Administrador - Nuevo Usuario `,
+  area: `Administrador - Nuevo Usuario `,
 };
 const area = [
-  { label : "LEGALES" },
-  { label : "MIEMBROS" },
-  { label : "MESAENTRADA" },
-  { label : "ADMIN" },
+  { label: "LEGALES" },
+  { label: "MIEMBROS" },
+  { label: "MESAENTRADA" },
+  { label: "ADMIN" },
 ];
-const rol           = [{ label: "USUARIO" }, { label: "ADMIN" }];
-  const route = "/admin"; 
- const dialogMessage = {
-   title: "Desea cancelar la operacion",
-   message:
-     "todos los datos se perderan y sera redirigido al inbox de administrador",
- };
-  
+const rol = [{ label: "USUARIO" }, { label: "ADMIN" }];
+const route = "/admin";
+
 export default function FormDatosUsuario() {
-    const [openAlert, setOpenAlert] = useState(false);
-    const [alertMessage, setAlertMessage] = useState({
-      type: "",
-      title: "",
-      message: "",
-      reaload: false,
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState({
+    type: "",
+    title: "",
+    message: "",
+    reaload: false,
+  });
+  const setOpenAlertDialog = (isTrue) => {
+    setOpenAlert(isTrue);
+  };
+  const [dialogMessage, setDialogMessage] = useState({
+    title: "",
+    message: "",
+    expirado: false,
+  });
+  const [openPopup, setPopup] = useState(false);
+  const setOpenPopup = (isTrue) => {
+    setPopup(isTrue);
+  };
+  const cancelar = () => {
+    /**
+     * !aca se debe emitir un dispatch para elimiar la persona usando el id pasado por parametro
+     */
+    setDialogMessage({
+      title: "¿Desea cancelar la operacion?",
+      message:
+        "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
     });
-    const setOpenAlertDialog = (isTrue) => {
-      setOpenAlert(isTrue);
-    };
-    const [openPopup, setPopup] = useState(false);
-    const setOpenPopup = (isTrue) => {
-      setPopup(isTrue);
-    };
-    const cancel = () => {
-      setPopup(true);
-    };
-  const persona       = useSelector((state) => state.persona.personas);
-  const dispatch      = useDispatch();
-  const navigate      = useNavigate();
+    setPopup(true);
+  };
+  const persona = useSelector((state) => state.persona.personas);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   useEffect(() => {
-    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
+    dispatch(
+      verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
+    ).then((resp) => {
+      if (resp.payload.status === 403) {
+        setDialogMessage({
+          title: "Su sesion ha caducado",
+          message: "Por favor vuelva a ingresar al sistema",
+          expirado: true,
+        });
+        setPopup(true);
+      }
+    });
   }, []);
   const [inputValue, setInputValue] = useState({
-    Area          : "",
-    Rol           : "",
+    Area: "",
+    Rol: "",
   });
   const areaChange = (event, newArea) => {
     setInputValue({ ...inputValue, Area: newArea });
@@ -71,68 +90,61 @@ export default function FormDatosUsuario() {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
 
-      if(!data.get("usuario") || data.get("usuario") === ""){
+      if (!data.get("usuario") || data.get("usuario") === "") {
         alert("Debe completar todos los campos olbigatorios");
-        return
+        return;
       }
-      if(!data.get("mail") || data.get("mail") === ""){
+      if (!data.get("mail") || data.get("mail") === "") {
         alert("Debe completar todos los campos olbigatorios");
-        return
+        return;
       }
-      if(!inputValue.Area || inputValue.Area === ""){
+      if (!inputValue.Area || inputValue.Area === "") {
         alert("Debe completar todos los campos olbigatorios");
-        return
+        return;
       }
-      if(!data.get("contrasenia") || data.get("contrasenia") === ""){
+      if (!data.get("contrasenia") || data.get("contrasenia") === "") {
         alert("Debe completar todos los campos olbigatorios");
-        return
+        return;
       }
-      
-      
 
-    const bodyUsuario = {
-        usuario         : data.get("usuario"),
-        email           : data.get("mail"),
-        contrasenia     : data.get("contrasenia"),
-        area            : inputValue.Area,
-        rol             : JSON.parse(localStorage.getItem("usuario")).rol,
-        idPersona       : persona.persona._id
-    }
+      const bodyUsuario = {
+        usuario: data.get("usuario"),
+        email: data.get("mail"),
+        contrasenia: data.get("contrasenia"),
+        area: inputValue.Area,
+        rol: JSON.parse(localStorage.getItem("usuario")).rol,
+        idPersona: persona.persona._id,
+      };
 
-    dispatch(crearNuevoUsuarioAsync(bodyUsuario))
-        .then((resp)=>{
-          if (resp.payload.status === 201) {
-                        setAlertMessage({
-                          type: "success",
-                          title: "Exito",
-                          message:
-                            "El usuario fue registrado con exito",
-                        });
-                        setOpenAlert(true);
-          } else if (resp.payload.response.status === 400) {
-                        setAlertMessage({
-                          type: "error",
-                          title: "Error",
-                          message:
-                            "Ya existe un usuario con ese nombre",
-                        });
-                        setOpenAlert(true);
-          } else if (resp.payload.response.status === 500) {
-                        setAlertMessage({
-                          type: "error",
-                          title: "Error",
-                          message:
-                            "Hubo un problema, porfavor intente nuevamente o llame a personal tecnico",
-                        });
-                        setOpenAlert(true);
-          }
-        })
-
+      dispatch(crearNuevoUsuarioAsync(bodyUsuario)).then((resp) => {
+        if (resp.payload.status === 201) {
+          setAlertMessage({
+            type: "success",
+            title: "Exito",
+            message: "El usuario fue registrado con exito",
+          });
+          setOpenAlert(true);
+        } else if (resp.payload.response.status === 400) {
+          setAlertMessage({
+            type: "error",
+            title: "Error",
+            message: "Ya existe un usuario con ese nombre",
+          });
+          setOpenAlert(true);
+        } else if (resp.payload.response.status === 500) {
+          setAlertMessage({
+            type: "error",
+            title: "Error",
+            message:
+              "Hubo un problema, porfavor intente nuevamente o llame a personal tecnico",
+          });
+          setOpenAlert(true);
+        }
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-   
-  }
+  };
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -245,11 +257,7 @@ export default function FormDatosUsuario() {
                   </Grid>
                   <Grid item xs={1} />
                   <Grid item xs={2}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={cancel}
-                    >
+                    <Button variant="contained" fullWidth onClick={cancelar}>
                       Cancelar
                     </Button>
                   </Grid>

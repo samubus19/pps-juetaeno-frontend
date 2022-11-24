@@ -14,6 +14,7 @@ import AlertDialogSlide from "../../components/Dialog";
 import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 import AlertDialog from "../../components/Alert";
 import SimpleBackdrop from "../../components/Backdrop";
+
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Editar Documento",
 };
@@ -23,11 +24,7 @@ const tiposDocumento = [
   { label: "REC (reclamos)" },
   { label: "CES (ceses)" },
 ];
-const dialogMessage = {
-  title: "¿Desea cancelar la operacion?",
-  message:
-    "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
-};
+
 const route = "/mesaentrada";
 
 export default function EditDocumentsFrom() {
@@ -46,8 +43,20 @@ export default function EditDocumentsFrom() {
   };
 
   const dispatch = useDispatch();
-
+  const [dialogMessage, setDialogMessage] = useState({
+    title: "",
+    message: "",
+    expirado: false,
+  });
   const [openPopup, setPopup] = useState(false);
+  const cancelar = () => {
+    setDialogMessage({
+      title: "¿Desea cancelar la operacion?",
+      message:
+        "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+    });
+    setPopup(true);
+  };
   const [inputValue, setInputValue] = useState({
     tipoDocumento: "",
   });
@@ -55,7 +64,18 @@ export default function EditDocumentsFrom() {
     setInputValue({ ...inputValue, tipoDocumento: newTipoDocumento });
   };
   useEffect(() => {
-    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
+    dispatch(
+      verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
+    ).then((resp) => {
+      if (resp.payload.status === 403) {
+        setDialogMessage({
+          title: "Su sesion ha caducado",
+          message: "Por favor vuelva a ingresar al sistema",
+          expirado: true,
+        });
+        setPopup(true);
+      }
+    });
   }, []);
 
   const completeFromAlert = () => {
@@ -118,9 +138,7 @@ export default function EditDocumentsFrom() {
     setPopup(isTrue);
   };
 
-  const cancelar = () => {
-    setPopup(true);
-  };
+  
 
   return (
     <React.Fragment>

@@ -13,7 +13,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function AlertDialogSlide(props) {
-  const { openPopup, setOpenPopup, route,  content  } = props;
+  const { openPopup, setOpenPopup, route, content } = props;
 
   const navigate = useNavigate();
 
@@ -22,7 +22,12 @@ export default function AlertDialogSlide(props) {
   };
 
   const handleAgree = () => {
-    navigate(`${route}`);
+    if (content.expirado) {
+      localStorage.clear();
+      window.location.reload();
+    } else {
+      navigate(`${route}`);
+    }
   };
 
   return (
@@ -31,7 +36,6 @@ export default function AlertDialogSlide(props) {
         open={openPopup}
         TransitionComponent={Transition}
         keepMounted
-        onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle>{content.title}</DialogTitle>
@@ -41,7 +45,7 @@ export default function AlertDialogSlide(props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={handleClose}  sx={{display : `${content.expirado? "none": ""}`}}>Cancelar</Button>
           <Button onClick={handleAgree}>Aceptar</Button>
         </DialogActions>
       </Dialog>

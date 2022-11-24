@@ -24,6 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 import AlertDialog from "../../components/Alert";
 import CircularIndeterminate from "../../components/Circular";
+import AlertDialogSlide from "../../components/Dialog";
 // en area se debe poner el nombre tal cual se guarde en el back
 const area = "Legales";
 const estado = [{ label: "En Pase" }, { label: "Finalizado" }];
@@ -102,6 +103,16 @@ export default function LegalesForm() {
     setOpenAlert(isTrue);
   };
 
+  const [dialogMessage, setDialogMessage] = useState({
+    title: "",
+    message: "",
+    expirado: false,
+  });
+  const [openPopup, setPopup] = useState(false);
+  const setOpenPopup = (isTrue) => {
+    setPopup(isTrue);
+  };
+
   const navigate = useNavigate();
 
   const estadoChange = (event, estado) => {
@@ -111,7 +122,18 @@ export default function LegalesForm() {
     setEstadoValue({ ...estadoValue, areaDestino: areaDestino });
   };
   useEffect(() => {
-    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
+    dispatch(
+      verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
+    ).then((resp) => {
+      if (resp.payload.status === 403) {
+        setDialogMessage({
+          title: "Su sesion ha caducado",
+          message: "Por favor vuelva a ingresar al sistema",
+          expirado: true,
+        });
+        setPopup(true);
+      }
+    });
     dispatch(getDocumentos());
   }, []);
 
@@ -332,6 +354,11 @@ export default function LegalesForm() {
         setOpenAlertDialog={setOpenAlertDialog}
         route={route}
         content={alertMessage}
+      />
+      <AlertDialogSlide
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+        content={dialogMessage}
       />
       <Footer />
     </React.Fragment>

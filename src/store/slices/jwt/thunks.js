@@ -14,21 +14,21 @@ export const verificarTokenAsync = createAsyncThunk(
         },
       });
       //dispatch(setValido({ valido: resp.data.valido }));
-      
+
       /*const result = {
         data: {
           valido: resp.data.valido,
         },
         status: resp.status,
       };*/
+      console.log(resp);
       return resp;
-     
-      
     } catch (error) {
       dispatch(setRequestStatus({ requestStatus: error.response.status }));
-     
-      localStorage.clear();
-      window.location.reload();
+      console.log(error);
+      return error.response;
+      // localStorage.clear();
+      // window.location.reload();
       //console.log(error);
     }
   }

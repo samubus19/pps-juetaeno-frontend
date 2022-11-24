@@ -10,9 +10,9 @@ import { Stack } from "@mui/system";
 import { useDispatch } from "react-redux";
 import { crearNuevoDocumento } from "../../store/slices/documentos/thunks";
 import AlertDialogSlide from "../../components/Dialog";
-import { useBeforeunload } from "react-beforeunload";
 import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 import AlertDialog from "../../components/Alert";
+
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Nuevo Documento",
 };
@@ -22,17 +22,28 @@ const tiposDocumento = [
   { label: "REC (reclamos)" },
   { label: "CES (ceses)" },
 ];
-const dialogMessage = {
-  title: "¿Desea cancelar la operacion?",
-  message:
-    "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
-};
+
 const route = "/mesaentrada";
 
 export default function NewDocumentsFrom() {
-
   const dispatch = useDispatch();
+  const [dialogMessage, setDialogMessage] = useState({
+    title: "",
+    message: "",
+    expirado: false,
+  });
   const [openPopup, setPopup] = useState(false);
+  const setOpenPopup = (isTrue) => {
+    setPopup(isTrue);
+  };
+  const cancelar = () => {
+    setDialogMessage({
+      title: "¿Desea cancelar la operacion?",
+      message:
+        "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+    });
+    setPopup(true);
+  };
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState({
     type: "",
@@ -51,7 +62,18 @@ export default function NewDocumentsFrom() {
     setInputValue({ ...inputValue, tipoDocumento: newTipoDocumento });
   };
   useEffect(() => {
-    dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
+    dispatch(
+      verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
+    ).then((resp) => {
+      if (resp.payload.status === 403) {
+        setDialogMessage({
+          title: "Su sesion ha caducado",
+          message: "Por favor vuelva a ingresar al sistema",
+          expirado: true,
+        });
+        setPopup(true);
+      }
+    });
   }, []);
   const completeFromAlert = () => {
     setAlertMessage({
@@ -94,7 +116,7 @@ export default function NewDocumentsFrom() {
             message: "La operacion ha resultado exitosa, documento añadido",
           });
           setOpenAlert(true);
-        }else{
+        } else {
           if (resp.response.status === 400) {
             setAlertMessage({
               type: "error",
@@ -102,30 +124,24 @@ export default function NewDocumentsFrom() {
               message: `${resp.response.data.mensaje}`,
             });
             setOpenAlert(true);
-          }else{
-           if (resp.response.status === 500) {
+          } else {
+            if (resp.response.status === 500) {
               setAlertMessage({
                 type: "error",
                 title: "Ocurrio un error",
                 message: "Intentelo mas tarde o llame a personal tecnico. ",
               });
               setOpenAlert(true);
-           }
+            }
           }
         }
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
-  //useBeforeunload(() => "reload");
 
-  const setOpenPopup = (isTrue) => {
-    setPopup(isTrue);
-  };
-  const cancel = () => {
-    setPopup(true);
-  };
+  
 
   return (
     <React.Fragment>
@@ -230,7 +246,7 @@ export default function NewDocumentsFrom() {
                   </Grid>
                   <Grid item xs={1} />
                   <Grid item xs={2}>
-                    <Button variant="contained" fullWidth onClick={cancel}>
+                    <Button variant="contained" fullWidth onClick={cancelar}>
                       Cancelar
                     </Button>
                   </Grid>
