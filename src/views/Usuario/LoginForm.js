@@ -29,9 +29,9 @@ function Copyright() {
 }
 
 export default function LoginForm() {
-  const dispatch = useDispatch();
+  const dispatch    = useDispatch();
   const { usuario } = useSelector((state) => state.usuario);
-  const navigate = useNavigate();
+  const navigate    = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -40,8 +40,8 @@ export default function LoginForm() {
     if (!!data.get("email") & !!data.get("password")) {
       dispatch(
         loginUsuario({
-          usuario: data.get("email"),
-          contrasenia: data.get("password"),
+          usuario     : data.get("email"),
+          contrasenia : data.get("password"),
         })
       );
     } else {

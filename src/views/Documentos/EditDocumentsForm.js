@@ -106,9 +106,9 @@ export default function EditDocumentsFrom() {
 
       const bodyEditarDocumento = {
         _id: selectionData._id,
-        tipoDocumento: inputValue.tipoDocumento.split(" ")[0].trim(),
-        nroDocumento: data.get("numeroDoc").trim(),
-        descripcion: data.get("description").trim(),
+        tipoDocumento : inputValue.tipoDocumento.split(" ")[0].trim(),
+        nroDocumento  : data.get("numeroDoc").trim(),
+        descripcion   : data.get("description").trim(),
       };
 
       dispatch(editarDocumento(bodyEditarDocumento)).then((resp) => {
