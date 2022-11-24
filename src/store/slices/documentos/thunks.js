@@ -125,8 +125,8 @@ export const actualizarEstadoDocumento = (body) => {
           },
         }
       );
-
       dispatch(setRequestStatus({ requestStatus: resp.status }));
+      return resp
     } catch (error) {
       dispatch(setRequestStatus({ requestStatus: error.response.status }));
       //console.log(error);

@@ -52,18 +52,20 @@ export const crearNuevoUsuarioAsync = createAsyncThunk( 'usuario/crearNuevoUsuar
             area        : body.area,
             rol         : body.rol,
             idPersona   : body.idPersona
+            
         },{
             headers : {
                 'Authorization' : mToken
             }
         })
-        console.log(resp)
+        //console.log(resp)
         return resp
         // dispatch(setRequestStatus({requestStatus : resp.status}))  
       }  
       catch(error) {
         dispatch(setRequestStatus({requestStatus : error.response.status})) 
         console.log(error);
+        return error
       }
 }) 
 
@@ -82,8 +84,8 @@ export const actualizarContrasenia = (body, params) => {
         dispatch(setRequestStatus({requestStatus : resp.status}))  
         } catch(error) {
           dispatch(setRequestStatus({requestStatus : error.response.status})) 
-
           console.log(error)
+          return error;
         }
     }
 } 
@@ -106,6 +108,7 @@ export const editarUsuarioAsync = createAsyncThunk( 'usuario/editarUsuarioAsync'
     catch(error) {
       dispatch(setRequestStatus({requestStatus : error.response.status})) 
       console.log(error);
+      return error;
     }
 }) 
 

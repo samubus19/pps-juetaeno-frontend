@@ -31,7 +31,8 @@ export const crearNuevaPersonaAsync = createAsyncThunk('persona/crearNuevaPerson
                 tipoDocumento   : body.tipoDocumento,
                 nroDocumento    : body.nroDocumento,
                 fechaNacimiento : body.fechaNacimiento,
-                nroTelefono     : body.nroTelefono
+                nroTelefono     : body.nroTelefono,
+                 rol             : JSON.parse(localStorage.getItem("usuario")).rol
             } ,
             {
                 headers : {
@@ -43,7 +44,8 @@ export const crearNuevaPersonaAsync = createAsyncThunk('persona/crearNuevaPerson
         // dispatch(setRequestStatus({requestStatus : resp.status}))   
     } catch (error) {
         dispatch(setRequestStatus({requestStatus : error.response.status}))
-        console.log(error);            
+        //console.log(error);  
+        return error;          
     }
 }) 
 export const editarPersonaAsync = createAsyncThunk( 'persona/editarPersonaAsync' ,async (body, {getState, dispatch}) => {
@@ -65,5 +67,6 @@ export const editarPersonaAsync = createAsyncThunk( 'persona/editarPersonaAsync'
       catch(error) {
         dispatch(setRequestStatus({requestStatus : error.response.status})) 
         console.log(error);
+        return error;
       }
   }) 

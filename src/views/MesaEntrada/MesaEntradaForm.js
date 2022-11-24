@@ -22,11 +22,14 @@ import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
+import AlertDialog from "../../components/Alert";
+import CircularIndeterminate from "../../components/Circular";
 
 // en area se debe poner el nombre tal cual se guarde en el back
 const area = "Mesa de Entrada";
 const estado = [{ label: "En Pase" }];
 const areaDestino = [{ label: "Legales" }, { label: "Miembros de Junta" }];
+const route = "/mesaentrada";
 
 const columns = [
   {
@@ -94,6 +97,17 @@ export default function MesaEntradaForm() {
     _id: "",
   });
 
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState({
+    type: "",
+    title: "",
+    message: "",
+    reload: false,
+  });
+  const setOpenAlertDialog = (isTrue) => {
+    setOpenAlert(isTrue);
+  };
+
   const navigate = useNavigate();
   useEffect(() => {
     dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
@@ -129,15 +143,27 @@ export default function MesaEntradaForm() {
         _id: estadoValue._id,
       };
 
-      dispatch(actualizarEstadoDocumento(bodyActualizarEstado));
-
-      try {
-        if (requestStatus === 200) {
-          window.location.reload();
+      dispatch(actualizarEstadoDocumento(bodyActualizarEstado)).then((resp) => {
+        if (resp.status === 200) {
+          setAlertMessage({
+            type: "success",
+            title: "El documento fue actualizado con exito",
+            message: "La operacion ha resultado exitosa, documento actualizado",
+            reaload: true,
+          });
+          setOpenAlert(true);
+        } else {
+          if (resp.response.status === 500) {
+            setAlertMessage({
+              type: "error",
+              title: "Ocurrio un error",
+              message: "Intentelo mas tarde o llame a personal tecnico. ",
+              reaload: true,
+            });
+            setOpenAlert(true);
+          }
         }
-      } catch (error) {
-        console.log(error);
-      }
+      });
     } catch (error) {
       console.log(error);
     }
@@ -151,57 +177,63 @@ export default function MesaEntradaForm() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
-              <div style={{ height: 450, width: "100%" }}>
-                <DataGrid
-                  localeText={
-                    esES.components.MuiDataGrid.defaultProps.localeText
-                  }
-                  getRowId={(r) => r._id}
-                  rows={showDocumentos.filter(
-                    (documento) => documento.sede === area
-                  )}
-                  columns={columns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  checkboxSelection
-                  selectionModel={selectionId}
-                  onSelectionModelChange={(selection) => {
-                    if (selection.length > 1) {
-                      const selectionSet = new Set(selectionId);
-                      const result = selection.filter(
-                        (s) => !selectionSet.has(s)
-                      );
-                      setSelectionId(result);
-                      setEstadoValue({
-                        ...estadoValue,
-                        _id: result[0],
-                      });
-                      const selectedRow = showDocumentos.filter(
-                        (documento) => documento._id === result[0]
-                      );
-                      setSelectionRow(selectedRow);
-                    } else {
-                      setSelectionId(selection);
-                      setEstadoValue({
-                        ...estadoValue,
-                        _id: selection[0],
-                      });
-                      const selectedRow = showDocumentos.filter(
-                        (documento) => documento._id === selection[0]
-                      );
-                      setSelectionRow(selectedRow);
-                    }
-                  }}
-                  components={{ Toolbar: GridToolbar }}
-                  componentsProps={{
-                    toolbar: {
-                      showQuickFilter: true,
-                      quickFilterProps: { debounceMs: 500 },
-                      csvOptions: { disableToolbarButton: true },
-                      printOptions: { disableToolbarButton: true },
-                    },
-                  }}
-                />
+              <div style={{ height: 450, width: "100%", display: "grid" }}>
+                {showDocumentos.length === 0 ? (
+                  <CircularIndeterminate />
+                ) : (
+                  <>
+                    <DataGrid
+                      localeText={
+                        esES.components.MuiDataGrid.defaultProps.localeText
+                      }
+                      getRowId={(r) => r._id}
+                      rows={showDocumentos.filter(
+                        (documento) => documento.sede === area
+                      )}
+                      columns={columns}
+                      pageSize={5}
+                      rowsPerPageOptions={[5]}
+                      checkboxSelection
+                      selectionModel={selectionId}
+                      onSelectionModelChange={(selection) => {
+                        if (selection.length > 1) {
+                          const selectionSet = new Set(selectionId);
+                          const result = selection.filter(
+                            (s) => !selectionSet.has(s)
+                          );
+                          setSelectionId(result);
+                          setEstadoValue({
+                            ...estadoValue,
+                            _id: result[0],
+                          });
+                          const selectedRow = showDocumentos.filter(
+                            (documento) => documento._id === result[0]
+                          );
+                          setSelectionRow(selectedRow);
+                        } else {
+                          setSelectionId(selection);
+                          setEstadoValue({
+                            ...estadoValue,
+                            _id: selection[0],
+                          });
+                          const selectedRow = showDocumentos.filter(
+                            (documento) => documento._id === selection[0]
+                          );
+                          setSelectionRow(selectedRow);
+                        }
+                      }}
+                      components={{ Toolbar: GridToolbar }}
+                      componentsProps={{
+                        toolbar: {
+                          showQuickFilter: true,
+                          quickFilterProps: { debounceMs: 500 },
+                          csvOptions: { disableToolbarButton: true },
+                          printOptions: { disableToolbarButton: true },
+                        },
+                      }}
+                    />
+                  </>
+                )}
               </div>
             </Paper>
           </Grid>
@@ -337,6 +369,13 @@ export default function MesaEntradaForm() {
           </Grid>
         </Grid>
       </Box>
+
+      <AlertDialog
+        openAlert={openAlert}
+        setOpenAlertDialog={setOpenAlertDialog}
+        route={route}
+        content={alertMessage}
+      />
       <Footer />
     </React.Fragment>
   );

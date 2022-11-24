@@ -9,11 +9,11 @@ import Autocomplete                               from "@mui/material/Autocomple
 import { Stack }                                  from "@mui/system";
 import { useNavigate }                            from "react-router-dom";
 import { useDispatch, useSelector }               from "react-redux";
-import { crearNuevaPersonaAsync, getPersonaPorNumeroAsync } from '../../../store/slices/personas';
-import { crearNuevoUsuario, crearNuevoUsuarioAsync }                      from '../../../store/slices/usuarios';
-import { DateTime, luxon }                        from 'luxon';
+import {  crearNuevoUsuarioAsync }                      from '../../../store/slices/usuarios';
 import { useEffect }                              from "react";
 import { verificarTokenAsync } from "../../../store/slices/jwt/thunks";
+import AlertDialog from "../../../components/Alert";
+import AlertDialogSlide from "../../../components/Dialog";
 const mainFeaturedPost = {
   area    : `Administrador - Nuevo Usuario `,
 };
@@ -24,11 +24,32 @@ const area = [
   { label : "ADMIN" },
 ];
 const rol           = [{ label: "USUARIO" }, { label: "ADMIN" }];
-export default function FormDatosUsuario() {
+  const route = "/admin"; 
+ const dialogMessage = {
+   title: "Desea cancelar la operacion",
+   message:
+     "todos los datos se perderan y sera redirigido al inbox de administrador",
+ };
   
+export default function FormDatosUsuario() {
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState({
+      type: "",
+      title: "",
+      message: "",
+      reaload: false,
+    });
+    const setOpenAlertDialog = (isTrue) => {
+      setOpenAlert(isTrue);
+    };
+    const [openPopup, setPopup] = useState(false);
+    const setOpenPopup = (isTrue) => {
+      setPopup(isTrue);
+    };
+    const cancel = () => {
+      setPopup(true);
+    };
   const persona       = useSelector((state) => state.persona.personas);
-  const isLoading     = useSelector((state) => state.persona.isLoading);
-  const requestStatus = useSelector((state) => state.persona.requestStatus);
   const dispatch      = useDispatch();
   const navigate      = useNavigate();
   useEffect(() => {
@@ -79,7 +100,33 @@ export default function FormDatosUsuario() {
     }
 
     dispatch(crearNuevoUsuarioAsync(bodyUsuario))
-        .then(() => navigate("/admin"))
+        .then((resp)=>{
+          if (resp.payload.status === 201) {
+                        setAlertMessage({
+                          type: "success",
+                          title: "Exito",
+                          message:
+                            "El usuario fue registrado con exito",
+                        });
+                        setOpenAlert(true);
+          } else if (resp.payload.response.status === 400) {
+                        setAlertMessage({
+                          type: "error",
+                          title: "Error",
+                          message:
+                            "Ya existe un usuario con ese nombre",
+                        });
+                        setOpenAlert(true);
+          } else if (resp.payload.response.status === 500) {
+                        setAlertMessage({
+                          type: "error",
+                          title: "Error",
+                          message:
+                            "Hubo un problema, porfavor intente nuevamente o llame a personal tecnico",
+                        });
+                        setOpenAlert(true);
+          }
+        })
 
     } catch (error) {
       console.log(error)
@@ -113,7 +160,7 @@ export default function FormDatosUsuario() {
                   }}
                 >
                   <Typography variant="h6" p={1}>
-                    Datos del Usuario 
+                    Datos del Usuario
                   </Typography>
                 </Paper>
                 <Box p={1} pt={3} pb={3}>
@@ -178,7 +225,7 @@ export default function FormDatosUsuario() {
                   }}
                 >
                   <Typography variant="h6" p={1}>
-                    Opciones: 
+                    Opciones:
                   </Typography>
                 </Paper>
                 <Divider />
@@ -201,11 +248,9 @@ export default function FormDatosUsuario() {
                     <Button
                       variant="contained"
                       fullWidth
-                      onClick={() => {
-                        navigate("/admin");
-                      }}
+                      onClick={cancel}
                     >
-                      Cancelar 
+                      Cancelar
                     </Button>
                   </Grid>
                   <Grid item xs={1} />
@@ -215,6 +260,18 @@ export default function FormDatosUsuario() {
           </Grid>
         </Grid>
       </Box>
+      <AlertDialog
+        openAlert={openAlert}
+        setOpenAlertDialog={setOpenAlertDialog}
+        content={alertMessage}
+        route={route}
+      />
+      <AlertDialogSlide
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+        route={route}
+        content={dialogMessage}
+      />
       <Footer />
     </React.Fragment>
   );

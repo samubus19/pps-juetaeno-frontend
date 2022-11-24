@@ -3,7 +3,10 @@ import MainFeaturedPost from "../../components/MainFeaturedPost";
 import Footer from "../../components/Footer";
 import TabPanel from "../../components/TabPanel";
 import { renderCellExpand } from "../../components/CellExpand";
-import { getDocumentos, actualizarEstadoDocumento } from "../../store/slices/documentos";
+import {
+  getDocumentos,
+  actualizarEstadoDocumento,
+} from "../../store/slices/documentos";
 import { upperFormatearArea } from "../../helpers/Area-UpperFormater";
 import {
   Button,
@@ -19,6 +22,8 @@ import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
+import AlertDialog from "../../components/Alert";
+import CircularIndeterminate from "../../components/Circular";
 // en area se debe poner el nombre tal cual se guarde en el back
 const area = "Legales";
 const estado = [{ label: "En Pase" }, { label: "Finalizado" }];
@@ -26,7 +31,6 @@ const areaDestino = [
   { label: "Mesa de Entrada" },
   { label: "Miembros de Junta" },
 ];
-
 
 const columns = [
   {
@@ -74,14 +78,12 @@ const columns = [
   },
 ];
 const mainFeaturedPost = { area: "Area: Legales" };
-
+const route = "/legales";
 export default function LegalesForm() {
-
-  const { showDocumentos = [], requestStatus } = useSelector((state) => state.documento);
-  const { valido } = useSelector((state) => state.jwttoken);
+  const { showDocumentos = [] } = useSelector((state) => state.documento);
   const dispatch = useDispatch();
   const [value, setValue] = React.useState(0);
-  //es el id seleccionado 
+  //es el id seleccionado
   const [selectionId, setSelectionId] = useState([]);
   //body para actualizar estado
   const [estadoValue, setEstadoValue] = useState({
@@ -89,6 +91,17 @@ export default function LegalesForm() {
     areaDestino: "",
     _id: "",
   });
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState({
+    type: "",
+    title: "",
+    message: "",
+    reload: false,
+  });
+  const setOpenAlertDialog = (isTrue) => {
+    setOpenAlert(isTrue);
+  };
+
   const navigate = useNavigate();
 
   const estadoChange = (event, estado) => {
@@ -102,98 +115,113 @@ export default function LegalesForm() {
     dispatch(getDocumentos());
   }, []);
 
-
-const handleSubmit = (event) => {
-  event.preventDefault();
-  try {
-    if (!estadoValue.estado || estadoValue.estado === "") {
-      alert("Debe completar todos los campos olbigatorios");
-      return;
-    }
-    if (!estadoValue.areaDestino || estadoValue.areaDestino === "") {
-      alert("Debe completar todos los campos olbigatorios");
-      return;
-    }
-    if (!estadoValue._id || estadoValue._id === "") {
-      alert("Debe completar todos los campos olbigatorios");
-      return;
-    }
-
-    const bodyActualizarEstado = {
-      nuevoEstado: estadoValue.estado,
-      sede: upperFormatearArea(estadoValue.areaDestino),
-      _id: estadoValue._id,
-    };
-
-    dispatch(actualizarEstadoDocumento(bodyActualizarEstado));
-
+  const handleSubmit = (event) => {
+    event.preventDefault();
     try {
-      if (requestStatus === 200) {
-        window.location.href = window.location.href;
+      if (!estadoValue.estado || estadoValue.estado === "") {
+        alert("Debe completar todos los campos olbigatorios");
+        return;
       }
+      if (!estadoValue.areaDestino || estadoValue.areaDestino === "") {
+        alert("Debe completar todos los campos olbigatorios");
+        return;
+      }
+      if (!estadoValue._id || estadoValue._id === "") {
+        alert("Debe completar todos los campos olbigatorios");
+        return;
+      }
+
+      const bodyActualizarEstado = {
+        nuevoEstado: estadoValue.estado,
+        sede: upperFormatearArea(estadoValue.areaDestino),
+        _id: estadoValue._id,
+      };
+
+      dispatch(actualizarEstadoDocumento(bodyActualizarEstado)).then((resp) => {
+        if (resp.status === 200) {
+          setAlertMessage({
+            type: "success",
+            title: "El documento fue actualizado con exito",
+            message: "La operacion ha resultado exitosa, documento actualizado",
+            reaload: true,
+          });
+          setOpenAlert(true);
+        } else {
+          if (resp.response.status === 500) {
+            setAlertMessage({
+              type: "error",
+              title: "Ocurrio un error",
+              message: "Intentelo mas tarde o llame a personal tecnico. ",
+              reaload: true,
+            });
+            setOpenAlert(true);
+          }
+        }
+      });
     } catch (error) {
       console.log(error);
     }
-  } catch (error) {
-    console.log(error);
-  }
- 
-};
+  };
 
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
-
       <Box sx={{ flexGrow: 1 }} pt={2} pl={4} pr={4}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
               <Divider />
-              <div style={{ height: 450, width: "100%" }}>
-                <DataGrid
-                  localeText={
-                    esES.components.MuiDataGrid.defaultProps.localeText
-                  }
-                  getRowId={(r) => r._id}
-                  rows={showDocumentos.filter(
-                    (documento) => documento.sede === area
-                  )}
-                  columns={columns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  checkboxSelection
-                  selectionModel={selectionId}
-                  onSelectionModelChange={(selection) => {
-                    if (selection.length > 1) {
-                      const selectionSet = new Set(selectionId);
-                      const result = selection.filter(
-                        (s) => !selectionSet.has(s)
-                      );
+              <div style={{ height: 450, width: "100%", display: "grid" }}>
+                {showDocumentos.length === 0 ? (
+                  <CircularIndeterminate />
+                ) : (
+                  <>
+                    <DataGrid
+                      localeText={
+                        esES.components.MuiDataGrid.defaultProps.localeText
+                      }
+                      getRowId={(r) => r._id}
+                      rows={showDocumentos.filter(
+                        (documento) => documento.sede === area
+                      )}
+                      columns={columns}
+                      pageSize={5}
+                      rowsPerPageOptions={[5]}
+                      checkboxSelection
+                      selectionModel={selectionId}
+                      onSelectionModelChange={(selection) => {
+                        if (selection.length > 1) {
+                          const selectionSet = new Set(selectionId);
+                          const result = selection.filter(
+                            (s) => !selectionSet.has(s)
+                          );
 
-                      setSelectionId(result);
-                      setEstadoValue({
-                        ...estadoValue,
-                        _id: result[0],
-                      });
-                    } else {
-                      setSelectionId(selection);
+                          setSelectionId(result);
+                          setEstadoValue({
+                            ...estadoValue,
+                            _id: result[0],
+                          });
+                        } else {
+                          setSelectionId(selection);
 
-                      setEstadoValue({
-                        ...estadoValue,
-                        _id: selection[0],
-                      });
-                    }
-                  }}
-                  components={{ Toolbar: GridToolbar }}
-                  componentsProps={{
-                    toolbar: {
-                      showQuickFilter: true,
-                      quickFilterProps: { debounceMs: 500 },
-                      csvOptions: { disableToolbarButton: true },
-                      printOptions: { disableToolbarButton: true },
-                    },
-                  }}
-                />
+                          setEstadoValue({
+                            ...estadoValue,
+                            _id: selection[0],
+                          });
+                        }
+                      }}
+                      components={{ Toolbar: GridToolbar }}
+                      componentsProps={{
+                        toolbar: {
+                          showQuickFilter: true,
+                          quickFilterProps: { debounceMs: 500 },
+                          csvOptions: { disableToolbarButton: true },
+                          printOptions: { disableToolbarButton: true },
+                        },
+                      }}
+                    />
+                  </>
+                )}
               </div>
             </Paper>
           </Grid>
@@ -298,6 +326,13 @@ const handleSubmit = (event) => {
           </Grid>
         </Grid>
       </Box>
+
+      <AlertDialog
+        openAlert={openAlert}
+        setOpenAlertDialog={setOpenAlertDialog}
+        route={route}
+        content={alertMessage}
+      />
       <Footer />
     </React.Fragment>
   );

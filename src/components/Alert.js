@@ -18,7 +18,12 @@ export default function AlertDialog(props) {
       switch (content.type) {
         case "success":
           setOpenAlertDialog(false);
-          navigate(`${route}`);
+          if(!!route){
+            navigate(`${route}`);
+          }
+          if (content.reaload) {
+            window.location.reload()
+          }
           break;
         case "error":
           setOpenAlertDialog(false);
@@ -52,18 +57,19 @@ export default function AlertDialog(props) {
 }
 
 /** al ocupar el componente de dialogo el formulario debera incluir 
-
-  const route = "/mesaentrada"; 
+  import AlertDialog from "../../components/Alert";
+  const route = "/rutaAUsar"; 
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState({
     type:"", 
     title: "",
     message: "",
+    reaload: false
   });
   const setOpenAlertDialog = (isTrue) => {setOpenAlert(isTrue);};
 
  * 
-   <AlertDialogSlide
+   <AlertDialog
         openAlert={openAlert}
         setOpenAlertDialog={setOpenAlertDialog}
         route={route}

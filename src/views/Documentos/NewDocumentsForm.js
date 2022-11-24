@@ -38,6 +38,7 @@ export default function NewDocumentsFrom() {
     type: "",
     title: "",
     message: "",
+    reload: false,
   });
   const setOpenAlertDialog = (isTrue) => {
     setOpenAlert(isTrue);

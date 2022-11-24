@@ -10,11 +10,10 @@ import { Stack } from "@mui/system";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { editarDocumento } from "../../store/slices/documentos/thunks";
-import { useBeforeunload } from "react-beforeunload";
 import AlertDialogSlide from "../../components/Dialog";
 import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
 import AlertDialog from "../../components/Alert";
-
+import SimpleBackdrop from "../../components/Backdrop";
 const mainFeaturedPost = {
   area: "Area: Mesa de entrada - Editar Documento",
 };
@@ -40,6 +39,7 @@ export default function EditDocumentsFrom() {
     type: "",
     title: "",
     message: "",
+    reaload: false,
   });
   const setOpenAlertDialog = (isTrue) => {
     setOpenAlert(isTrue);
@@ -122,127 +122,132 @@ export default function EditDocumentsFrom() {
     setPopup(true);
   };
 
-  /*useBeforeunload((e) => {
-    e.preventDefault()
-    setPopup(true)});*/
-
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
-
-      <Box
-        sx={{ flexGrow: 1 }}
-        pt={2}
-        pl={4}
-        pr={4}
-        component="form"
-        noValidate
-        onSubmit={handleSubmit}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
-            <Paper elevation={3}>
-              <div style={{ height: 400, width: "100%" }}>
-                <Paper
-                  component="form"
-                  elevation={0}
-                  sx={{
-                    p: "2px 4px",
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    height: 47,
-                  }}
-                >
-                  <Typography variant="h6" p={1}>
-                    Nuevo Documento - Datos
-                  </Typography>
+      {selectionData.length === 0 ? (
+        <SimpleBackdrop />
+      ) : (
+        <>
+          <Box
+            sx={{ flexGrow: 1 }}
+            pt={2}
+            pl={4}
+            pr={4}
+            component="form"
+            noValidate
+            onSubmit={handleSubmit}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
+                <Paper elevation={3}>
+                  <div style={{ height: 400, width: "100%" }}>
+                    <Paper
+                      component="form"
+                      elevation={0}
+                      sx={{
+                        p: "2px 4px",
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100%",
+                        height: 47,
+                      }}
+                    >
+                      <Typography variant="h6" p={1}>
+                        Nuevo Documento - Datos
+                      </Typography>
+                    </Paper>
+                    <Divider />
+                    <Box p={1} pt={3}>
+                      <Stack spacing={2}>
+                        <Autocomplete
+                          disablePortal
+                          id="typeDoc"
+                          name="typeDoc"
+                          inputValue={inputValue.tipoDocumento}
+                          onInputChange={tipoDocumentoChange}
+                          fullWidth
+                          defaultValue={selectionData.tipoDocumento}
+                          options={tiposDocumento}
+                          renderInput={(params) => (
+                            <TextField {...params} label="Tipo de documento" />
+                          )}
+                        />
+                        <TextField
+                          fullWidth
+                          required
+                          defaultValue={selectionData.nroDocumento}
+                          id="numeroDoc"
+                          label="Numero de documento"
+                          name="numeroDoc"
+                          margin="dense"
+                        />
+                        <TextField
+                          required
+                          id="description"
+                          name="description"
+                          label="Descripción"
+                          defaultValue={selectionData.descripcion}
+                          multiline
+                          rows={4}
+                        />
+                      </Stack>
+                    </Box>
+                  </div>
                 </Paper>
-                <Divider />
-                <Box p={1} pt={3}>
-                  <Stack spacing={2}>
-                    <Autocomplete
-                      disablePortal
-                      id="typeDoc"
-                      name="typeDoc"
-                      inputValue={inputValue.tipoDocumento}
-                      onInputChange={tipoDocumentoChange}
-                      fullWidth
-                      defaultValue={selectionData.tipoDocumento}
-                      options={tiposDocumento}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Tipo de documento" />
-                      )}
-                    />
-                    <TextField
-                      fullWidth
-                      required
-                      defaultValue={selectionData.nroDocumento}
-                      id="numeroDoc"
-                      label="Numero de documento"
-                      name="numeroDoc"
-                      margin="dense"
-                    />
-                    <TextField
-                      required
-                      id="description"
-                      name="description"
-                      label="Descripción"
-                      defaultValue={selectionData.descripcion}
-                      multiline
-                      rows={4}
-                    />
-                  </Stack>
-                </Box>
-              </div>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-            <Paper elevation={3}>
-              <Box sx={{ height: 400, width: "100%" }}>
-                <Paper
-                  component="form"
-                  elevation={0}
-                  sx={{
-                    p: "2px 4px",
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    height: 47,
-                  }}
-                >
-                  <Typography variant="h6" p={1}>
-                    Opciones:
-                  </Typography>
+              </Grid>
+              <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                <Paper elevation={3}>
+                  <Box sx={{ height: 400, width: "100%" }}>
+                    <Paper
+                      component="form"
+                      elevation={0}
+                      sx={{
+                        p: "2px 4px",
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100%",
+                        height: 47,
+                      }}
+                    >
+                      <Typography variant="h6" p={1}>
+                        Opciones:
+                      </Typography>
+                    </Paper>
+                    <Divider />
+                    <Grid
+                      container
+                      spacing={3}
+                      columns={1}
+                      direction="column"
+                      justifyContent="center"
+                      p={3}
+                    >
+                      <Grid item xs={1} />
+                      <Grid item xs={2}>
+                        <Button type="submit" variant="contained" fullWidth>
+                          Guardar
+                        </Button>
+                      </Grid>
+                      <Grid item xs={1} />
+                      <Grid item xs={2}>
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          onClick={cancelar}
+                        >
+                          Cancelar
+                        </Button>
+                      </Grid>
+                      <Grid item xs={1} />
+                    </Grid>
+                  </Box>
                 </Paper>
-                <Divider />
-                <Grid
-                  container
-                  spacing={3}
-                  columns={1}
-                  direction="column"
-                  justifyContent="center"
-                  p={3}
-                >
-                  <Grid item xs={1} />
-                  <Grid item xs={2}>
-                    <Button type="submit" variant="contained" fullWidth>
-                      Guardar
-                    </Button>
-                  </Grid>
-                  <Grid item xs={1} />
-                  <Grid item xs={2}>
-                    <Button variant="contained" fullWidth onClick={cancelar}>
-                      Cancelar
-                    </Button>
-                  </Grid>
-                  <Grid item xs={1} />
-                </Grid>
-              </Box>
-            </Paper>
-          </Grid>
-        </Grid>
-      </Box>
+              </Grid>
+            </Grid>
+          </Box>
+        </>
+      )}
       <AlertDialog
         openAlert={openAlert}
         setOpenAlertDialog={setOpenAlertDialog}

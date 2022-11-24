@@ -9,6 +9,7 @@ import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
+import CircularIndeterminate from "../../components/Circular";
 const columns = [
   {
     field: "tipoDocumento",
@@ -99,7 +100,6 @@ export default function SearchDocumentsForm() {
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
-
       <Box sx={{ flexGrow: 1 }} p={1}>
         <Grid container spacing={2}>
           <Grid item xs={1}></Grid>
@@ -111,40 +111,46 @@ export default function SearchDocumentsForm() {
             </div>
             <Paper elevation={3}>
               <Divider />
-              <div style={{ height: 500, width: "100%" }}>
-                <DataGrid
-                  localeText={
-                    esES.components.MuiDataGrid.defaultProps.localeText
-                  }
-                  getRowId={(r) => r._id}
-                  rows={showDocumentos}
-                  columns={columns}
-                  pageSize={6}
-                  rowsPerPageOptions={[5]}
-                  checkboxSelection
-                  selectionModel={selectionId}
-                  onSelectionModelChange={(selection) => {
-                    if (selection.length > 1) {
-                      const selectionSet = new Set(selectionId);
-                      const result = selection.filter(
-                        (s) => !selectionSet.has(s)
-                      );
+              <div style={{ height: 500, width: "100%", display: "grid" }}>
+                {showDocumentos.length === 0 ? (
+                  <CircularIndeterminate />
+                ) : (
+                  <>
+                    <DataGrid
+                      localeText={
+                        esES.components.MuiDataGrid.defaultProps.localeText
+                      }
+                      getRowId={(r) => r._id}
+                      rows={showDocumentos}
+                      columns={columns}
+                      pageSize={6}
+                      rowsPerPageOptions={[5]}
+                      checkboxSelection
+                      selectionModel={selectionId}
+                      onSelectionModelChange={(selection) => {
+                        if (selection.length > 1) {
+                          const selectionSet = new Set(selectionId);
+                          const result = selection.filter(
+                            (s) => !selectionSet.has(s)
+                          );
 
-                      setSelectionId(result);
-                    } else {
-                      setSelectionId(selection);
-                    }
-                  }}
-                  components={{ Toolbar: GridToolbar }}
-                  componentsProps={{
-                    toolbar: {
-                      showQuickFilter: true,
-                      quickFilterProps: { debounceMs: 500 },
-                      csvOptions: { disableToolbarButton: true },
-                      printOptions: { disableToolbarButton: true },
-                    },
-                  }}
-                />
+                          setSelectionId(result);
+                        } else {
+                          setSelectionId(selection);
+                        }
+                      }}
+                      components={{ Toolbar: GridToolbar }}
+                      componentsProps={{
+                        toolbar: {
+                          showQuickFilter: true,
+                          quickFilterProps: { debounceMs: 500 },
+                          csvOptions: { disableToolbarButton: true },
+                          printOptions: { disableToolbarButton: true },
+                        },
+                      }}
+                    />
+                  </>
+                )}
               </div>
             </Paper>
           </Grid>

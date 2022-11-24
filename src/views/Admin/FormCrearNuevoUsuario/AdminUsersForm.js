@@ -1,35 +1,57 @@
-import MainFeaturedPost                           from "../../../components/MainFeaturedPost";
-import Footer                                     from "../../../components/Footer";
-import React, { useEffect, useState }                        from "react";
-import { Button, Divider, Grid, Typography }      from "@mui/material";
-import Box                                        from "@mui/system/Box";
-import TextField                                  from "@mui/material/TextField";
-import Paper                                      from "@mui/material/Paper";
-import Autocomplete                               from "@mui/material/Autocomplete";
-import { Stack }                                  from "@mui/system";
-import { useNavigate }                            from "react-router-dom";
-import { useDispatch, useSelector }               from "react-redux";
-import { crearNuevaPersonaAsync, getPersonaPorNumeroAsync } from '../../../store/slices/personas';
-import { DateTime}                        from 'luxon';
+import MainFeaturedPost from "../../../components/MainFeaturedPost";
+import Footer from "../../../components/Footer";
+import React, { useEffect, useState } from "react";
+import { Button, Divider, Grid, Typography } from "@mui/material";
+import Box from "@mui/system/Box";
+import TextField from "@mui/material/TextField";
+import Paper from "@mui/material/Paper";
+import Autocomplete from "@mui/material/Autocomplete";
+import { Stack } from "@mui/system";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  crearNuevaPersonaAsync,
+  getPersonaPorNumeroAsync,
+} from "../../../store/slices/personas";
+import { DateTime } from "luxon";
 import { verificarTokenAsync } from "../../../store/slices/jwt/thunks";
+import AlertDialog from "../../../components/Alert";
+import AlertDialogSlide from "../../../components/Dialog";
 const mainFeaturedPost = {
-  area    : `Administrador - Nuevo Usuario `,
+  area: `Administrador - Nuevo Usuario `,
 };
-
-
 const tipoDocumento = [{ label: "DNI" }, { label: "LC" }];
+const dialogMessage = {
+  title: "Desea cancelar la operacion",
+  message:
+    "todos los datos se perderan y sera redirigido al inbox de administrador",
+};
+const route = "/admin";
 export default function NewUsersFrom() {
-  
-  const persona       = useSelector((state) => state.persona.personas);
-  const isLoading     = useSelector((state) => state.persona.isLoading);
-  const requestStatus = useSelector((state) => state.persona.requestStatus);
-  const dispatch      = useDispatch();
-  const navigate      = useNavigate();
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState({
+    type: "",
+    title: "",
+    message: "",
+    reaload: false,
+  });
+  const setOpenAlertDialog = (isTrue) => {
+    setOpenAlert(isTrue);
+  };
+  const [openPopup, setPopup] = useState(false);
+  const setOpenPopup = (isTrue) => {
+    setPopup(isTrue);
+  };
+  const cancel = () => {
+    setPopup(true);
+  };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   useEffect(() => {
     dispatch(verificarTokenAsync(JSON.parse(localStorage.getItem("token"))));
   }, []);
   const [inputValue, setInputValue] = useState({
-    TipoDocumento : "",
+    TipoDocumento: "",
   });
 
   const tipoDocumentoChange = (event, newTipoDocumento) => {
@@ -40,50 +62,79 @@ export default function NewUsersFrom() {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
 
-      if(!data.get("nombre") || data.get("nombre") === ""){
+      if (!data.get("nombre") || data.get("nombre") === "") {
         alert("Debe completar todos los campos olbigatorios");
-        return
+        return;
       }
-      if(!data.get("apellido") || data.get("apellido") === ""){
+      if (!data.get("apellido") || data.get("apellido") === "") {
         alert("Debe completar todos los campos olbigatorios");
-        return
+        return;
       }
-      if(!inputValue.TipoDocumento || inputValue.TipoDocumento === ""){
+      if (!inputValue.TipoDocumento || inputValue.TipoDocumento === "") {
         alert("Debe completar todos los campos olbigatorios");
-        return
+        return;
       }
-      if(!data.get("ndocumento") || data.get("ndocumento") === ""){
+      if (!data.get("ndocumento") || data.get("ndocumento") === "") {
         alert("Debe completar todos los campos olbigatorios");
-        return
+        return;
       }
-      if(!data.get("fecha") || data.get("fecha") === ""){
+      if (!data.get("fecha") || data.get("fecha") === "") {
         alert("Debe completar todos los campos olbigatorios");
-        return
+        return;
       }
-      if(!data.get("telefono") || data.get("telefono") === ""){
+      if (!data.get("telefono") || data.get("telefono") === "") {
         alert("Debe completar todos los campos olbigatorios");
-        return
+        return;
       }
-      
 
       const bodyPersona = {
-        nombre          : data.get("nombre"),
-        apellido        : data.get("apellido"),
-        tipoDocumento   : inputValue.TipoDocumento,
-        nroDocumento    : data.get("ndocumento"),
-        fechaNacimiento : DateTime.fromISO(data.get("fecha")).toFormat('dd/LL/yyyy'),
-        nroTelefono     : data.get("telefono"),
-      }
+        nombre: data.get("nombre"),
+        apellido: data.get("apellido"),
+        tipoDocumento: inputValue.TipoDocumento,
+        nroDocumento: data.get("ndocumento"),
+        fechaNacimiento: DateTime.fromISO(data.get("fecha")).toFormat(
+          "dd/LL/yyyy"
+        ),
+        nroTelefono: data.get("telefono"),
+      };
 
-      dispatch(crearNuevaPersonaAsync(bodyPersona))
-        .then(() => dispatch(getPersonaPorNumeroAsync(bodyPersona.nroDocumento)))
-        .then(() => navigate('/admin/nuevousuario2'))
-        
-      } catch (error) {
-          console.log(error)
+      dispatch(crearNuevaPersonaAsync(bodyPersona)).then((resp) => {
+        if (resp.payload.status === 201) {
+          setAlertMessage({
+            type: "success",
+            title: "Exito",
+            message: "Los datos de la persona fueron registrado con exito",
+          });
+          setOpenAlert(true);
+          if (openAlert === false) {
+            setTimeout(() => {
+              dispatch(getPersonaPorNumeroAsync(bodyPersona.nroDocumento)).then(
+                () => navigate("/admin/nuevousuario2")
+              );
+            }, 4000);
+          }
+        } else if (resp.payload.response.status === 400) {
+          setAlertMessage({
+            type: "error",
+            title: "Error",
+            message:
+              "La persona que se intenta registrar ya existe en la base de datos",
+          });
+          setOpenAlert(true);
+        } else if (resp.payload.response.status === 500) {
+          setAlertMessage({
+            type: "error",
+            title: "Error",
+            message:
+              "Hubo un problema, porfavor intente nuevamente o llame a personal tecnico",
+          });
+          setOpenAlert(true);
+        }
+      });
+    } catch (error) {
+      console.log(error);
     }
-   
-  }
+  };
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -111,7 +162,7 @@ export default function NewUsersFrom() {
                   }}
                 >
                   <Typography variant="h6" p={1}>
-                    Datos Personales 
+                    Datos Personales
                   </Typography>
                 </Paper>
                 <Box p={1} pt={3} pb={3}>
@@ -185,7 +236,7 @@ export default function NewUsersFrom() {
                   }}
                 >
                   <Typography variant="h6" p={1}>
-                    Opciones: 
+                    Opciones:
                   </Typography>
                 </Paper>
                 <Divider />
@@ -205,14 +256,8 @@ export default function NewUsersFrom() {
                   </Grid>
                   <Grid item xs={1} />
                   <Grid item xs={2}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={() => {
-                        navigate("/admin");
-                      }}
-                    >
-                      Cancelar 
+                    <Button variant="contained" fullWidth onClick={cancel}>
+                      Cancelar
                     </Button>
                   </Grid>
                   <Grid item xs={1} />
@@ -222,6 +267,17 @@ export default function NewUsersFrom() {
           </Grid>
         </Grid>
       </Box>
+      <AlertDialog
+        openAlert={openAlert}
+        setOpenAlertDialog={setOpenAlertDialog}
+        content={alertMessage}
+      />
+      <AlertDialogSlide
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+        route={route}
+        content={dialogMessage}
+      />
       <Footer />
     </React.Fragment>
   );
