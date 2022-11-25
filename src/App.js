@@ -55,7 +55,7 @@ function App() {
               redirectTo="/"
               isAllowed={
                 !!usuario.usuario &&
-                usuario.area.toUpperCase().includes("LEGALES")
+                usuario.area.toUpperCase().includes("MESAENTRADA")
               }
             />
           }
@@ -93,7 +93,7 @@ function App() {
               redirectTo="/"
               isAllowed={
                 !!usuario.usuario &&
-                usuario.area.toUpperCase().includes("LEGALES")
+                usuario.area.toUpperCase().includes("MIEMBROS")
               }
             >
               <MiembrosForm />
