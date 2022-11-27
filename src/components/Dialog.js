@@ -1,13 +1,13 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Slide from "@mui/material/Slide";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import * as React               from "react";
+import Button                   from "@mui/material/Button";
+import Dialog                   from "@mui/material/Dialog";
+import DialogActions            from "@mui/material/DialogActions";
+import DialogContent            from "@mui/material/DialogContent";
+import DialogContentText        from "@mui/material/DialogContentText";
+import DialogTitle              from "@mui/material/DialogTitle";
+import Slide                    from "@mui/material/Slide";
+import { useNavigate }          from "react-router-dom";
+import { useDispatch }          from "react-redux";
 import { eliminarPersonaAsync } from "../store/slices/personas/thunks";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -40,10 +40,10 @@ export default function AlertDialogSlide(props) {
   return (
     <div>
       <Dialog
-        open={openPopup}
-        TransitionComponent={Transition}
+        open                = {openPopup}
+        TransitionComponent = {Transition}
+        aria-describedby    = "alert-dialog-slide-description"
         keepMounted
-        aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle>{content.title}</DialogTitle>
         <DialogContent>

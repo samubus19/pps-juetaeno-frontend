@@ -1,111 +1,124 @@
-import React, { useEffect, useState } from "react";
-import MainFeaturedPost from "../../components/MainFeaturedPost";
-import Footer from "../../components/Footer";
-import { renderCellExpand } from "../../components/CellExpand";
+import React, { useEffect, useState }               from "react";
+import MainFeaturedPost                             from "../../components/MainFeaturedPost";
+import Footer                                       from "../../components/Footer";
+import { renderCellExpand }                         from "../../components/CellExpand";
 import { Button, Divider, Grid, Typography, Paper } from "@mui/material";
-import { Box } from "@mui/system";
-import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getUsuarios } from "../../store/slices/usuarios/thunks";
-import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
-import CircularIndeterminate from "../../components/Circular";
-import AlertDialogSlide from "../../components/Dialog";
+import { Box }                                      from "@mui/system";
+import { DataGrid, GridToolbar, esES }              from "@mui/x-data-grid";
+import { useNavigate }                              from "react-router-dom";
+import { useDispatch, useSelector }                 from "react-redux";
+import { getUsuarios }                              from "../../store/slices/usuarios/thunks";
+import { verificarTokenAsync }                      from "../../store/slices/jwt/thunks";
+import CircularIndeterminate                        from "../../components/Circular";
+import AlertDialogSlide                             from "../../components/Dialog";
+
 const columns = [
   {
-    field: "usuario",
-    headerName: "Usuario",
-    width: 90,
-    renderCell: renderCellExpand,
+    field      : "usuario",
+    headerName : "Usuario",
+    width      : 90,
+    renderCell : renderCellExpand,
   },
   {
-    field: "email",
-    headerName: "Email",
-    width: 90,
-    renderCell: renderCellExpand,
+    field      : "email",
+    headerName : "Email",
+    width      : 90,
+    renderCell : renderCellExpand,
   },
   {
-    field: "area",
-    headerName: "Area",
-    width: 90,
-    renderCell: renderCellExpand,
+    field      : "area",
+    headerName : "Area",
+    width      : 90,
+    renderCell : renderCellExpand,
   },
-  { field: "rol", headerName: "Rol", width: 90, renderCell: renderCellExpand },
+  { 
+    field      : "rol", 
+    headerName : "Rol", 
+    width      : 90, 
+    renderCell : renderCellExpand },
   {
-    field: "nombre",
-    headerName: "Nombre",
-    width: 90,
-    renderCell: renderCellExpand,
-  },
-  {
-    field: "apellido",
-    headerName: "Apellido",
-    width: 90,
-    renderCell: renderCellExpand,
+    field      : "nombre",
+    headerName : "Nombre",
+    width      : 90,
+    renderCell : renderCellExpand,
   },
   {
-    field: "tipoDocumento",
-    headerName: "Tipo documento",
-    width: 90,
-    renderCell: renderCellExpand,
+    field      : "apellido",
+    headerName : "Apellido",
+    width      : 90,
+    renderCell : renderCellExpand,
   },
   {
-    field: "nroDocumento",
-    headerName: "Numero documento",
-    width: 90,
-    renderCell: renderCellExpand,
+    field      : "tipoDocumento",
+    headerName : "Tipo documento",
+    width      : 90,
+    renderCell : renderCellExpand,
   },
   {
-    field: "fechaNacimiento",
-    headerName: "Fecha nacimiento",
-    width: 90,
-    renderCell: renderCellExpand,
+    field      : "nroDocumento",
+    headerName : "Numero documento",
+    width      : 90,
+    renderCell : renderCellExpand,
   },
   {
-    field: "nroTelefono",
-    headerName: "Telefono",
-    width: 90,
-    renderCell: renderCellExpand,
+    field      : "fechaNacimiento",
+    headerName : "Fecha nacimiento",
+    width      : 90,
+    renderCell : renderCellExpand,
+  },
+  {
+    field      : "nroTelefono",
+    headerName : "Telefono",
+    width      : 90,
+    renderCell : renderCellExpand,
   },
 ];
 
 const mainFeaturedPost = {
-  area: "Interfaz de Administrador",
+  area : "Interfaz de Administrador",
 };
 
 export default function AdminMainForm() {
+
   const { listadoUsuarios = [], requestStatus } = useSelector(
     (state) => state.usuario
   );
 
   const [dialogMessage, setDialogMessage] = useState({
-    title: "",
-    message: "",
-    expirado: false,
+    title    : "",
+    message  : "",
+    expirado : false,
   });
+
   const [openPopup, setPopup] = useState(false);
+
   const setOpenPopup = (isTrue) => {
     setPopup(isTrue);
   };
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   //es el id seleccionado para enviar a editar
   const [selectionId, setSelectionId] = useState([]);
+
   useEffect(() => {
+
     dispatch(
       verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title: "Su sesion ha caducado",
-          message: "Por favor vuelva a ingresar al sistema",
-          expirado: true,
+          title    : "Su sesion ha caducado",
+          message  : "Por favor vuelva a ingresar al sistema",
+          expirado : true,
         });
         setPopup(true);
       }
     });
     dispatch(getUsuarios());
   }, []);
+
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
@@ -121,17 +134,17 @@ export default function AdminMainForm() {
                 ) : (
                   <>
                     <DataGrid
-                      localeText={
+                      localeText             = {
                         esES.components.MuiDataGrid.defaultProps.localeText
                       }
-                      getRowId={(r) => r._id}
-                      rows={listadoUsuarios}
-                      columns={columns}
-                      pageSize={5}
-                      rowsPerPageOptions={[5]}
-                      checkboxSelection
-                      selectionModel={selectionId}
-                      onSelectionModelChange={(selection) => {
+                      getRowId               = {(r) => r._id}
+                      rows                   = {listadoUsuarios}
+                      columns                = {columns}
+                      pageSize               = {5}
+                      rowsPerPageOptions     = {[5]}
+                      checkboxSelection 
+                      selectionModel         = {selectionId}
+                      onSelectionModelChange = {(selection) => {
                         if (selection.length > 1) {
                           const selectionSet = new Set(selectionId);
                           const result = selection.filter(
@@ -143,13 +156,13 @@ export default function AdminMainForm() {
                           setSelectionId(selection);
                         }
                       }}
-                      components={{ Toolbar: GridToolbar }}
-                      componentsProps={{
-                        toolbar: {
-                          showQuickFilter: true,
-                          quickFilterProps: { debounceMs: 500 },
-                          csvOptions: { disableToolbarButton: true },
-                          printOptions: { disableToolbarButton: true },
+                      components             = {{ Toolbar: GridToolbar }}
+                      componentsProps        = {{
+                        toolbar : {
+                          showQuickFilter  : true,
+                          quickFilterProps : { debounceMs: 500 },
+                          csvOptions       : { disableToolbarButton: true },
+                          printOptions     : { disableToolbarButton: true },
                         },
                       }}
                     />
@@ -162,14 +175,14 @@ export default function AdminMainForm() {
             <Paper elevation={3}>
               <Box sx={{ height: 450, width: "100%" }}>
                 <Paper
-                  component="form"
-                  elevation={0}
-                  sx={{
-                    p: "2px 4px",
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    height: 47,
+                  component = "form"
+                  elevation = {0}
+                  sx        = {{
+                    p          : "2px 4px",
+                    display    : "flex",
+                    alignItems : "center",
+                    width      : "100%",
+                    height     : 47,
                   }}
                 >
                   <Typography variant="h6" p={1}>
@@ -180,11 +193,11 @@ export default function AdminMainForm() {
                 <Divider />
                 <Grid
                   container
-                  spacing={3}
-                  columns={1}
-                  direction="column"
-                  justifyContent="center"
-                  p={3}
+                  spacing        = {3}
+                  columns        = {1}
+                  direction      = "column"
+                  justifyContent = "center"
+                  p              = {3}
                 >
                   <Grid item xs={1} />
                   <Grid item xs={2}>
@@ -213,6 +226,8 @@ export default function AdminMainForm() {
                       {" "}
                       Editar Usuario
                     </Button>
+                  <p style={{textAlign:"center"}}>¡IMPORTANTE! </p>
+                  <p style={{textAlign:"center"}}>Si edita el usuario actualmente logueado deberá iniciar sesión nuevamente.</p>
                   </Grid>
                 </Grid>
               </Box>
@@ -221,9 +236,9 @@ export default function AdminMainForm() {
         </Grid>
       </Box>
       <AlertDialogSlide
-        openPopup={openPopup}
-        setOpenPopup={setOpenPopup}
-        content={dialogMessage}
+        openPopup    ={openPopup}
+        setOpenPopup ={setOpenPopup}
+        content      ={dialogMessage}
       />
       <Footer />
     </React.Fragment>

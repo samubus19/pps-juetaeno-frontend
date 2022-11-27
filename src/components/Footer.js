@@ -1,8 +1,8 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
+import Box        from "@mui/material/Box";
+import Container  from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
+import Link       from "@mui/material/Link";
 
 function Copyright() {
   return (
@@ -25,10 +25,10 @@ function Footer(props) {
           J.U.E.T.A.E.N.O
         </Typography>
         <Typography
-          variant="subtitle1"
-          align="center"
-          color="text.secondary"
-          component="p"
+          variant   = "subtitle1"
+          align     = "center"
+          color     = "text.secondary"
+          component = "p"
         >
           (Junta Única de Evaluación de Títulos y Antecedentes del Educador del
           Nivel Obligatorio)

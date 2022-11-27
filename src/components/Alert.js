@@ -1,7 +1,7 @@
-import * as React from "react";
-import Dialog from "@mui/material/Dialog";
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
+import * as React      from "react";
+import Dialog          from "@mui/material/Dialog";
+import Alert           from "@mui/material/Alert";
+import AlertTitle      from "@mui/material/AlertTitle";
 import { useNavigate } from "react-router-dom";
 
 export default function AlertDialog(props) {
@@ -16,6 +16,7 @@ export default function AlertDialog(props) {
   const onTimeClose = () => {
     setTimeout(() => {
       switch (content.type) {
+        
         case "success":
           setOpenAlertDialog(false);
           if(!!route){
@@ -25,12 +26,15 @@ export default function AlertDialog(props) {
             window.location.reload()
           }
           break;
+        
         case "error":
           setOpenAlertDialog(false);
           break;
+        
         case "warning":
           setOpenAlertDialog(false);
           break;
+        
         default:
           break;
       }
@@ -42,10 +46,10 @@ export default function AlertDialog(props) {
   return (
     <div>
       <Dialog
-        open={openAlert}
+        open             = {openAlert}
+        aria-labelledby  = "alert-dialog-title"
+        aria-describedby = "alert-dialog-description"
         //onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
       >
         <Alert severity={content.type}>
           <AlertTitle>{content.title}</AlertTitle>

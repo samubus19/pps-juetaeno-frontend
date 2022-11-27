@@ -1,65 +1,71 @@
-import MainFeaturedPost from "../../../components/MainFeaturedPost";
-import Footer from "../../../components/Footer";
-import React, { useState } from "react";
+import MainFeaturedPost                      from "../../../components/MainFeaturedPost";
+import Footer                                from "../../../components/Footer";
+import React, { useState }                   from "react";
 import { Button, Divider, Grid, Typography } from "@mui/material";
-import Box from "@mui/system/Box";
-import TextField from "@mui/material/TextField";
-import Paper from "@mui/material/Paper";
-import Autocomplete from "@mui/material/Autocomplete";
-import { Stack } from "@mui/system";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { crearNuevoUsuarioAsync } from "../../../store/slices/usuarios";
-import { useEffect } from "react";
-import { verificarTokenAsync } from "../../../store/slices/jwt/thunks";
-import AlertDialog from "../../../components/Alert";
-import AlertDialogSlide from "../../../components/Dialog";
+import Box                                   from "@mui/system/Box";
+import TextField                             from "@mui/material/TextField";
+import Paper                                 from "@mui/material/Paper";
+import Autocomplete                          from "@mui/material/Autocomplete";
+import { Stack }                             from "@mui/system";
+import { useNavigate }                       from "react-router-dom";
+import { useDispatch, useSelector }          from "react-redux";
+import { crearNuevoUsuarioAsync }            from "../../../store/slices/usuarios";
+import { useEffect }                         from "react";
+import { verificarTokenAsync }               from "../../../store/slices/jwt/thunks";
+import AlertDialog                           from "../../../components/Alert";
+import AlertDialogSlide                      from "../../../components/Dialog";
+
 const mainFeaturedPost = {
   area: `Administrador - Nuevo Usuario `,
 };
+
 const area = [
-  { label: "LEGALES" },
-  { label: "MIEMBROS" },
-  { label: "MESAENTRADA" },
-  { label: "ADMIN" },
+  { label : "LEGALES" },
+  { label : "MIEMBROS" },
+  { label : "MESAENTRADA" },
+  { label : "ADMIN" },
 ];
-const rol = [{ label: "USUARIO" }, { label: "ADMIN" }];
+
+const rol   = [{ label: "USUARIO" }, { label: "ADMIN" }];
 const route = "/admin";
 
 export default function FormDatosUsuario() {
-  const [openAlert, setOpenAlert] = useState(false);
+  const [openAlert, setOpenAlert]       = useState(false);
   const [alertMessage, setAlertMessage] = useState({
-    type: "",
-    title: "",
-    message: "",
-    reaload: false,
+    type    : "",
+    title   : "",
+    message : "",
+    reaload : false,
   });
+
   const setOpenAlertDialog = (isTrue) => {
     setOpenAlert(isTrue);
   };
+
   const [dialogMessage, setDialogMessage] = useState({
-    title: "",
-    message: "",
-    expirado: false,
+    title    : "",
+    message  : "",
+    expirado : false,
   });
-  const [openPopup, setPopup] = useState(false);
+
+  const [openPopup, setPopup]             = useState(false);
   const setOpenPopup = (isTrue) => {
     setPopup(isTrue);
   };
   
-  const persona = useSelector((state) => state.persona.personas);
+  const persona  = useSelector((state) => state.persona.personas);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   
   useEffect(() => {
+
     dispatch(
       verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title: "Su sesion ha caducado",
-          message: "Por favor vuelva a ingresar al sistema",
-          expirado: true,
+          title    : "Su sesion ha caducado",
+          message  : "Por favor vuelva a ingresar al sistema",
+          expirado : true,
         });
         setPopup(true);
       }
@@ -67,14 +73,10 @@ export default function FormDatosUsuario() {
   }, []);
 
   const cancelar = () => {
-    /**
-     * !aca se debe emitir un dispatch para elimiar la persona usando el id pasado por parametro
-     */
     
     setDialogMessage({
-      title: "¿Desea cancelar la operacion?",
-      message:
-        "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+      title     : "¿Desea cancelar la operacion?",
+      message   : "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
       eliminado : true,
       idPersona : persona.persona._id
     });
@@ -82,18 +84,21 @@ export default function FormDatosUsuario() {
   };
 
   const [inputValue, setInputValue] = useState({
-    Area: "",
-    Rol: "",
+    Area : "",
+    Rol  : "",
   });
+
   const areaChange = (event, newArea) => {
     setInputValue({ ...inputValue, Area: newArea });
   };
+
   const rolChange = (event, newRol) => {
     setInputValue({ ...inputValue, Rol: newRol });
   };
 
   const handleSubmit = async (event) => {
     try {
+
       event.preventDefault();
       const data = new FormData(event.currentTarget);
 
@@ -115,39 +120,41 @@ export default function FormDatosUsuario() {
       }
 
       const bodyUsuario = {
-        usuario: data.get("usuario"),
-        email: data.get("mail"),
-        contrasenia: data.get("contrasenia"),
-        area: inputValue.Area,
-        rol: JSON.parse(localStorage.getItem("usuario")).rol,
-        idPersona: persona.persona._id,
+        usuario     : data.get("usuario").trim(),
+        email       : data.get("mail").trim(),
+        contrasenia : data.get("contrasenia").trim(),
+        area        : inputValue.Area,
+        rol         : JSON.parse(localStorage.getItem("usuario")).rol,
+        idPersona   : persona.persona._id,
       };
 
       dispatch(crearNuevoUsuarioAsync(bodyUsuario)).then((resp) => {
         if (resp.payload.status === 201) {
           setAlertMessage({
-            type: "success",
-            title: "Exito",
-            message: "El usuario fue registrado con exito",
+            type    : "success",
+            title   : "Exito",
+            message : "El usuario fue registrado con exito",
           });
           setOpenAlert(true);
+
         } else if (resp.payload.response.status === 400) {
           setAlertMessage({
-            type: "error",
-            title: "Error",
-            message: "Ya existe un usuario con ese nombre",
+            type    : "error",
+            title   : "Error",
+            message : "Ya existe un usuario con ese nombre",
           });
           setOpenAlert(true);
+
         } else if (resp.payload.response.status === 500) {
           setAlertMessage({
-            type: "error",
-            title: "Error",
-            message:
-              "Hubo un problema, porfavor intente nuevamente o llame a personal tecnico",
+            type    : "error",
+            title   : "Error",
+            message : "Hubo un problema, porfavor intente nuevamente o llame a personal tecnico",
           });
           setOpenAlert(true);
         }
       });
+
     } catch (error) {
       console.log(error);
     }
@@ -156,26 +163,26 @@ export default function FormDatosUsuario() {
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
       <Box
-        sx={{ flexGrow: 1 }}
-        pt={2}
-        pl={4}
-        pr={4}
-        component="form"
+        sx        = {{ flexGrow: 1 }}
+        pt        = {2}
+        pl        = {4}
+        pr        = {4}
+        component = "form"
+        onSubmit  = {handleSubmit}
         noValidate
-        onSubmit={handleSubmit}
       >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
               <div style={{ height: 450, width: "100%" }}>
                 <Paper
-                  component="form"
-                  sx={{
-                    p: "2px 4px",
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    height: 47,
+                  component = "form"
+                  sx        = {{
+                    p          : "2px 4px",
+                    display    : "flex",
+                    alignItems : "center",
+                    width      : "100%",
+                    height     : 47,
                   }}
                 >
                   <Typography variant="h6" p={1}>
@@ -186,42 +193,42 @@ export default function FormDatosUsuario() {
                   <Stack spacing={2}>
                     <TextField
                       fullWidth
-                      label="Usuario"
-                      id="usuario"
-                      name="usuario"
-                      margin="dense"
+                      label  = "Usuario"
+                      id     = "usuario"
+                      name   = "usuario"
+                      margin = "dense"
                     />
                     <TextField
                       fullWidth
-                      label="Mail"
-                      id="mail"
-                      name="mail"
-                      margin="dense"
+                      label  = "Mail"
+                      id     = "mail"
+                      name   = "mail"
+                      margin = "dense"
                     />
                     <TextField
                       fullWidth
-                      label="Contraseña"
-                      id="constrasenia"
-                      name="contrasenia"
-                      margin="dense"
+                      label  = "Contraseña"
+                      id     = "constrasenia"
+                      name   = "contrasenia"
+                      margin = "dense"
                     />
                     <Autocomplete
                       disablePortal
                       fullWidth
-                      id="area"
-                      onInputChange={areaChange}
-                      options={area}
-                      renderInput={(params) => (
+                      id            = "area"
+                      onInputChange = {areaChange}
+                      options       = {area}
+                      renderInput   = {(params) => (
                         <TextField {...params} label="Area" />
                       )}
                     />
                     <Autocomplete
                       disablePortal
                       fullWidth
-                      id="rol"
-                      onInputChange={rolChange}
-                      options={rol}
-                      renderInput={(params) => (
+                      id            = "rol"
+                      onInputChange = {rolChange}
+                      options       = {rol}
+                      renderInput   = {(params) => (
                         <TextField {...params} label="Rol" />
                       )}
                     />
@@ -234,13 +241,13 @@ export default function FormDatosUsuario() {
             <Paper elevation={3}>
               <Box sx={{ height: 350, width: "100%" }}>
                 <Paper
-                  component="form"
-                  sx={{
-                    p: "2px 4px",
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    height: 47,
+                  component = "form"
+                  sx        = {{
+                    p          : "2px 4px",
+                    display    : "flex",
+                    alignItems : "center",
+                    width      : "100%",
+                    height     : 47,
                   }}
                 >
                   <Typography variant="h6" p={1}>
@@ -250,11 +257,11 @@ export default function FormDatosUsuario() {
                 <Divider />
                 <Grid
                   container
-                  spacing={3}
-                  columns={1}
-                  direction="column"
-                  justifyContent="center"
-                  p={3}
+                  spacing        = {3}
+                  columns        = {1}
+                  direction      = "column"
+                  justifyContent = "center"
+                  p              = {3}
                 >
                   <Grid item xs={1} />
                   <Grid item xs={2}>
@@ -276,16 +283,16 @@ export default function FormDatosUsuario() {
         </Grid>
       </Box>
       <AlertDialog
-        openAlert={openAlert}
-        setOpenAlertDialog={setOpenAlertDialog}
-        content={alertMessage}
-        route={route}
+        openAlert          = {openAlert}
+        setOpenAlertDialog = {setOpenAlertDialog}
+        content            = {alertMessage}
+        route              = {route}
       />
       <AlertDialogSlide
-        openPopup={openPopup}
-        setOpenPopup={setOpenPopup}
-        route={route}
-        content={dialogMessage}
+        openPopup    = {openPopup}
+        setOpenPopup = {setOpenPopup}
+        route        = {route}
+        content      = {dialogMessage}
       />
       <Footer />
     </React.Fragment>

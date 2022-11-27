@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  isLoading: false,
-  documentos: [],
-  showDocumentos: [],
-  requestStatus: 0,
-  requestNewStatus: 0,
-  requestEditStatus: 0,
+  isLoading         : false,
+  documentos        : [],
+  showDocumentos    : [],
+  requestStatus     : 0,
+  requestNewStatus  : 0,
+  requestEditStatus : 0,
 };
 
 export const documentoSlice = createSlice({
@@ -14,22 +14,18 @@ export const documentoSlice = createSlice({
   initialState,
   reducers: {
     startLoadingDocuments: (state) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
       state.isLoading = true
     },
     setDocuments : (state, action) => {
-      state.documentos    = action.payload.documentos
+      state.documentos     = action.payload.documentos
       state.showDocumentos = action.payload.showDocumentos;
      
     },
-    setRequestStatus    : (state, action) => {
-      state.isLoading     = false
-      state.requestStatus = action.payload.requestStatus
+    setRequestStatus : (state, action) => {
+      state.isLoading         = false
+      state.requestStatus     = action.payload.requestStatus
       state.requestEditStatus = action.payload.requestEditStatus
-      state.requestNewStatus = action.payload.requestNewStatus
+      state.requestNewStatus  = action.payload.requestNewStatus
     }
   },
 })

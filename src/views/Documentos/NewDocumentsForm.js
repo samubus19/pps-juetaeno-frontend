@@ -108,7 +108,6 @@ export default function NewDocumentsFrom() {
       };
 
       dispatch(crearNuevoDocumento(bodyNuevoDocumento)).then((resp) => {
-        console.log(resp);
         if (resp.status === 201) {
           setAlertMessage({
             type: "success",

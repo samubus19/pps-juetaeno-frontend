@@ -1,26 +1,29 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
+import * as React   from "react";
+import Box          from "@mui/material/Box";
+import Avatar       from "@mui/material/Avatar";
+import Menu         from "@mui/material/Menu";
+import MenuItem     from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import Logout from "@mui/icons-material/Logout";
+import Divider      from "@mui/material/Divider";
+import IconButton   from "@mui/material/IconButton";
+import Tooltip      from "@mui/material/Tooltip";
+import Logout       from "@mui/icons-material/Logout";
 
 export default function AccountMenu() {
-  let usuario = {};
+  let usuario                   = {};
   !!localStorage.getItem("usuario")
     ? (usuario = JSON.parse(localStorage.getItem("usuario")))
     : (usuario = { usuario: "" });
-  let resp = !!usuario.usuario ? "" : "none";
+
+  let resp                      = !!usuario.usuario ? "" : "none";
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+  const open                    = Boolean(anchorEl);
+
   const logOut = () => {
     localStorage.clear();
     window.location.href = window.location.href;
   };
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -28,61 +31,59 @@ export default function AccountMenu() {
     setAnchorEl(null);
   };
 
-
-
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
         <Tooltip title="Account settings">
           <IconButton
-            onClick={handleClick}
-            size="small"
-            sx={{ ml: 2 }}
-            aria-controls={open ? "account-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            disabled={!!!usuario.usuario}
+            onClick       = {handleClick}
+            size          = "small"
+            sx            = {{ ml: 2 }}
+            aria-controls = {open ? "account-menu" : undefined}
+            aria-haspopup = "true"
+            aria-expanded = {open ? "true" : undefined}
+            disabled      = {!!!usuario.usuario}
           >
             <Avatar
-              sx={{ width: 32, height: 32, display: resp }}
+              sx = {{ width: 32, height: 32, display: resp }}
             ></Avatar>
           </IconButton>
         </Tooltip>
       </Box>
       <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-        PaperProps={{
+        anchorEl   = {anchorEl}
+        id         = "account-menu"
+        open       = {open}
+        onClose    = {handleClose}
+        onClick    = {handleClose}
+        PaperProps = {{
           elevation: 0,
           sx: {
-            overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1.5,
-            "& .MuiAvatar-root": {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
+            overflow : "visible",
+            filter   : "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt       : 1.5,
+            "& .MuiAvatar-root" : {
+              width  : 32,
+              height : 32,
+              ml     : -0.5,
+              mr     : 1,
             },
-            "&:before": {
-              content: '""',
-              display: "block",
-              position: "absolute",
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: "background.paper",
-              transform: "translateY(-50%) rotate(45deg)",
-              zIndex: 0,
+            "&:before" : {
+              content   : '""',
+              display   : "block",
+              position  : "absolute",
+              top       : 0,
+              right     : 14,
+              width     : 10,
+              height    : 10,
+              bgcolor   : "background.paper",
+              transform : "translateY(-50%) rotate(45deg)",
+              zIndex    : 0,
             },
           },
         }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        transformOrigin = {{ horizontal: "right", vertical: "top" }}
+        anchorOrigin    = {{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem>
           <Avatar /> {usuario.usuario}

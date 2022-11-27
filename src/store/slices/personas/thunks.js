@@ -1,6 +1,8 @@
-import { juetaenoApi } from '../../../api/juetaeno-backend-api';
-import { setPersonas, setRequestStatus, startLoadingPersonas } from './personaSlice';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { juetaenoApi }          from '../../../api/juetaeno-backend-api';
+import { setPersonas, 
+         setRequestStatus, 
+         startLoadingPersonas } from './personaSlice';
+import { createAsyncThunk }     from '@reduxjs/toolkit';
 
 const mToken = JSON.parse(localStorage.getItem("token"))
 
@@ -12,15 +14,14 @@ export const getPersonaPorNumeroAsync = createAsyncThunk('persona/getPersonaPorN
                 headers : {
                     'Authorization' : mToken
                 },
-                
             });
             
         return resp    
+
     } catch (error) {
         dispatch(setRequestStatus({requestStatus : error.response.status}))
     }
 })
-
 
 export const crearNuevaPersonaAsync = createAsyncThunk('persona/crearNuevaPersona',async (body, {getState, dispatch}) => {
     try {
@@ -32,7 +33,7 @@ export const crearNuevaPersonaAsync = createAsyncThunk('persona/crearNuevaPerson
                 nroDocumento    : body.nroDocumento,
                 fechaNacimiento : body.fechaNacimiento,
                 nroTelefono     : body.nroTelefono,
-                 rol             : JSON.parse(localStorage.getItem("usuario")).rol
+                 rol            : JSON.parse(localStorage.getItem("usuario")).rol
             } ,
             {
                 headers : {
@@ -40,11 +41,11 @@ export const crearNuevaPersonaAsync = createAsyncThunk('persona/crearNuevaPerson
                 }
             
             });
+
             return resp
-        // dispatch(setRequestStatus({requestStatus : resp.status}))   
+
     } catch (error) {
         dispatch(setRequestStatus({requestStatus : error.response.status}))
-        //console.log(error);  
         return error;          
     }
 }) 
@@ -61,12 +62,12 @@ export const editarPersonaAsync = createAsyncThunk( 'persona/editarPersonaAsync'
                 'Authorization' : mToken
             }
         })
+
         return resp
-        // dispatch(setRequestStatus({requestStatus : resp.status}))  
+
       }  
       catch(error) {
         dispatch(setRequestStatus({requestStatus : error.response.status})) 
-        console.log(error);
         return error;
       }
   }) 
@@ -78,9 +79,9 @@ export const editarPersonaAsync = createAsyncThunk( 'persona/editarPersonaAsync'
         const resp = await juetaenoApi(
             {
               method : "delete",
-              url : `/person/${body.idPersona}`,
-              data : {
-                rol : JSON.parse(localStorage.getItem("usuario")).rol
+              url    : `/person/${body.idPersona}`,
+              data   : {
+                rol  : JSON.parse(localStorage.getItem("usuario")).rol
               },
               headers : {
                 "Authorization" : mToken
@@ -88,19 +89,11 @@ export const editarPersonaAsync = createAsyncThunk( 'persona/editarPersonaAsync'
             }
           );
 
-        // const resp     = await juetaenoApi.delete(`/person/${body.idPersona}`, {
-        //     rol : JSON.parse(localStorage.getItem("usuario")).rol
-        // },{
-        //     headers : {
-        //         'Authorization' : mToken
-        //     }
-        // })
         return resp
-        // dispatch(setRequestStatus({requestStatus : resp.status}))  
+
       }  
       catch(error) {
         dispatch(setRequestStatus({requestStatus : error.response.status})) 
-        console.log(error);
         return error;
       }
   }) 

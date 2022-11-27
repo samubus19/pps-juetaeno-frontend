@@ -1,48 +1,54 @@
-import MainFeaturedPost from "../../../components/MainFeaturedPost";
-import Footer from "../../../components/Footer";
-import React, { useEffect, useState } from "react";
+import MainFeaturedPost                      from "../../../components/MainFeaturedPost";
+import Footer                                from "../../../components/Footer";
+import React, { useEffect, useState }        from "react";
 import { Button, Divider, Grid, Typography } from "@mui/material";
-import Box from "@mui/system/Box";
-import TextField from "@mui/material/TextField";
-import Paper from "@mui/material/Paper";
-import Autocomplete from "@mui/material/Autocomplete";
-import { Stack } from "@mui/system";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  crearNuevaPersonaAsync,
-  getPersonaPorNumeroAsync,
-} from "../../../store/slices/personas";
-import { DateTime } from "luxon";
-import { verificarTokenAsync } from "../../../store/slices/jwt/thunks";
-import AlertDialog from "../../../components/Alert";
-import AlertDialogSlide from "../../../components/Dialog";
+import Box                                   from "@mui/system/Box";
+import TextField                             from "@mui/material/TextField";
+import Paper                                 from "@mui/material/Paper";
+import Autocomplete                          from "@mui/material/Autocomplete";
+import { Stack }                             from "@mui/system";
+import { useNavigate }                       from "react-router-dom";
+import { useDispatch, useSelector }          from "react-redux";
+import { crearNuevaPersonaAsync, 
+         getPersonaPorNumeroAsync,}          from "../../../store/slices/personas";
+import { DateTime }                          from "luxon";
+import { verificarTokenAsync }               from "../../../store/slices/jwt/thunks";
+import AlertDialog                           from "../../../components/Alert";
+import AlertDialogSlide                      from "../../../components/Dialog";
+
 const mainFeaturedPost = {
-  area: `Administrador - Nuevo Usuario `,
+  area : `Administrador - Nuevo Usuario `,
 };
-const tipoDocumento = [{ label: "DNI" }, { label: "LC" }];
+
+const tipoDocumento = [{ label : "DNI" }, { label : "LC" }];
 
 const route = "/admin";
+
 export default function NewUsersFrom() {
-  const [openAlert, setOpenAlert] = useState(false);
+
+  const [openAlert, setOpenAlert]       = useState(false);
   const [alertMessage, setAlertMessage] = useState({
-    type: "",
-    title: "",
-    message: "",
-    reaload: false,
+    type    : "",
+    title   : "",
+    message : "",
+    reaload : false,
   });
+
   const setOpenAlertDialog = (isTrue) => {
     setOpenAlert(isTrue);
   };
+
   const [dialogMessage, setDialogMessage] = useState({
-    title: "",
-    message: "",
-    expirado: false,
+    title    : "",
+    message  : "",
+    expirado : false,
   });
-  const [openPopup, setPopup] = useState(false);
+
+  const [openPopup, setPopup]             = useState(false);
   const setOpenPopup = (isTrue) => {
     setPopup(isTrue);
   };
+
   const cancelar = () => {
     setDialogMessage({
       title: "¿Desea cancelar la operacion?",
@@ -51,29 +57,35 @@ export default function NewUsersFrom() {
     });
     setPopup(true);
   };
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
+    
     dispatch(
       verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
     ).then((resp) => {
+
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title: "Su sesion ha caducado",
-          message: "Por favor vuelva a ingresar al sistema",
-          expirado: true,
+          title    : "Su sesion ha caducado",
+          message  : "Por favor vuelva a ingresar al sistema",
+          expirado : true,
         });
         setPopup(true);
       }
     });
   }, []);
+
   const [inputValue, setInputValue] = useState({
-    TipoDocumento: "",
+    TipoDocumento : "",
   });
 
   const tipoDocumentoChange = (event, newTipoDocumento) => {
     setInputValue({ ...inputValue, TipoDocumento: newTipoDocumento });
   };
+
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
@@ -105,22 +117,20 @@ export default function NewUsersFrom() {
       }
 
       const bodyPersona = {
-        nombre: data.get("nombre"),
-        apellido: data.get("apellido"),
-        tipoDocumento: inputValue.TipoDocumento,
-        nroDocumento: data.get("ndocumento"),
-        fechaNacimiento: DateTime.fromISO(data.get("fecha")).toFormat(
-          "dd/LL/yyyy"
-        ),
-        nroTelefono: data.get("telefono"),
+        nombre          : data.get("nombre").trim(),
+        apellido        : data.get("apellido").trim(),
+        tipoDocumento   : inputValue.TipoDocumento,
+        nroDocumento    : data.get("ndocumento").trim(),
+        fechaNacimiento : DateTime.fromISO(data.get("fecha")).toFormat("dd/LL/yyyy"),
+        nroTelefono     : data.get("telefono").trim(),
       };
 
       dispatch(crearNuevaPersonaAsync(bodyPersona)).then((resp) => {
         if (resp.payload.status === 201) {
           setAlertMessage({
-            type: "success",
-            title: "Exito",
-            message: "Los datos de la persona fueron registrado con exito",
+            type    : "success",
+            title   : "Exito",
+            message : "Los datos de la persona fueron registrado con exito",
           });
           setOpenAlert(true);
           if (openAlert === false) {
@@ -130,52 +140,56 @@ export default function NewUsersFrom() {
               );
             }, 4000);
           }
+
         } else if (resp.payload.response.status === 400) {
           setAlertMessage({
-            type: "error",
-            title: "Error",
-            message:
+            type    : "error",
+            title   : "Error",
+            message :
               "La persona que se intenta registrar ya existe en la base de datos",
           });
           setOpenAlert(true);
+
         } else if (resp.payload.response.status === 500) {
           setAlertMessage({
-            type: "error",
-            title: "Error",
-            message:
+            type    : "error",
+            title   : "Error",
+            message :
               "Hubo un problema, porfavor intente nuevamente o llame a personal tecnico",
           });
           setOpenAlert(true);
         }
       });
+
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <React.Fragment>
       <MainFeaturedPost post={mainFeaturedPost} />
       <Box
-        sx={{ flexGrow: 1 }}
-        pt={2}
-        pl={4}
-        pr={4}
-        component="form"
+        sx        = {{ flexGrow: 1 }}
+        pt        = {2}
+        pl        = {4}
+        pr        = {4}
+        component = "form"
+        onSubmit  = {handleSubmit}
         noValidate
-        onSubmit={handleSubmit}
       >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Paper elevation={3}>
               <div style={{ height: 510, width: "100%" }}>
                 <Paper
-                  component="form"
-                  sx={{
-                    p: "2px 4px",
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    height: 47,
+                  component = "form"
+                  sx        = {{
+                    p          : "2px 4px",
+                    display    : "flex",
+                    alignItems : "center",
+                    width      : "100%",
+                    height     : 47,
                   }}
                 >
                   <Typography variant="h6" p={1}>
@@ -186,53 +200,53 @@ export default function NewUsersFrom() {
                   <Stack spacing={2}>
                     <TextField
                       fullWidth
-                      label="Nombre"
-                      id="nombre"
-                      name="nombre"
-                      margin="dense"
+                      label  = "Nombre"
+                      id     = "nombre"
+                      name   = "nombre"
+                      margin = "dense"
                     />
                     <TextField
                       fullWidth
-                      label="Apellido"
-                      id="apellido"
-                      name="apellido"
-                      margin="dense"
+                      label  = "Apellido"
+                      id     = "apellido"
+                      name   = "apellido"
+                      margin = "dense"
                     />
                     <Autocomplete
                       disablePortal
                       fullWidth
-                      id="tipoDocumento"
-                      inputValue={inputValue.TipoDocumento}
-                      onInputChange={tipoDocumentoChange}
-                      options={tipoDocumento}
-                      renderInput={(params) => (
+                      id            = "tipoDocumento"
+                      inputValue    = {inputValue.TipoDocumento}
+                      onInputChange = {tipoDocumentoChange}
+                      options       = {tipoDocumento}
+                      renderInput   = {(params) => (
                         <TextField {...params} label="Tipo de Documento" />
                       )}
                     />
                     <TextField
                       fullWidth
-                      label="Nº Documento"
-                      id="ndocumento"
-                      name="ndocumento"
-                      margin="dense"
+                      label  ="Nº Documento"
+                      id     ="ndocumento"
+                      name   ="ndocumento"
+                      margin ="dense"
                     />
                     <TextField
-                      id="fecha"
-                      name="fecha"
-                      label="Fecha de Nacimiento"
-                      type="date"
                       fullWidth
-                      margin="dense"
-                      InputLabelProps={{
+                      id              ="fecha"
+                      name            ="fecha"
+                      label           ="Fecha de Nacimiento"
+                      type            ="date"
+                      margin          ="dense"
+                      InputLabelProps ={{
                         shrink: true,
                       }}
                     />
                     <TextField
                       fullWidth
-                      label="Telefono"
-                      id="telefono"
-                      name="telefono"
-                      margin="dense"
+                      label  ="Telefono"
+                      id     ="telefono"
+                      name   ="telefono"
+                      margin ="dense"
                     />
                   </Stack>
                 </Box>
@@ -243,13 +257,13 @@ export default function NewUsersFrom() {
             <Paper elevation={3}>
               <Box sx={{ height: 350, width: "100%" }}>
                 <Paper
-                  component="form"
-                  sx={{
-                    p: "2px 4px",
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    height: 47,
+                  component = "form"
+                  sx        = {{
+                    p          : "2px 4px",
+                    display    : "flex",
+                    alignItems : "center",
+                    width      : "100%",
+                    height     : 47,
                   }}
                 >
                   <Typography variant="h6" p={1}>
@@ -259,11 +273,11 @@ export default function NewUsersFrom() {
                 <Divider />
                 <Grid
                   container
-                  spacing={3}
-                  columns={1}
-                  direction="column"
-                  justifyContent="center"
-                  p={3}
+                  spacing        = {3}
+                  columns        = {1}
+                  direction      = "column"
+                  justifyContent = "center"
+                  p              = {3}
                 >
                   <Grid item xs={1} />
                   <Grid item xs={2}>
@@ -285,15 +299,15 @@ export default function NewUsersFrom() {
         </Grid>
       </Box>
       <AlertDialog
-        openAlert={openAlert}
-        setOpenAlertDialog={setOpenAlertDialog}
-        content={alertMessage}
+        openAlert          = {openAlert}
+        setOpenAlertDialog = {setOpenAlertDialog}
+        content            = {alertMessage}
       />
       <AlertDialogSlide
-        openPopup={openPopup}
-        setOpenPopup={setOpenPopup}
-        route={route}
-        content={dialogMessage}
+        openPopup    ={openPopup}
+        setOpenPopup ={setOpenPopup}
+        route        ={route}
+        content      ={dialogMessage}
       />
       <Footer />
     </React.Fragment>

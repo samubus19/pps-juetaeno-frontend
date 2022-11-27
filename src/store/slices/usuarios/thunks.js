@@ -8,7 +8,7 @@ export const loginUsuario = (body) => {
     return async (dispatch, getState) => {
 
        dispatch(startLoadingUsers())
-        const resp = await juetaenoApi.post(`/users/login`, {
+       const resp = await juetaenoApi.post(`/users/login`, {
             usuario     : body.usuario,
             email       : body.email,
             contrasenia : body.contrasenia 
@@ -35,7 +35,6 @@ export const loginUsuario = (body) => {
             }
            
           });
-
           dispatch(setUser({usuario : resp.data.usuario, token : resp.data.token}))
           dispatch(setRequestStatus({requestStatus : resp.status})) 
 
@@ -120,9 +119,9 @@ export const getUsuarios = () => {
       const resp = await juetaenoApi(
         {
           method : "get",
-          url : "/users/all",
-          data : {
-            rol : JSON.parse(localStorage.getItem("usuario")).rol
+          url    : "/users/all",
+          data   : {
+            rol  : JSON.parse(localStorage.getItem("usuario")).rol
           },
           headers : {
             "Authorization" : mToken
@@ -130,9 +129,9 @@ export const getUsuarios = () => {
         }
       );
 
-      
        const usuarios = resp.data.mensaje
-       const vector = []
+       const vector   = []
+
        for (let i = 0; i < usuarios.length; i++) {
         let e = {
           _id             : usuarios[i]._id,
@@ -149,14 +148,12 @@ export const getUsuarios = () => {
         }
         vector.push(e)
        }
-       console.log(vector)
-      dispatch(
-        setListadoUsuarios({ listadoUsuarios: vector })
-      );
+
+      dispatch(setListadoUsuarios({ listadoUsuarios: vector }));
       dispatch(setRequestStatus({ requestStatus: resp.status }));
+
     } catch (error) {
       dispatch(setRequestStatus({ requestStatus: error.response.status }));
-      console.log(error);
     }
   };
 }; 
@@ -189,11 +186,11 @@ export const getUsuarioPorIdAsync =  createAsyncThunk("usuario/getUsuarioPorIdAS
       },
       status : resp.status
     }
+
     return result
 
   } catch (error) {
     dispatch(setRequestStatus({ requestStatus: error.response.status }));
-    console.log(error);
   }
 });
     

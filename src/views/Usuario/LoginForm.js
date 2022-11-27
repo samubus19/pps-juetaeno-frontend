@@ -40,8 +40,8 @@ export default function LoginForm() {
     if (!!data.get("email") & !!data.get("password")) {
       dispatch(
         loginUsuario({
-          usuario     : data.get("email"),
-          contrasenia : data.get("password"),
+          usuario     : data.get("email").trim(),
+          contrasenia : data.get("password").trim(),
         })
       );
     } else {

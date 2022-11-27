@@ -16,8 +16,6 @@ import NotFoundPage from "./views/NotFoundPage";
 import FormDatosUsuario from "./views/Admin/FormCrearNuevoUsuario/FormDatosUsuario";
 import EditDocumentsFrom from "./views/Documentos/EditDocumentsForm";
 import FormEditarUsuarioPersona from "./views/Admin/FormEditarUsuarioPersona";
-import { useDispatch, useSelector } from "react-redux";
-import { verificarTokenAsync } from "./store/slices/jwt/thunks";
 
 const theme = createTheme({
   palette: {
@@ -35,6 +33,10 @@ const theme = createTheme({
 });
 
 function App() {
+  window.addEventListener("storage", (e) => {
+    localStorage.clear()
+    window.location.reload()
+  })
  
   let usuario = {};
   !!localStorage.getItem("usuario")
@@ -55,7 +57,7 @@ function App() {
               redirectTo="/"
               isAllowed={
                 !!usuario.usuario &&
-                usuario.area.toUpperCase().includes("MESAENTRADA")
+                (usuario.area.toUpperCase().includes("MESAENTRADA") || usuario.rol.toUpperCase().includes("ADMIN"))
               }
             />
           }
@@ -78,7 +80,7 @@ function App() {
               redirectTo="/"
               isAllowed={
                 !!usuario.usuario &&
-                usuario.area.toUpperCase().includes("LEGALES")
+                (usuario.area.toUpperCase().includes("LEGALES") || usuario.rol.toUpperCase().includes("ADMIN"))
               }
             >
               <LegalesForm />
@@ -93,7 +95,7 @@ function App() {
               redirectTo="/"
               isAllowed={
                 !!usuario.usuario &&
-                usuario.area.toUpperCase().includes("MIEMBROS")
+                (usuario.area.toUpperCase().includes("MIEMBROS") || usuario.rol.toUpperCase().includes("ADMIN"))
               }
             >
               <MiembrosForm />

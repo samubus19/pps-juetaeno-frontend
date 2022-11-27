@@ -1,12 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { crearNuevoUsuarioAsync, editarUsuarioAsync, getUsuarioPorIdAsync } from './thunks'
+import { crearNuevoUsuarioAsync, 
+         editarUsuarioAsync, 
+         getUsuarioPorIdAsync }          from './thunks'
 
 const initialState = {
-  isLoading: false,
-  usuario: [],
-  listadoUsuarios: [],
-  token: "",
-  requestStatus: 0,
+  isLoading       : false,
+  usuario         : [],
+  listadoUsuarios : [],
+  token           : "",
+  requestStatus   : 0,
 };
 
 export const usuarioSlice = createSlice({
@@ -60,5 +62,4 @@ export const usuarioSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { startLoadingUsers, setUser, setRequestStatus, setListadoUsuarios } =
-  usuarioSlice.actions;
+export const { startLoadingUsers, setUser, setRequestStatus, setListadoUsuarios } = usuarioSlice.actions;
