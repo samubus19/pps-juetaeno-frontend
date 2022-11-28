@@ -1,33 +1,33 @@
-import { Route, Routes } from "react-router-dom";
-import Header from "./components/Header";
-import CssBaseline from "@mui/material/CssBaseline";
+import { Route, Routes }              from "react-router-dom";
+import Header                         from "./components/Header";
+import CssBaseline                    from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ProtectedRoute }             from "./components/ProtectedRoute";
 //import all views
-import AdminMainForm from "./views/Admin/AdminMainForm";
-import AdminUsersForm from "./views/Admin/FormCrearNuevoUsuario/AdminUsersForm";
-import LegalesForm from "./views/Legales/LegalesForm";
-import LoginForm from "./views/Usuario/LoginForm";
-import MesaEntradaForm from "./views/MesaEntrada/MesaEntradaForm";
-import MiembrosForm from "./views/MiembrosJunta/MiembrosForm";
-import NewDocumentsForm from "./views/Documentos/NewDocumentsForm";
-import SearchDocumentsForm from "./views/Documentos/SearchDocumentsForm";
-import NotFoundPage from "./views/NotFoundPage";
-import FormDatosUsuario from "./views/Admin/FormCrearNuevoUsuario/FormDatosUsuario";
-import EditDocumentsFrom from "./views/Documentos/EditDocumentsForm";
-import FormEditarUsuarioPersona from "./views/Admin/FormEditarUsuarioPersona";
+import AdminMainForm                  from "./views/Admin/AdminMainForm";
+import AdminUsersForm                 from "./views/Admin/FormCrearNuevoUsuario/AdminUsersForm";
+import LegalesForm                    from "./views/Legales/LegalesForm";
+import LoginForm                      from "./views/Usuario/LoginForm";
+import MesaEntradaForm                from "./views/MesaEntrada/MesaEntradaForm";
+import MiembrosForm                   from "./views/MiembrosJunta/MiembrosForm";
+import NewDocumentsForm               from "./views/Documentos/NewDocumentsForm";
+import SearchDocumentsForm            from "./views/Documentos/SearchDocumentsForm";
+import NotFoundPage                   from "./views/NotFoundPage";
+import FormDatosUsuario               from "./views/Admin/FormCrearNuevoUsuario/FormDatosUsuario";
+import EditDocumentsFrom              from "./views/Documentos/EditDocumentsForm";
+import FormEditarUsuarioPersona       from "./views/Admin/FormEditarUsuarioPersona";
 
 const theme = createTheme({
   palette: {
-    type: "light",
-    primary: {
-      main: "#C20E0E",
+    type    : "light",
+    primary : {
+      main : "#C20E0E",
     },
-    secondary: {
-      main: "#0e0d0e",
+    secondary : {
+      main : "#0e0d0e",
     },
-    warning: {
-      main: "#ffeb3b",
+    warning : {
+      main : "#ffeb3b",
     },
   },
 });

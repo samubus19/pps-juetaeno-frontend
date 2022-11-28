@@ -1,135 +1,139 @@
-import React, { useEffect, useState } from "react";
-import MainFeaturedPost from "../../components/MainFeaturedPost";
-import Footer from "../../components/Footer";
-import TabPanel from "../../components/TabPanel";
-import { renderCellExpand } from "../../components/CellExpand";
-import {
-  getDocumentos,
-  actualizarEstadoDocumento,
-} from "../../store/slices/documentos";
-import { upperFormatearArea } from "../../helpers/Area-UpperFormater";
-import {
-  Button,
-  Divider,
-  Grid,
-  Typography,
-  Paper,
-  Autocomplete,
-  TextField,
-} from "@mui/material";
-import { Stack, Box } from "@mui/system";
+import React, { useEffect, useState }  from "react";
+import MainFeaturedPost                from "../../components/MainFeaturedPost";
+import Footer                          from "../../components/Footer";
+import TabPanel                        from "../../components/TabPanel";
+import { renderCellExpand }            from "../../components/CellExpand";
+import { getDocumentos, 
+         actualizarEstadoDocumento,}   from "../../store/slices/documentos";
+import { upperFormatearArea }          from "../../helpers/Area-UpperFormater";
+import { Button, 
+         Divider, 
+         Grid, 
+         Typography, 
+         Paper, 
+         Autocomplete, 
+        TextField, }                   from "@mui/material";
+import { Stack, Box }                  from "@mui/system";
 import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
-import AlertDialog from "../../components/Alert";
-import AlertDialogSlide from "../../components/Dialog";
-import CircularIndeterminate from "../../components/Circular";
+import { useNavigate }                 from "react-router-dom";
+import { useDispatch, useSelector }    from "react-redux";
+import { verificarTokenAsync }         from "../../store/slices/jwt/thunks";
+import AlertDialog                     from "../../components/Alert";
+import AlertDialogSlide                from "../../components/Dialog";
+import CircularIndeterminate           from "../../components/Circular";
 // en area se debe poner el nombre tal cual se guarde en el back
-const area = "Miembros de Junta";
-const estado = [{ label: "en Pase" }];
-const areaDestino = [{ label: "Mesa de Entrada" }, { label: "Legales" }];
+const area        = "Miembros de Junta";
+const estado      = [{ label : "en Pase" }];
+const areaDestino = [{ label : "Mesa de Entrada" }, { label: "Legales" }];
 
 const columns = [
   {
-    field: "tipoDocumento",
-    headerName: "Tipo ",
-    width: 130,
-    renderCell: renderCellExpand,
+    field      : "tipoDocumento",
+    headerName : "Tipo ",
+    width      : 130,
+    renderCell : renderCellExpand,
   },
   {
-    field: "nroDocumento",
-    headerName: "Numero",
-    width: 130,
-    renderCell: renderCellExpand,
+    field      : "nroDocumento",
+    headerName : "Numero",
+    width      : 130,
+    renderCell : renderCellExpand,
   },
   {
-    field: "descripcion",
-    headerName: "Descripcion",
-    width: 200,
-    renderCell: renderCellExpand,
+    field      : "descripcion",
+    headerName : "Descripcion",
+    width      : 200,
+    renderCell : renderCellExpand,
   },
   {
-    field: "estado",
-    headerName: "Estado",
-    width: 200,
-    renderCell: renderCellExpand,
+    field      : "estado",
+    headerName : "Estado",
+    width      : 200,
+    renderCell : renderCellExpand,
   },
   {
-    field: "sede",
-    headerName: "Sede",
-    width: 200,
-    renderCell: renderCellExpand,
+    field      : "sede",
+    headerName : "Sede",
+    width      : 200,
+    renderCell : renderCellExpand,
   },
   {
-    field: "fechaIngreso",
-    headerName: "Fecha de Ingreso",
-    width: 200,
-    renderCell: renderCellExpand,
+    field      : "fechaIngreso",
+    headerName : "Fecha de Ingreso",
+    width      : 200,
+    renderCell : renderCellExpand,
   },
 
   {
-    field: "UsuarioFirmante",
-    headerName: "Firma",
-    width: 200,
-    renderCell: renderCellExpand,
+    field      : "UsuarioFirmante",
+    headerName : "Firma",
+    width      : 200,
+    renderCell : renderCellExpand,
   },
 ];
 
 const mainFeaturedPost = {
-  area: "Area: Miembros de Junta",
+  area : "Area: Miembros de Junta",
 };
 const route = "/miembros";
+
 export default function MiembrosForm() {
+
   const { showDocumentos = [], requestStatus } = useSelector(
     (state) => state.documento
   );
-  const dispatch = useDispatch();
-  const [value, setValue] = React.useState(0);
-  //es el id seleccionado
-  const [selectionId, setSelectionId] = useState([]);
-  //body para actualizar estado
-  const [estadoValue, setEstadoValue] = useState({
-    estado: "",
-    areaDestino: "",
-    _id: "",
+  const dispatch                        = useDispatch();
+  const navigate                        = useNavigate();
+  const [value, setValue]               = React.useState(0);
+  //es el id seleccionado  
+  const [selectionId, setSelectionId]   = useState([]);
+  //body para actualizar estado  
+  const [estadoValue, setEstadoValue]   = useState({
+    estado      : "",
+    areaDestino : "",
+    _id         : "",
   });
-  const [openAlert, setOpenAlert] = useState(false);
+
+  const [openAlert, setOpenAlert]       = useState(false);
   const [alertMessage, setAlertMessage] = useState({
-    type: "",
-    title: "",
-    message: "",
-    reload: false,
+    type    : "",
+    title   : "",
+    message : "",
+    reload  : false,
   });
+
   const setOpenAlertDialog = (isTrue) => {
     setOpenAlert(isTrue);
   };
+
   const [dialogMessage, setDialogMessage] = useState({
-    title: "",
-    message: "",
-    expirado: false,
+    title    : "",
+    message  : "",
+    expirado : false,
   });
+
   const [openPopup, setPopup] = useState(false);
   const setOpenPopup = (isTrue) => {
     setPopup(isTrue);
   };
 
-  const navigate = useNavigate();
   const estadoChange = (event, estado) => {
     setEstadoValue({ ...estadoValue, estado: estado });
   };
+
   const areaDestinoChange = (event, areaDestino) => {
     setEstadoValue({ ...estadoValue, areaDestino: areaDestino });
   };
+
   useEffect(() => {
     dispatch(
       verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title: "Su sesion ha caducado",
-          message: "Por favor vuelva a ingresar al sistema",
-          expirado: true,
+          title    : "Su sesion ha caducado",
+          message  : "Por favor vuelva a ingresar al sistema",
+          expirado : true,
         });
         setPopup(true);
       }
@@ -154,27 +158,28 @@ export default function MiembrosForm() {
       }
 
       const bodyActualizarEstado = {
-        nuevoEstado: estadoValue.estado,
-        sede: upperFormatearArea(estadoValue.areaDestino),
-        _id: estadoValue._id,
+        nuevoEstado : estadoValue.estado,
+        sede        : upperFormatearArea(estadoValue.areaDestino),
+        _id         : estadoValue._id,
       };
 
       dispatch(actualizarEstadoDocumento(bodyActualizarEstado)).then((resp) => {
         if (resp.status === 200) {
           setAlertMessage({
-            type: "success",
-            title: "El documento fue actualizado con exito",
-            message: "La operacion ha resultado exitosa, documento actualizado",
-            reaload: true,
+            type    : "success",
+            title   : "El documento fue actualizado con exito",
+            message : "La operacion ha resultado exitosa, documento actualizado",
+            reaload : true,
           });
           setOpenAlert(true);
+
         } else {
           if (resp.response.status === 500) {
             setAlertMessage({
-              type: "error",
-              title: "Ocurrio un error",
-              message: "Intentelo mas tarde o llame a personal tecnico. ",
-              reaload: true,
+              type    : "error",
+              title   : "Ocurrio un error",
+              message : "Intentelo mas tarde o llame a personal tecnico. ",
+              reaload : true,
             });
             setOpenAlert(true);
           }

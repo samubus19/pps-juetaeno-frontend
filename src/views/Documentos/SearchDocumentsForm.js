@@ -1,87 +1,92 @@
-import React, { useEffect, useState } from "react";
-import MainFeaturedPost from "../../components/MainFeaturedPost";
-import Footer from "../../components/Footer";
-import { renderCellExpand } from "../../components/CellExpand";
-import { getDocumentos } from "../../store/slices/documentos";
+import React, { useEffect, useState }   from "react";
+import MainFeaturedPost                 from "../../components/MainFeaturedPost";
+import Footer                           from "../../components/Footer";
+import { renderCellExpand }             from "../../components/CellExpand";
+import { getDocumentos }                from "../../store/slices/documentos";
 import { Button, Divider, Grid, Paper } from "@mui/material";
-import { Box } from "@mui/system";
-import { DataGrid, GridToolbar, esES } from "@mui/x-data-grid";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { verificarTokenAsync } from "../../store/slices/jwt/thunks";
-import CircularIndeterminate from "../../components/Circular";
-import AlertDialogSlide from "../../components/Dialog";
+import { Box }                          from "@mui/system";
+import { DataGrid, GridToolbar, esES }  from "@mui/x-data-grid";
+import { useNavigate }                  from "react-router-dom";
+import { useDispatch, useSelector }     from "react-redux";
+import { verificarTokenAsync }          from "../../store/slices/jwt/thunks";
+import CircularIndeterminate            from "../../components/Circular";
+import AlertDialogSlide                 from "../../components/Dialog";
+
 const columns = [
   {
-    field: "tipoDocumento",
-    headerName: "Tipo ",
-    width: 130,
-    renderCell: renderCellExpand,
+    field      : "tipoDocumento",
+    headerName : "Tipo ",
+    width      : 130,
+    renderCell : renderCellExpand,
   },
   {
-    field: "nroDocumento",
-    headerName: "Numero",
-    width: 130,
-    renderCell: renderCellExpand,
+    field      : "nroDocumento",
+    headerName : "Numero",
+    width      : 130,
+    renderCell : renderCellExpand,
   },
   {
-    field: "descripcion",
-    headerName: "Descripcion",
-    width: 200,
-    renderCell: renderCellExpand,
+    field      : "descripcion",
+    headerName : "Descripcion",
+    width      : 200,
+    renderCell : renderCellExpand,
   },
   {
-    field: "estado",
-    headerName: "Estado",
-    width: 200,
-    renderCell: renderCellExpand,
+    field      : "estado",
+    headerName : "Estado",
+    width      : 200,
+    renderCell : renderCellExpand,
   },
   {
-    field: "sede",
-    headerName: "Sede",
-    width: 200,
-    renderCell: renderCellExpand,
+    field      : "sede",
+    headerName : "Sede",
+    width      : 200,
+    renderCell : renderCellExpand,
   },
   {
-    field: "fechaIngreso",
-    headerName: "Fecha de Ingreso",
-    width: 200,
-    renderCell: renderCellExpand,
+    field      : "fechaIngreso",
+    headerName : "Fecha de Ingreso",
+    width      : 200,
+    renderCell : renderCellExpand,
   },
   {
-    field: "fechaSalida",
-    headerName: "Fecha de Salida",
-    width: 200,
-    renderCell: renderCellExpand,
+    field      : "fechaSalida",
+    headerName : "Fecha de Salida",
+    width      : 200,
+    renderCell : renderCellExpand,
   },
 
   {
-    field: "UsuarioFirmante",
-    headerName: "Firma",
-    width: 200,
-    renderCell: renderCellExpand,
+    field      : "UsuarioFirmante",
+    headerName : "Firma",
+    width      : 200,
+    renderCell : renderCellExpand,
   },
 ];
 
 const mainFeaturedPost = {
-  area: "Busqueda de docuementos",
+  area : "Busqueda de docuementos",
 };
 
 export default function SearchDocumentsForm() {
+
   const [dialogMessage, setDialogMessage] = useState({
-    title: "",
-    message: "",
-    expirado: false,
+    title    : "",
+    message  : "",
+    expirado : false,
   });
   const [openPopup, setPopup] = useState(false);
+  
   const setOpenPopup = (isTrue) => {
     setPopup(isTrue);
   };
-  const { showDocumentos = [] } = useSelector((state) => state.documento);
-  const dispatch = useDispatch();
+
+  const { showDocumentos = [] }       = useSelector((state) => state.documento);
+  const dispatch                      = useDispatch();
   //es el id seleccionado para enviar a editar
   const [selectionId, setSelectionId] = useState([]);
-  const navigate = useNavigate();
+  const navigate                      = useNavigate();
+
   const redirect = (e) => {
     switch (JSON.parse(localStorage.getItem("usuario")).area.toUpperCase()) {
       case "LEGALES":
@@ -102,6 +107,7 @@ export default function SearchDocumentsForm() {
         break;
     }
   };
+  
   useEffect(() => {
     dispatch(
       verificarTokenAsync(JSON.parse(localStorage.getItem("token")))
