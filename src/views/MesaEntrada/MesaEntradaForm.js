@@ -59,8 +59,8 @@ const columns = [
     renderCell : renderCellExpand,
   },
   {
-    field      : "fechaIngreso",
-    headerName : "Fecha de Ingreso",
+    field      : "fechaIngresoArea",
+    headerName : "Fecha de ingreso al area",
     width      : 200,
     renderCell : renderCellExpand,
   },
@@ -192,6 +192,7 @@ export default function MesaEntradaForm() {
       console.log(error);
     }
   };
+  
 
   return (
     <React.Fragment>

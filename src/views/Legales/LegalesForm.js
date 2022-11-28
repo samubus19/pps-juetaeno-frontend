@@ -61,8 +61,8 @@ const columns = [
     renderCell : renderCellExpand,
   },
   {
-    field      : "fechaIngreso",
-    headerName : "Fecha de Ingreso",
+     field     : "fechaIngresoArea",
+    headerName : "Fecha de ingreso al area",
     width      : 200,
     renderCell : renderCellExpand,
   },
@@ -220,7 +220,6 @@ export default function LegalesForm() {
                           const result = selection.filter(
                             (s) => !selectionSet.has(s)
                           );
-
                           setSelectionId(result);
                           setEstadoValue({
                             ...estadoValue,
@@ -228,7 +227,6 @@ export default function LegalesForm() {
                           });
                         } else {
                           setSelectionId(selection);
-
                           setEstadoValue({
                             ...estadoValue,
                             _id: selection[0],
@@ -296,8 +294,8 @@ export default function LegalesForm() {
                     <Grid item xs={2}>
                       <Button
                         variant="contained"
-                        fullWidth
                         disabled={!selectionId.length}
+                        fullWidth
                         onClick={() => setValue(1)}
                       >
                         Actualizar Estado

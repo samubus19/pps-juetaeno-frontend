@@ -7,7 +7,7 @@ import Link       from "@mui/material/Link";
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
-      {"Diseño © "}
+      {"Desarollo © "}
       <Link color="inherit" href="">
         UNLaR
       </Link>{" "}

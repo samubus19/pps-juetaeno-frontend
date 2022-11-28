@@ -58,8 +58,8 @@ const columns = [
     renderCell : renderCellExpand,
   },
   {
-    field      : "fechaIngreso",
-    headerName : "Fecha de Ingreso",
+     field     : "fechaIngresoArea",
+    headerName : "Fecha de ingreso al area",
     width      : 200,
     renderCell : renderCellExpand,
   },
@@ -297,6 +297,7 @@ export default function MiembrosForm() {
                     <Grid item xs={2}>
                       <Button
                         variant="contained"
+                        disabled={!selectionId.length}
                         fullWidth
                         onClick={() => setValue(1)}
                       >

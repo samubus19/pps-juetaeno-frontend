@@ -4,7 +4,7 @@ import { setUser, startLoadingUsers, setRequestStatus, setListadoUsuarios } from
 
 const mToken = JSON.parse(localStorage.getItem("token"))
 
-export const loginUsuario = (body) => {
+/*export const loginUsuario = (body) => {
     return async (dispatch, getState) => {
 
        dispatch(startLoadingUsers())
@@ -22,6 +22,7 @@ export const loginUsuario = (body) => {
               console.log(error.response.status);
               console.log(error.response.headers);
               dispatch(setRequestStatus({requestStatus : error.response.status}))
+              return error
             } else if (error.request) {
               // La petición fue hecha pero no se recibió respuesta
               // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
@@ -39,8 +40,23 @@ export const loginUsuario = (body) => {
           dispatch(setRequestStatus({requestStatus : resp.status})) 
 
     }
-} 
-
+} */
+export const loginUsuario = createAsyncThunk('usuario/loginUsuario', async(body,{getState, dispatch})=>{
+  try {
+    const resp = await juetaenoApi.post(`/users/login`, {
+            usuario     : body.usuario,
+            email       : body.email,
+            contrasenia : body.contrasenia 
+        })
+        dispatch(setUser({usuario : resp.data.usuario, token : resp.data.token}))
+        dispatch(setRequestStatus({requestStatus : resp.status})) 
+        return resp
+  } catch (error) {
+    //console.log(error);
+    dispatch(setRequestStatus({ requestStatus: error.response.status })); 
+    return error;
+  }
+}) 
 export const crearNuevoUsuarioAsync = createAsyncThunk( 'usuario/crearNuevoUsuarioAsync' ,async (body, {getState, dispatch}) => {
     try {
         // dispatch(startLoadingUsers())

@@ -31,6 +31,12 @@ const columns = [
     width      : 200,
     renderCell : renderCellExpand,
   },
+   {
+     field     : "fechaIngresoInst",
+    headerName : "Fecha de ingreso a la institución",
+    width      : 200,
+    renderCell : renderCellExpand,
+  },
   {
     field      : "estado",
     headerName : "Estado",
@@ -44,14 +50,14 @@ const columns = [
     renderCell : renderCellExpand,
   },
   {
-    field      : "fechaIngreso",
-    headerName : "Fecha de Ingreso",
+     field     : "fechaIngresoArea",
+    headerName : "Fecha de ingreso al area",
     width      : 200,
     renderCell : renderCellExpand,
   },
   {
     field      : "fechaSalida",
-    headerName : "Fecha de Salida",
+    headerName : "Fecha de salida de la institución",
     width      : 200,
     renderCell : renderCellExpand,
   },
@@ -83,8 +89,6 @@ export default function SearchDocumentsForm() {
 
   const { showDocumentos = [] }       = useSelector((state) => state.documento);
   const dispatch                      = useDispatch();
-  //es el id seleccionado para enviar a editar
-  const [selectionId, setSelectionId] = useState([]);
   const navigate                      = useNavigate();
 
   const redirect = (e) => {
@@ -152,20 +156,7 @@ export default function SearchDocumentsForm() {
                       columns={columns}
                       pageSize={6}
                       rowsPerPageOptions={[5]}
-                      checkboxSelection
-                      selectionModel={selectionId}
-                      onSelectionModelChange={(selection) => {
-                        if (selection.length > 1) {
-                          const selectionSet = new Set(selectionId);
-                          const result = selection.filter(
-                            (s) => !selectionSet.has(s)
-                          );
-
-                          setSelectionId(result);
-                        } else {
-                          setSelectionId(selection);
-                        }
-                      }}
+                      disableSelectionOnClick={true}
                       components={{ Toolbar: GridToolbar }}
                       componentsProps={{
                         toolbar: {

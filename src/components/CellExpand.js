@@ -49,7 +49,7 @@ const GridCellExpand = React.memo(function GridCellExpand(props) {
         ref = {cellDiv}
         sx  = {{
           height   : "100%",
-          width,
+          width ,
           display  : "block",
           position : "absolute",
           top      : 0,
@@ -69,11 +69,11 @@ const GridCellExpand = React.memo(function GridCellExpand(props) {
         <Popper
           open     = {showFullCell && anchorEl !== null}
           anchorEl = {anchorEl}
-          style    = {{ width, marginLeft: -17 }}
+          style    = {{ width, marginLeft: -17,  }}
         >
           <Paper
             elevation = {1}
-            style     = {{ minHeight: wrapper.current.offsetHeight - 3 }}
+            style     = {{ minHeight: wrapper.current.offsetHeight - 3, wordBreak : "break-word" }}
           >
             <Typography variant="body2" style={{ padding: 8 }}>
               {value}

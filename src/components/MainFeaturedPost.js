@@ -11,42 +11,41 @@ function MainFeaturedPost(props) {
 
   return (
     <Paper
-      sx = {{
-        position           : "relative",
-        backgroundColor    : " #9b0404 ",
-        color              : "#fff",
-        mb                 : 4,
-        backgroundSize     : "fill",
-        backgroundRepeat   : "no-repeat",
-        backgroundPosition : "right",
-        backgroundImage    : `url(${logo})`,
+      sx={{
+        position: "relative",
+        backgroundColor: " #9b0404 ",
+        color: "#fff",
+        mb: 4,
+        backgroundSize: "fill",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "right",
+        backgroundImage: `url(${logo})`,
       }}
     >
-      
       {<img style={{ display: "none" }} src={logo} alt={post.imageText} />}
       <Box
-        sx = {{
-          position        : "absolute",
-          top             : 0,
-          bottom          : 0,
-          right           : 0,
-          left            : 0,
-          backgroundColor : "rgba(0,0,0,.3)",
+        sx={{
+          position: "absolute",
+          top: 0,
+          bottom: 0,
+          right: 0,
+          left: 0,
+          backgroundColor: "rgba(0,0,0,.3)",
         }}
       />
       <Grid container>
         <Grid item md={6}>
           <Box
-            sx = {{
-              position : "relative",
-              p        : { xs: 3, md: 3 },
-              pr       : { md: 0 },
+            sx={{
+              position: "relative",
+              p: { xs: 2, md: 2, lg: 2, xl: 3 },
+              pr: { md: 0 },
             }}
           >
             <Typography
-              component = "h1"
-              variant   = "h3"
-              color     = "inherit"
+              component="h1"
+              variant="h3"
+              color="inherit"
               gutterBottom
             >
               Si.G.T.I.D.

@@ -76,6 +76,9 @@ export default function PersistentDrawerLeft() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+    const toggleDrawer = (open) => (event) => {
+      setOpen(open);
+    };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -83,12 +86,12 @@ export default function PersistentDrawerLeft() {
       <AppBar position="fixed" open={open}>
         <Toolbar>
           <IconButton
-            color      = "inherit"
-            aria-label = "open drawer"
-            onClick    = {handleDrawerOpen}
-            edge       = "start"
-            sx         = {{ mr: 2, ...(open && { display: "none" }) }}
-            disabled   = {!!!usuario.usuario}
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={{ mr: 2, ...(open && { display: "none" }) }}
+            disabled={!!!usuario.usuario}
           >
             <MenuIcon />
           </IconButton>
@@ -102,17 +105,17 @@ export default function PersistentDrawerLeft() {
       </AppBar>
 
       <Drawer
-        sx      = {{
-          width       : drawerWidth,
-          flexShrink  : 0,
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
           "& .MuiDrawer-paper": {
-            width     : drawerWidth,
-            boxSizing : "border-box",
+            width: drawerWidth,
+            boxSizing: "border-box",
           },
         }}
-        variant ="persistent"
-        anchor  ="left"
-        open    ={open}
+        anchor="left"
+        open={open}
+        onClose={toggleDrawer(false)}
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
@@ -124,7 +127,13 @@ export default function PersistentDrawerLeft() {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List></List>
+        <Box
+          role="presentation"
+          onClick={toggleDrawer(false)}
+          onKeyDown={toggleDrawer(false)}
+        >
+          <List></List>
+        </Box>
       </Drawer>
       <Main open={open}>
         <DrawerHeader />

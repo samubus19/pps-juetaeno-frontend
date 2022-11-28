@@ -16,60 +16,60 @@ const columns = [
   {
     field      : "usuario",
     headerName : "Usuario",
-    width      : 90,
+    width      : 130,
     renderCell : renderCellExpand,
   },
   {
     field      : "email",
     headerName : "Email",
-    width      : 90,
+    width      : 130,
     renderCell : renderCellExpand,
   },
   {
     field      : "area",
     headerName : "Area",
-    width      : 90,
+    width      : 130,
     renderCell : renderCellExpand,
   },
   { 
     field      : "rol", 
     headerName : "Rol", 
-    width      : 90, 
+    width      : 130, 
     renderCell : renderCellExpand },
   {
     field      : "nombre",
     headerName : "Nombre",
-    width      : 90,
+    width      : 130,
     renderCell : renderCellExpand,
   },
   {
     field      : "apellido",
     headerName : "Apellido",
-    width      : 90,
+    width      : 130,
     renderCell : renderCellExpand,
   },
   {
     field      : "tipoDocumento",
     headerName : "Tipo documento",
-    width      : 90,
+    width      : 130,
     renderCell : renderCellExpand,
   },
   {
     field      : "nroDocumento",
     headerName : "Numero documento",
-    width      : 90,
+    width      : 130,
     renderCell : renderCellExpand,
   },
   {
     field      : "fechaNacimiento",
     headerName : "Fecha nacimiento",
-    width      : 90,
+    width      : 130,
     renderCell : renderCellExpand,
   },
   {
     field      : "nroTelefono",
     headerName : "Telefono",
-    width      : 90,
+    width      : 130,
     renderCell : renderCellExpand,
   },
 ];
@@ -140,7 +140,7 @@ export default function AdminMainForm() {
                       getRowId               = {(r) => r._id}
                       rows                   = {listadoUsuarios}
                       columns                = {columns}
-                      pageSize               = {5}
+                      pageSize               = {6}
                       rowsPerPageOptions     = {[5]}
                       checkboxSelection 
                       selectionModel         = {selectionId}

@@ -24,14 +24,15 @@ export const getDocumentos = () => {
       for (let i = 0; i < documento.length; i++) {
         const e = {
           _id: documento[i]._id,
-          tipoDocumento   : documento[i].tipoDocumento,
-          nroDocumento    : documento[i].nroDocumento,
-          descripcion     : documento[i].descripcion,
-          fechaIngreso    : documento[i].historial[documento[i].historial.length - 1].fechaIngreso,
-          fechaSalida     : documento[i].historial[documento[i].historial.length - 1].fechaSalida,
-          sede            : formatearArea(documento[i].historial[documento[i].historial.length - 1].sede),
-          estado          : documento[i].historial[documento[i].historial.length - 1].estado,
-          UsuarioFirmante : documento[i].historial[documento[i].historial.length - 1].idUsuarioFirmante.idPersona.nombre +
+          tipoDocumento     : documento[i].tipoDocumento,
+          nroDocumento      : documento[i].nroDocumento,
+          descripcion       : documento[i].descripcion,
+          fechaIngresoInst  : documento[i].historial[0].fechaIngreso,
+          fechaIngresoArea  : documento[i].historial[documento[i].historial.length - 1].fechaIngreso,
+          fechaSalida       : documento[i].historial[documento[i].historial.length - 1].fechaSalida,
+          sede              : formatearArea(documento[i].historial[documento[i].historial.length - 1].sede),
+          estado            : documento[i].historial[documento[i].historial.length - 1].estado,
+          UsuarioFirmante   : documento[i].historial[documento[i].historial.length - 1].idUsuarioFirmante.idPersona.nombre +
             " " + documento[i].historial[documento[i].historial.length - 1].idUsuarioFirmante.idPersona.apellido +
             " DNI: " + documento[i].historial[documento[i].historial.length - 1].idUsuarioFirmante.idPersona.nroDocumento,
         };

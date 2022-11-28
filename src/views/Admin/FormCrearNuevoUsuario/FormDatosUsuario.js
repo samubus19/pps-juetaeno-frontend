@@ -95,6 +95,14 @@ export default function FormDatosUsuario() {
   const rolChange = (event, newRol) => {
     setInputValue({ ...inputValue, Rol: newRol });
   };
+    const completeFromAlert = () => {
+    setAlertMessage({
+      type    : "warning",
+      title   : "Advertencia",
+      message : "Debe completar todos los campos obligatorios",
+    });
+    setOpenAlert(true);
+  };
 
   const handleSubmit = async (event) => {
     try {
@@ -103,19 +111,19 @@ export default function FormDatosUsuario() {
       const data = new FormData(event.currentTarget);
 
       if (!data.get("usuario") || data.get("usuario") === "") {
-        alert("Debe completar todos los campos olbigatorios");
+        completeFromAlert();
         return;
       }
       if (!data.get("mail") || data.get("mail") === "") {
-        alert("Debe completar todos los campos olbigatorios");
+        completeFromAlert();
         return;
       }
       if (!inputValue.Area || inputValue.Area === "") {
-        alert("Debe completar todos los campos olbigatorios");
+        completeFromAlert();
         return;
       }
       if (!data.get("contrasenia") || data.get("contrasenia") === "") {
-        alert("Debe completar todos los campos olbigatorios");
+        completeFromAlert();
         return;
       }
 
@@ -177,6 +185,7 @@ export default function FormDatosUsuario() {
               <div style={{ height: 450, width: "100%" }}>
                 <Paper
                   component = "form"
+                  elevation = {0}
                   sx        = {{
                     p          : "2px 4px",
                     display    : "flex",
@@ -189,6 +198,7 @@ export default function FormDatosUsuario() {
                     Datos del Usuario
                   </Typography>
                 </Paper>
+                <Divider></Divider>
                 <Box p={1} pt={3} pb={3}>
                   <Stack spacing={2}>
                     <TextField
@@ -242,6 +252,7 @@ export default function FormDatosUsuario() {
               <Box sx={{ height: 350, width: "100%" }}>
                 <Paper
                   component = "form"
+                  elevation = {0}
                   sx        = {{
                     p          : "2px 4px",
                     display    : "flex",
