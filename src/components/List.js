@@ -46,7 +46,7 @@ const SelectedListItem = (props) => {
           localStorage.getItem("usuario") && desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).rol.toUpperCase() === "ADMIN" ?
           (
             <>
-              <ListItemButton onClick={redirect} >
+              <ListItemButton onClick={() => navigate("/admin")} >
                 <ListItemIcon style={{justifyContent:"center"}}>
                   <SupervisorAccountIcon color="red"/>
                 </ListItemIcon>
