@@ -3,6 +3,7 @@ import { setPersonas,
          setRequestStatus, 
          startLoadingPersonas } from './personaSlice';
 import { createAsyncThunk }     from '@reduxjs/toolkit';
+import desencriptarUsuario      from '../../../helpers/Desencriptador';
 
 const mToken = JSON.parse(localStorage.getItem("token"))
 
@@ -33,7 +34,7 @@ export const crearNuevaPersonaAsync = createAsyncThunk('persona/crearNuevaPerson
                 nroDocumento    : body.nroDocumento,
                 fechaNacimiento : body.fechaNacimiento,
                 nroTelefono     : body.nroTelefono,
-                 rol            : JSON.parse(localStorage.getItem("usuario")).rol
+                 rol            : desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).rol
             } ,
             {
                 headers : {
@@ -56,7 +57,7 @@ export const editarPersonaAsync = createAsyncThunk( 'persona/editarPersonaAsync'
             apellido        : body.apellido,
             fechaNacimiento : body.fechaNacimiento,
             nroTelefono     : body.nroTelefono,
-            rol             : JSON.parse(localStorage.getItem("usuario")).rol
+            rol             : desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).rol
         },{
             headers : {
                 'Authorization' : mToken
@@ -81,7 +82,7 @@ export const editarPersonaAsync = createAsyncThunk( 'persona/editarPersonaAsync'
               method : "delete",
               url    : `/person/${body.idPersona}`,
               data   : {
-                rol  : JSON.parse(localStorage.getItem("usuario")).rol
+                rol  : desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).rol
               },
               headers : {
                 "Authorization" : mToken

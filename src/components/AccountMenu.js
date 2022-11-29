@@ -8,11 +8,13 @@ import Divider      from "@mui/material/Divider";
 import IconButton   from "@mui/material/IconButton";
 import Tooltip      from "@mui/material/Tooltip";
 import Logout       from "@mui/icons-material/Logout";
+import desencriptarUsuario from "../helpers/Desencriptador";
+
 
 export default function AccountMenu() {
   let usuario                   = {};
   !!localStorage.getItem("usuario")
-    ? (usuario = JSON.parse(localStorage.getItem("usuario")))
+    ? (usuario = desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')))
     : (usuario = { usuario: "" });
 
   let resp                      = !!usuario.usuario ? "" : "none";

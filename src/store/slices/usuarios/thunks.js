@@ -1,6 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { juetaenoApi } from '../../../api/juetaeno-backend-api';
 import { setUser, startLoadingUsers, setRequestStatus, setListadoUsuarios } from "./usuarioSlice";
+import CryptoJS                       from 'crypto-js';
+import desencriptarUsuario from '../../../helpers/Desencriptador'
 
 const mToken = JSON.parse(localStorage.getItem("token"))
 
@@ -48,11 +50,20 @@ export const loginUsuario = createAsyncThunk('usuario/loginUsuario', async(body,
             email       : body.email,
             contrasenia : body.contrasenia 
         })
-        dispatch(setUser({usuario : resp.data.usuario, token : resp.data.token}))
-        dispatch(setRequestStatus({requestStatus : resp.status})) 
-        return resp
+        // console.log("THUNK", desencriptarUsuario(resp.data.usuario, resp.data.token))
+
+        const result = {
+          data : {
+            token   : resp.data.token,
+            usuario : resp.data.usuario 
+          },
+          requestStatus : resp.status
+        }
+        // dispatch(setUser({usuario : resp.data.usuario, token : resp.data.token}))
+        // dispatch(setRequestStatus({requestStatus : resp.status})) 
+        return result
   } catch (error) {
-    //console.log(error);
+    console.log(error);
     dispatch(setRequestStatus({ requestStatus: error.response.status })); 
     return error;
   }
@@ -112,7 +123,7 @@ export const editarUsuarioAsync = createAsyncThunk( 'usuario/editarUsuarioAsync'
         email           : body.email,
         area            : body.area,
         rolEditado      : body.rolEditado,
-        rol             : JSON.parse(localStorage.getItem("usuario")).rol
+        rol             : desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).rol
       },{
           headers : {
               'Authorization' : mToken
@@ -137,7 +148,7 @@ export const getUsuarios = () => {
           method : "get",
           url    : "/users/all",
           data   : {
-            rol  : JSON.parse(localStorage.getItem("usuario")).rol
+            rol  : desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).rol
           },
           headers : {
             "Authorization" : mToken

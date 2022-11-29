@@ -14,6 +14,7 @@ import { useEffect }                         from "react";
 import { verificarTokenAsync }               from "../../../store/slices/jwt/thunks";
 import AlertDialog                           from "../../../components/Alert";
 import AlertDialogSlide                      from "../../../components/Dialog";
+import desencriptarUsuario                   from "../../../helpers/Desencriptador";
 
 const mainFeaturedPost = {
   area: `Administrador - Nuevo Usuario `,
@@ -132,7 +133,7 @@ export default function FormDatosUsuario() {
         email       : data.get("mail").trim(),
         contrasenia : data.get("contrasenia").trim(),
         area        : inputValue.Area,
-        rol         : JSON.parse(localStorage.getItem("usuario")).rol,
+        rol         : desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).rol,
         idPersona   : persona.persona._id,
       };
 

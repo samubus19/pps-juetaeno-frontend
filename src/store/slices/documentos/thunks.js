@@ -3,6 +3,7 @@ import { setDocuments,
         setRequestStatus, 
         startLoadingDocuments } from "./documentoSlice";
 import { formatearArea }        from "../../../helpers/Area-formatter";
+import desencriptarUsuario      from "../../../helpers/Desencriptador";
 
 const mToken = JSON.parse(localStorage.getItem("token"));
 
@@ -83,7 +84,7 @@ export const crearNuevoDocumento = (body) => {
           nroDocumento      : body.nroDocumento,
           tipoDocumento     : body.tipoDocumento,
           descripcion       : body.descripcion,
-          idUsuarioFirmante : JSON.parse(localStorage.getItem("usuario"))._id,
+          idUsuarioFirmante : desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', ''))._id,
         },
         {
           headers : {
@@ -111,7 +112,7 @@ export const actualizarEstadoDocumento = (body) => {
           _id               : body._id,
           nuevoEstado       : body.nuevoEstado,
           sede              : body.sede,
-          idUsuarioFirmante : JSON.parse(localStorage.getItem("usuario"))._id,
+          idUsuarioFirmante : desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', ''))._id,
         },
         {
           headers : {

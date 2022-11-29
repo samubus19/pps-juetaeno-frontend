@@ -17,6 +17,7 @@ import { verificarTokenAsync }               from "../../store/slices/jwt/thunks
 import AlertDialog                           from "../../components/Alert";
 import AlertDialogSlide                      from "../../components/Dialog";
 import SimpleBackdrop                        from "../../components/Backdrop";
+import desencriptarUsuario                   from "../../helpers/Desencriptador";
 
 const mainFeaturedPost = {
   area : "Administrador - Editar Usuario",
@@ -139,7 +140,7 @@ export default function FormEditarUsuarioPersona() {
           });
           setOpenAlert(true);
 
-          if(JSON.parse(localStorage.getItem("usuario")).usuario.toLowerCase() === bodyUsuario.usuario.toLowerCase()) {
+          if(desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).usuario.toLowerCase() === bodyUsuario.usuario.toLowerCase()) {
             localStorage.clear()
             window.location.reload()
           }

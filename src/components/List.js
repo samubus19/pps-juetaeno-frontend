@@ -9,13 +9,14 @@ import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import FindInPageIcon        from '@mui/icons-material/FindInPage';
 import ListAltIcon           from '@mui/icons-material/ListAlt';
 import HomeIcon              from '@mui/icons-material/Home';
+import desencriptarUsuario   from "../helpers/Desencriptador";
 
 const SelectedListItem = (props) => {
 
   const navigate = useNavigate();
 
   const redirect = (e) => {
-    switch (JSON.parse(localStorage.getItem("usuario")).area.toUpperCase()) {
+    switch (desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).area.toUpperCase()) {
       
       case "LEGALES":
         navigate("/legales");
@@ -42,7 +43,7 @@ const SelectedListItem = (props) => {
     <Box sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
       <List component="nav" aria-label="main mailbox folders">
         {
-          localStorage.getItem("usuario") && JSON.parse(localStorage.getItem("usuario")).rol.toUpperCase() === "ADMIN" ?
+          localStorage.getItem("usuario") && desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).rol.toUpperCase() === "ADMIN" ?
           (
             <>
               <ListItemButton onClick={redirect} >

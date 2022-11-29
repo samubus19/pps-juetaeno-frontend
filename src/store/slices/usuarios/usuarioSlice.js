@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { crearNuevoUsuarioAsync, 
          editarUsuarioAsync, 
-         getUsuarioPorIdAsync }          from './thunks'
+         getUsuarioPorIdAsync, 
+         loginUsuario}          from './thunks'
 
 const initialState = {
   isLoading       : false,
@@ -56,6 +57,17 @@ export const usuarioSlice = createSlice({
     builder.addCase(getUsuarioPorIdAsync.pending, (state, action) => {
       state.isLoading     = true
       state.usuario       = []
+    })
+    builder.addCase(loginUsuario.fulfilled, (state, action) => {
+      state.usuario   = action.payload.data.usuario
+      state.token     = action.payload.data.token
+      state.isLoading = false
+      state.requestStatus = action.payload.requestStatus
+      localStorage.setItem("usuario", JSON.stringify(state.usuario));
+      localStorage.setItem("token", JSON.stringify(state.token));
+    })
+    builder.addCase(loginUsuario.pending, (state, action) => {
+      state.isLoading = true
     })
     
   }

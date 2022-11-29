@@ -13,6 +13,7 @@ import ChevronLeftIcon      from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon     from "@mui/icons-material/ChevronRight";
 import List                 from "./List";
 import AccountMenu          from "./AccountMenu";
+import desencriptarUsuario  from "../helpers/Desencriptador";
 
 const drawerWidth = 240;
 
@@ -64,7 +65,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 export default function PersistentDrawerLeft() {
   let usuario = {};
   !!localStorage.getItem("usuario")
-    ? (usuario = JSON.parse(localStorage.getItem("usuario")))
+    ? (usuario = desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')))
     : (usuario = { usuario: "" });
 
   const theme = useTheme();

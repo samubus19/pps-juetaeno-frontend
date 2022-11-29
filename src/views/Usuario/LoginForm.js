@@ -14,6 +14,7 @@ import { loginUsuario }                           from "../../store/slices/usuar
 import { useNavigate }                            from "react-router-dom";
 import { useEffect, useState }                    from "react";
 import AlertDialog                                from "../../components/Alert";
+import desencriptarUsuario                        from "../../helpers/Desencriptador";
 
 function Copyright() {
   return (
@@ -30,7 +31,8 @@ function Copyright() {
 
 export default function LoginForm() {
   const dispatch    = useDispatch();
-  const { usuario } = useSelector((state) => state.usuario);
+  let { usuario }   = useSelector((state) => state.usuario);
+  let { token }     = useSelector((state) => state.usuario);
   const navigate    = useNavigate();
   const [openAlert, setOpenAlert]       = useState(false);
   const [alertMessage, setAlertMessage] = useState({
@@ -64,8 +66,8 @@ export default function LoginForm() {
         })
       )
       .then((resp)=>{
-        console.log(resp.payload.response.status)
-        if(resp.payload.response.status === 401){
+
+        if(resp.payload.data.requestStatus === 401){
            setAlertMessage({
               type    : "error",
               title   : "Error",
@@ -81,7 +83,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (!!localStorage.getItem("usuario")) {
-      switch (JSON.parse(localStorage.getItem("usuario")).area.toUpperCase()) {
+      switch (desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).area.toUpperCase()) {
         case "LEGALES":
           navigate("/legales");
           break;
@@ -102,120 +104,121 @@ export default function LoginForm() {
     }
   }, []);
 
-  if (!!usuario.area) {
+  if (!!usuario && usuario.length > 0) {
     window.location.reload();
+    console.log("USUARIO", usuario)
   }
 
   return (
-    <React.Fragment>
-      <Grid container component="main" sx={{ height: "100vh" }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={6}
-          sx={{
-            backgroundRepeat: "no-repeat",
-            backgroundColor: "#9b0404 ",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundImage: `url(${logoJUETAENO})`,
-          }}
-        >
-          <Box
+        <React.Fragment>
+        <Grid container component="main" sx={{ height: "100vh" }}>
+          <CssBaseline />
+          <Grid
+            item
+            xs={false}
+            sm={4}
+            md={6}
             sx={{
-              display: { xs: "none", sm: "block", md: "block" },
-
-              position: "relative",
-              p: { xs: 3, md: 3 },
-              pr: { md: 0 },
+              backgroundRepeat: "no-repeat",
+              backgroundColor: "#9b0404 ",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundImage: `url(${logoJUETAENO})`,
             }}
           >
-            <Typography component="h1" variant="h3" color="white" gutterBottom>
-              S.G.T.I.D.
-            </Typography>
-            <Typography variant="h7" color="white" paragraph>
-              (Sistema de Gestion de <br></br>Trafico Interno de Documentos)
-            </Typography>
-          </Box>
-        </Grid>
-        <Grid item xs={12} sm={8} md={6} component={Paper} elevation={6} square>
-          <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Ingreso
-            </Typography>
             <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 1 }}
+              sx={{
+                display: { xs: "none", sm: "block", md: "block" },
+  
+                position: "relative",
+                p: { xs: 3, md: 3 },
+                pr: { md: 0 },
+              }}
             >
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Nombre de usuario"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Clave"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Recordarme"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Ingresar
-              </Button>
-              <Typography variant="h6" align="center" gutterBottom>
-                J.U.E.T.A.E.N.O
+              <Typography component="h1" variant="h3" color="white" gutterBottom>
+                S.G.T.I.D. 
               </Typography>
-              <Typography
-                variant="subtitle1"
-                align="center"
-                color="text.secondary"
-                component="p"
-              >
-                (Junta Única de Evaluación de Títulos y Antecedentes del
-                Educador del Nivel Obligatorio)
+              <Typography variant="h7" color="white" paragraph>
+                (Sistema de Gestion de <br></br>Trafico Interno de Documentos)
               </Typography>
-              <Copyright sx={{ mt: 5 }} />
             </Box>
-          </Box>
+          </Grid>
+          <Grid item xs={12} sm={8} md={6} component={Paper} elevation={6} square>
+            <Box
+              sx={{
+                my: 8,
+                mx: 4,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Ingreso
+              </Typography>
+              <Box
+                component="form"
+                noValidate
+                onSubmit={handleSubmit}
+                sx={{ mt: 1 }}
+              >
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Nombre de usuario"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Clave"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                />
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Recordarme"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Ingresar
+                </Button>
+                <Typography variant="h6" align="center" gutterBottom>
+                  J.U.E.T.A.E.N.O
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  align="center"
+                  color="text.secondary"
+                  component="p"
+                >
+                  (Junta Única de Evaluación de Títulos y Antecedentes del
+                  Educador del Nivel Obligatorio)
+                </Typography>
+                <Copyright sx={{ mt: 5 }} />
+              </Box>
+            </Box>
+          </Grid>
         </Grid>
-      </Grid>
-         <AlertDialog
-        openAlert          = {openAlert}
-        setOpenAlertDialog = {setOpenAlertDialog}
-        content            = {alertMessage}
-      />
-    </React.Fragment>
+           <AlertDialog
+          openAlert          = {openAlert}
+          setOpenAlertDialog = {setOpenAlertDialog}
+          content            = {alertMessage}
+        />
+      </React.Fragment>
   );
 }

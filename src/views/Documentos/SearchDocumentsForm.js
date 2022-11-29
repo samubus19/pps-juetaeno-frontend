@@ -11,6 +11,7 @@ import { useDispatch, useSelector }     from "react-redux";
 import { verificarTokenAsync }          from "../../store/slices/jwt/thunks";
 import CircularIndeterminate            from "../../components/Circular";
 import AlertDialogSlide                 from "../../components/Dialog";
+import desencriptarUsuario              from "../../helpers/Desencriptador";
 
 const columns = [
   {
@@ -92,7 +93,7 @@ export default function SearchDocumentsForm() {
   const navigate                      = useNavigate();
 
   const redirect = (e) => {
-    switch (JSON.parse(localStorage.getItem("usuario")).area.toUpperCase()) {
+    switch (desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).area.toUpperCase()) {
       case "LEGALES":
         navigate("/legales");
         break;
