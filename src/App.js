@@ -16,6 +16,7 @@ import NotFoundPage                   from "./views/NotFoundPage";
 import FormDatosUsuario               from "./views/Admin/FormCrearNuevoUsuario/FormDatosUsuario";
 import EditDocumentsFrom              from "./views/Documentos/EditDocumentsForm";
 import FormEditarUsuarioPersona       from "./views/Admin/FormEditarUsuarioPersona";
+import FormCambiarContraseniaUsuario  from "./views/Admin/FormCambiarContrasenia";
 import desencriptarUsuario            from "./helpers/Desencriptador";
 
 const theme = createTheme({
@@ -132,6 +133,7 @@ function App() {
                 <Route path="/admin/nuevousuario" element={<AdminUsersForm />} />
                 <Route path="/admin/nuevousuario2" element={<FormDatosUsuario />} />
                 <Route path="/admin/editarusuario" element={<FormEditarUsuarioPersona />} />
+                <Route path="/admin/cambiarcontrasenia" element={<FormCambiarContraseniaUsuario />} />
               </Route>
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

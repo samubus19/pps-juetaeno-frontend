@@ -1,8 +1,9 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { crearNuevoUsuarioAsync, 
+import { createSlice }            from '@reduxjs/toolkit'
+import { cambiarContraseniaAsync, 
+         crearNuevoUsuarioAsync, 
          editarUsuarioAsync, 
          getUsuarioPorIdAsync, 
-         loginUsuario}          from './thunks'
+         loginUsuario}            from './thunks'
 
 const initialState = {
   isLoading       : false,
@@ -59,17 +60,25 @@ export const usuarioSlice = createSlice({
       state.usuario       = []
     })
     builder.addCase(loginUsuario.fulfilled, (state, action) => {
-      state.usuario   = action.payload.data.usuario
-      state.token     = action.payload.data.token
       state.isLoading = false
-      state.requestStatus = action.payload.requestStatus
-      localStorage.setItem("usuario", JSON.stringify(state.usuario));
-      localStorage.setItem("token", JSON.stringify(state.token));
+      if(!!action.payload.data){
+        state.usuario   = action.payload.data.usuario
+        state.token     = action.payload.data.token
+        state.requestStatus = action.payload.requestStatus
+        localStorage.setItem("usuario", JSON.stringify(state.usuario));
+        localStorage.setItem("token", JSON.stringify(state.token));
+      } 
     })
     builder.addCase(loginUsuario.pending, (state, action) => {
       state.isLoading = true
     })
-    
+    builder.addCase(cambiarContraseniaAsync.fulfilled, (state, action) => {
+      state.isLoading     = false
+      state.requestStatus = action.payload.data.requestStatus
+    })
+    builder.addCase(cambiarContraseniaAsync.pending, (state, action) => {
+      state.isLoading = true
+    })
   }
 })
 

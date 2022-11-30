@@ -63,7 +63,6 @@ export const loginUsuario = createAsyncThunk('usuario/loginUsuario', async(body,
         // dispatch(setRequestStatus({requestStatus : resp.status})) 
         return result
   } catch (error) {
-    console.log(error);
     dispatch(setRequestStatus({ requestStatus: error.response.status })); 
     return error;
   }
@@ -95,26 +94,23 @@ export const crearNuevoUsuarioAsync = createAsyncThunk( 'usuario/crearNuevoUsuar
       }
 }) 
 
-export const actualizarContrasenia = (body, params) => {
-    return async (dispatch, getState) => {
-    try{
-        dispatch(startLoadingUsers())
-        const resp = await juetaenoApi.put(`/users/${params.idUsuario}`, {
-            contrasenia : body.contrasenia,
-        },{
-            headers : {
-                'Authorization' : mToken
-            }
-        });
-
-        dispatch(setRequestStatus({requestStatus : resp.status}))  
-        } catch(error) {
-          dispatch(setRequestStatus({requestStatus : error.response.status})) 
-          console.log(error)
-          return error;
+export const cambiarContraseniaAsync = createAsyncThunk( 'usuario/cambiarContraseniaAsync' ,async (body, {getState, dispatch}) => {
+  try {
+      const resp = await juetaenoApi.put(`/users/passwd/${body.idUsuario}`, {
+        contrasenia : body.contrasenia,
+        rol         : desencriptarUsuario(localStorage.getItem("usuario").replaceAll('"', ''),  localStorage.getItem("token").replaceAll('"', '')).rol
+    },{
+        headers : {
+            'Authorization' : mToken
         }
-    }
-} 
+    });
+    return resp
+  
+  } catch(error) {
+    dispatch(setRequestStatus({requestStatus : error.response.status})) 
+    return error;
+}
+}) 
 
 export const editarUsuarioAsync = createAsyncThunk( 'usuario/editarUsuarioAsync' ,async (body, {getState, dispatch}) => {
   try {
