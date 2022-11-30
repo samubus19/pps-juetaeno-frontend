@@ -66,8 +66,6 @@ export default function LoginForm() {
         })
       )
       .then((resp)=>{
-
-        if(resp.payload.data.requestStatus === 401){
            setAlertMessage({
               type    : "error",
               title   : "Error",
@@ -76,6 +74,7 @@ export default function LoginForm() {
           setOpenAlert(true);
         }
       })
+      
     } else {
       completeFromAlert();
     }
