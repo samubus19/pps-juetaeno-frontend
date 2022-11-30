@@ -218,6 +218,21 @@ export default function AdminMainForm() {
                       fullWidth
                       disabled={!selectionId.length}
                       onClick={() => {
+                        navigate("/admin/cambiarcontrasenia", {
+                          state: selectionId,
+                        });
+                      }}
+                    >
+                      Cambiar contrasenña
+                    </Button>
+                  </Grid>
+                  <Grid item xs={1} />
+                  <Grid item xs={2}>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      disabled={!selectionId.length}
+                      onClick={() => {
                         navigate("/admin/editarusuario", {
                           state: selectionId,
                         });

@@ -67,7 +67,7 @@ export default function LoginForm() {
       )
       .then((resp)=>{
 
-        if(resp.payload.data.requestStatus === 401){
+        if(resp.payload.response.status === 400){
            setAlertMessage({
               type    : "error",
               title   : "Error",

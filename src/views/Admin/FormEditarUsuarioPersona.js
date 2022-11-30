@@ -18,6 +18,7 @@ import AlertDialog                           from "../../components/Alert";
 import AlertDialogSlide                      from "../../components/Dialog";
 import SimpleBackdrop                        from "../../components/Backdrop";
 import desencriptarUsuario                   from "../../helpers/Desencriptador";
+import obtenerEdadPorFecha                   from "../../helpers/ObtenerEdadPorFecha";
 
 const mainFeaturedPost = {
   area : "Administrador - Editar Usuario",
@@ -108,9 +109,41 @@ export default function FormEditarUsuarioPersona() {
     setInputValue({ ...inputValue, TipoDocumento: newTipoDocumento });
   };
 
+  const completeFromAlert = (mensaje = "Debe completar todos los campos obligatorios") => {
+    setAlertMessage({
+      type    : "warning",
+      title   : "Advertencia",
+      message : mensaje,
+    });
+    setOpenAlert(true);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+
+    if (!data.get("nombre") || data.get("nombre") === "") {
+      completeFromAlert();
+      return;
+    }
+
+    if (!data.get("apellido") || data.get("apellido") === "") {
+      completeFromAlert();
+      return;
+    }
+
+    if (!data.get("fecha") || data.get("fecha") === "") {
+      completeFromAlert();
+      return;
+    } else if(obtenerEdadPorFecha(DateTime.fromISO(data.get("fecha")).toFormat("dd/LL/yyyy")) < 18){
+      completeFromAlert("La persona debe ser mayor de edad (>18).")
+      return
+    }
+
+    if (!data.get("telefono") || data.get("telefono") === "") {
+      completeFromAlert();
+      return;
+    }
 
     const bodyPersona = {
       idPersona       : usuario.idPersona,

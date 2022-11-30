@@ -15,6 +15,7 @@ import { DateTime }                          from "luxon";
 import { verificarTokenAsync }               from "../../../store/slices/jwt/thunks";
 import AlertDialog                           from "../../../components/Alert";
 import AlertDialogSlide                      from "../../../components/Dialog";
+import obtenerEdadPorFecha                   from "../../../helpers/ObtenerEdadPorFecha";
 
 const mainFeaturedPost = {
   area : `Administrador - Nuevo Usuario `,
@@ -85,11 +86,11 @@ export default function NewUsersFrom() {
   const tipoDocumentoChange = (event, newTipoDocumento) => {
     setInputValue({ ...inputValue, TipoDocumento: newTipoDocumento });
   };
-    const completeFromAlert = () => {
+    const completeFromAlert = (mensaje = "Debe completar todos los campos obligatorios") => {
     setAlertMessage({
       type    : "warning",
       title   : "Advertencia",
-      message : "Debe completar todos los campos obligatorios",
+      message : mensaje,
     });
     setOpenAlert(true);
   };
@@ -118,6 +119,9 @@ export default function NewUsersFrom() {
       if (!data.get("fecha") || data.get("fecha") === "") {
         completeFromAlert();
         return;
+      } else if(obtenerEdadPorFecha(DateTime.fromISO(data.get("fecha")).toFormat("dd/LL/yyyy")) < 18){
+        completeFromAlert("La persona debe ser mayor de edad (>18).")
+        return
       }
       if (!data.get("telefono") || data.get("telefono") === "") {
         completeFromAlert();
