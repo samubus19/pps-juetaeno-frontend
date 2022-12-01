@@ -9,10 +9,6 @@ export default function AlertDialog(props) {
 
   const navigate = useNavigate();
 
-  const handleClose = () => {
-    setOpenAlertDialog(false);
-  };
-
   const onTimeClose = () => {
     setTimeout(() => {
       switch (content.type) {

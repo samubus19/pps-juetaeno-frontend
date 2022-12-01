@@ -36,13 +36,13 @@ const columns = [
   },
   {
     field      : "nroDocumento",
-    headerName : "Numero",
+    headerName : "Número",
     width      : 130,
     renderCell : renderCellExpand,
   },
   {
     field      : "descripcion",
-    headerName : "Descripcion",
+    headerName : "Descripción",
     width      : 200,
     renderCell : renderCellExpand,
   },
@@ -60,7 +60,7 @@ const columns = [
   },
   {
     field      : "fechaIngresoArea",
-    headerName : "Fecha de ingreso al area",
+    headerName : "Fecha de ingreso al área",
     width      : 200,
     renderCell : renderCellExpand,
   },
@@ -74,12 +74,12 @@ const columns = [
 ];
 
 const mainFeaturedPost = {
-  area : "Area: Mesa de entrada",
+  area : "Área: Mesa de entrada",
 };
 
 export default function MesaEntradaForm() {
 
-  const { showDocumentos = [], requestStatus } = useSelector(
+  const { showDocumentos = [] } = useSelector(
     (state) => state.documento
   );
 
@@ -126,7 +126,7 @@ export default function MesaEntradaForm() {
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title    : "Su sesion ha caducado",
+          title    : "Su sesión ha caducado",
           message  : "Por favor vuelva a ingresar al sistema",
           expirado : true,
         });
@@ -170,8 +170,8 @@ export default function MesaEntradaForm() {
         if (resp.status === 200) {
           setAlertMessage({
             type    : "success",
-            title   : "El documento fue actualizado con exito",
-            message : "La operacion ha resultado exitosa, documento actualizado",
+            title   : "Éxito",
+            message : "El estado del documento se ha actualizado correctamente",
             reaload : true,
           });
           setOpenAlert(true);
@@ -180,8 +180,8 @@ export default function MesaEntradaForm() {
           if (resp.response.status === 500) {
             setAlertMessage({
               type    : "error",
-              title   : "Ocurrio un error",
-              message : "Intentelo mas tarde o llame a personal tecnico. ",
+              title   : "Error",
+              message : "Inténtelo más tarde o llame a personal técnico. ",
               reaload : true,
             });
             setOpenAlert(true);
@@ -379,7 +379,7 @@ export default function MesaEntradaForm() {
                         options={areaDestino}
                         onInputChange={areaDestinoChange}
                         renderInput={(params) => (
-                          <TextField {...params} label="Area" />
+                          <TextField {...params} label="Área" />
                         )}
                       />
                       <Button

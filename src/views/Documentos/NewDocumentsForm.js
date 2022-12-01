@@ -14,7 +14,7 @@ import { verificarTokenAsync }               from "../../store/slices/jwt/thunks
 import AlertDialog                           from "../../components/Alert";
 
 const mainFeaturedPost = {
-  area : "Area: Mesa de entrada - Nuevo Documento",
+  area : "Área: Mesa de entrada - Nuevo Documento",
 };
 const tiposDocumento = [
   { label : "EXP (expediente)" },
@@ -41,9 +41,9 @@ export default function NewDocumentsFrom() {
 
   const cancelar = () => {
     setDialogMessage({
-      title   : "¿Desea cancelar la operacion?",
+      title   : "¿Desea cancelar la operación?",
       message :
-        "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+        "Si cancela la operación los cambios se perderán y será redirigido al inbox",
     });
     setPopup(true);
   };
@@ -73,7 +73,7 @@ export default function NewDocumentsFrom() {
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title    : "Su sesion ha caducado",
+          title    : "Su sesión ha caducado",
           message  : "Por favor vuelva a ingresar al sistema",
           expirado : true,
         });
@@ -119,8 +119,8 @@ export default function NewDocumentsFrom() {
         if (resp.status === 201) {
           setAlertMessage({
             type    : "success",
-            title   : "El documento fue añadido con exito",
-            message : "La operacion ha resultado exitosa, documento añadido",
+            title   : "Éxito",
+            message : "Documento creado correctamente",
           });
           setOpenAlert(true);
 
@@ -128,7 +128,7 @@ export default function NewDocumentsFrom() {
           if (resp.response.status === 400) {
             setAlertMessage({
               type    : "error",
-              title   : "Ocurrio un error",
+              title   : "Error",
               message : `${resp.response.data.mensaje}`,
             });
             setOpenAlert(true);
@@ -137,8 +137,8 @@ export default function NewDocumentsFrom() {
             if (resp.response.status === 500) {
               setAlertMessage({
                 type    : "error",
-                title   : "Ocurrio un error",
-                message : "Intentelo mas tarde o llame a personal tecnico. ",
+                title   : "Error",
+                message : "Inténtelo más tarde o llame a personal técnico. ",
               });
               setOpenAlert(true);
             }
@@ -203,7 +203,7 @@ export default function NewDocumentsFrom() {
                       fullWidth
                       required
                       id    = "numeroDoc"
-                      label = "Numero de documento"
+                      label = "Número"
                       name  = "numeroDoc"
                       margin= "dense"
                     />

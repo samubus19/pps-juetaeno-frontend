@@ -47,7 +47,6 @@ export const getDocumentos = () => {
       dispatch(setRequestStatus({ requestStatus: resp.status }));
     } catch (error) {
       dispatch(setRequestStatus({ requestStatus: error.response.status }));
-      console.log(error);
     }
   };
 };
@@ -77,7 +76,6 @@ export const crearNuevoDocumento = (body) => {
 
     } catch (error) {
       dispatch(setRequestStatus({ requestNewStatus: error.response.status }));
-      //console.log(error.response.status);
       return error;
     }
   };
@@ -157,7 +155,7 @@ export const getDocumentoPorIdAsync =  createAsyncThunk("documento/getDocumentoP
       descripcion   : resp.data.mensaje.descripcion
     }
 
-    resp.data.mensaje.historial.map((elementoHistorial) => {
+    resp.data.mensaje.historial.forEach((elementoHistorial) => {
       let datosPersona = {
         firmante : `${elementoHistorial.idUsuarioFirmante.idPersona.nombre} ${elementoHistorial.idUsuarioFirmante.idPersona.apellido } - ${elementoHistorial.idUsuarioFirmante.idPersona.tipoDocumento}: ${elementoHistorial.idUsuarioFirmante.idPersona.nroDocumento}`
       }

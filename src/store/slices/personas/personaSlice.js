@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice }               from '@reduxjs/toolkit'
 import {  crearNuevaPersonaAsync, 
           editarPersonaAsync, 
           eliminarPersonaAsync, 
-          getPersonaPorNumeroAsync }     from './thunks'
+          getPersonaPorNumeroAsync } from './thunks'
 
 const initialState = {
   isLoading     : false,

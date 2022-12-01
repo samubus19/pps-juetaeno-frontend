@@ -32,7 +32,6 @@ function Copyright() {
 export default function LoginForm() {
   const dispatch    = useDispatch();
   let { usuario }   = useSelector((state) => state.usuario);
-  let { token }     = useSelector((state) => state.usuario);
   const navigate    = useNavigate();
   const [openAlert, setOpenAlert]       = useState(false);
   const [alertMessage, setAlertMessage] = useState({
@@ -108,7 +107,6 @@ export default function LoginForm() {
 
   if (!!usuario && usuario.length > 0) {
     window.location.reload();
-    console.log("USUARIO", usuario)
   }
 
   return (

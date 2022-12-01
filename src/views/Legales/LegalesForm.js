@@ -38,7 +38,7 @@ const columns = [
   },
   {
     field      : "nroDocumento",
-    headerName : "Numero",
+    headerName : "Número",
     width      : 130,
     renderCell : renderCellExpand,
   },
@@ -62,7 +62,7 @@ const columns = [
   },
   {
      field     : "fechaIngresoArea",
-    headerName : "Fecha de ingreso al area",
+    headerName : "Fecha de ingreso al área",
     width      : 200,
     renderCell : renderCellExpand,
   },
@@ -74,7 +74,7 @@ const columns = [
     renderCell : renderCellExpand,
   },
 ];
-const mainFeaturedPost = { area: "Area: Legales" };
+const mainFeaturedPost = { area: "Área: Legales" };
 const route            = "/legales";
 
 export default function LegalesForm() {
@@ -129,7 +129,7 @@ export default function LegalesForm() {
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title    : "Su sesion ha caducado",
+          title    : "Su sesión ha caducado",
           message  : "Por favor vuelva a ingresar al sistema",
           expirado : true,
         });
@@ -165,8 +165,8 @@ export default function LegalesForm() {
         if (resp.status === 200) {
           setAlertMessage({
             type    : "success",
-            title   : "El documento fue actualizado con exito",
-            message : "La operacion ha resultado exitosa, documento actualizado",
+            title   : "Éxito",
+            message : "Estado del documento actualizado con éxito",
             reaload : true,
           });
           setOpenAlert(true);
@@ -175,8 +175,8 @@ export default function LegalesForm() {
           if (resp.response.status === 500) {
             setAlertMessage({
               type    : "error",
-              title   : "Ocurrio un error",
-              message : "Intentelo mas tarde o llame a personal tecnico. ",
+              title   : "Error",
+              message : "Inténtelo más tarde o llame a personal técnico. ",
               reaload : true,
             });
             setOpenAlert(true);
@@ -342,7 +342,7 @@ export default function LegalesForm() {
                         options={areaDestino}
                         onInputChange={areaDestinoChange}
                         renderInput={(params) => (
-                          <TextField {...params} label="Area" />
+                          <TextField {...params} label="Área" />
                         )}
                       />
                       <Button

@@ -7,7 +7,7 @@ import TextField                             from "@mui/material/TextField";
 import Paper                                 from "@mui/material/Paper";
 import Autocomplete                          from "@mui/material/Autocomplete";
 import { Stack }                             from "@mui/system";
-import { useLocation, useNavigate }          from "react-router-dom";
+import { useLocation }                       from "react-router-dom";
 import { useDispatch, useSelector }          from "react-redux";
 import { editarUsuarioAsync,
          getUsuarioPorIdAsync }              from "../../store/slices/usuarios/thunks";
@@ -61,8 +61,8 @@ export default function FormEditarUsuarioPersona() {
 
   const cancelar = () => {
     setDialogMessage({
-      title   : "¿Desea cancelar la operacion?",
-      message : "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+      title   : "¿Desea cancelar la operación?",
+      message : "Si cancela la operación los cambios se perderán y será redirigido al inbox",
     });
     setPopup(true);
   };
@@ -78,7 +78,7 @@ export default function FormEditarUsuarioPersona() {
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title: "Su sesion ha caducado",
+          title: "Su sesión ha caducado",
           message: "Por favor vuelva a ingresar al sistema",
           expirado: true,
         });
@@ -168,8 +168,8 @@ export default function FormEditarUsuarioPersona() {
         if (resp.payload.status === 200) {
           setAlertMessage({
             type    : "success",
-            title   : "Exito",
-            message : "Los datos de la persona fueron editados con exito",
+            title   : "Éxito",
+            message : "Los datos de la persona fueron editados con éxito",
           });
           setOpenAlert(true);
 
@@ -182,7 +182,7 @@ export default function FormEditarUsuarioPersona() {
           setAlertMessage({
             type    : "error",
             title   : "Error",
-            message : "Error al editar usuario por favor revise los datos",
+            message : "Error al editar usuario. Por favor revise los datos",
           });
           setOpenAlert(true);
 
@@ -190,7 +190,7 @@ export default function FormEditarUsuarioPersona() {
           setAlertMessage({
             type    : "error",
             title   : "Error",
-            message : "Hubo un problema, porfavor intente nuevamente o llame a personal tecnico",
+            message : "Hubo un problema, por favor intente nuevamente o llame a personal técnico",
           });
           setOpenAlert(true);
         }
@@ -263,7 +263,7 @@ export default function FormEditarUsuarioPersona() {
                           inputValue    = {inputValue.Area}
                           defaultValue  = {usuario.area.toUpperCase()}
                           renderInput   = {(params) => (
-                            <TextField {...params} label="Area" />
+                            <TextField {...params} label="Área" />
                           )}
                         />
                         <Autocomplete
@@ -349,7 +349,7 @@ export default function FormEditarUsuarioPersona() {
                         />
                         <TextField
                           fullWidth
-                          label        = "Telefono"
+                          label        = "Teléfono"
                           id           = "telefono"
                           name         = "telefono"
                           margin       = "dense"

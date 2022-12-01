@@ -2,34 +2,32 @@ import React, { useEffect, useState }               from "react";
 import MainFeaturedPost                             from "../../components/MainFeaturedPost";
 import Footer                                       from "../../components/Footer";
 import { renderCellExpand }                         from "../../components/CellExpand";
-import { Button, Divider, Grid, Typography, Paper } from "@mui/material";
+import { Divider, Grid, Paper }                     from "@mui/material";
 import { Box }                                      from "@mui/system";
 import { DataGrid, GridToolbar, esES }              from "@mui/x-data-grid";
-import { useLocation, useNavigate }                 from "react-router-dom";
+import { useLocation }                              from "react-router-dom";
 import { useDispatch, useSelector }                 from "react-redux";
-import { getUsuarios }                              from "../../store/slices/usuarios/thunks";
 import { verificarTokenAsync }                      from "../../store/slices/jwt/thunks";
-import CircularIndeterminate                        from "../../components/Circular";
 import AlertDialogSlide                             from "../../components/Dialog";
 import { getDocumentoPorIdAsync }                   from "../../store/slices/documentos";
-import SimpleBackdrop from "../../components/Backdrop";
+import SimpleBackdrop                               from "../../components/Backdrop";
 
 const columns = [
     {
       field      : "tipoDocumento",
-      headerName : "Tipo ",
+      headerName : "Tipo Documento",
       width      : 80,
       renderCell : renderCellExpand,
     },
     {
       field      : "nroDocumento",
-      headerName : "Numero",
+      headerName : "Número",
       width      : 80,
       renderCell : renderCellExpand,
     },
     {
       field      : "descripcion",
-      headerName : "Descripcion",
+      headerName : "Descripción",
       width      : 200,
       renderCell : renderCellExpand,
     },
@@ -47,13 +45,13 @@ const columns = [
       },
     {
         field      : "fechaIngreso",
-        headerName : "Fecha de ingreso al area",
+        headerName : "Fecha de ingreso al área",
         width      : 180,
         renderCell : renderCellExpand,
     },
     {
         field      : "fechaSalida",
-        headerName : "Fecha de salida del area",
+        headerName : "Fecha de salida del área",
         width      : 180,
         renderCell : renderCellExpand,
     },
@@ -87,11 +85,9 @@ export default function HistorialDocumento() {
     setPopup(isTrue);
   };
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   let idDocumento = useLocation().state[0]._id;
-  console.log("USE LOCATION", useLocation())
 
   useEffect(() => {
 
@@ -100,7 +96,7 @@ export default function HistorialDocumento() {
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title    : "Su sesion ha caducado",
+          title    : "Su sesión ha caducado",
           message  : "Por favor vuelva a ingresar al sistema",
           expirado : true,
         });

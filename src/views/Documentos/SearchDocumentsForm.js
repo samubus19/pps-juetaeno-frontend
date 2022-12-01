@@ -17,13 +17,13 @@ const columns = [
   {
     field      : "tipoDocumento",
     headerName : "Tipo ",
-    width      : 130,
+    width      : 80,
     renderCell : renderCellExpand,
   },
   {
     field      : "nroDocumento",
-    headerName : "Numero",
-    width      : 130,
+    headerName : "Número",
+    width      : 80,
     renderCell : renderCellExpand,
   },
   {
@@ -35,13 +35,13 @@ const columns = [
    {
      field     : "fechaIngresoInst",
     headerName : "Fecha de ingreso a la institución",
-    width      : 200,
+    width      : 220,
     renderCell : renderCellExpand,
   },
   {
     field      : "estado",
     headerName : "Estado",
-    width      : 200,
+    width      : 130,
     renderCell : renderCellExpand,
   },
   {
@@ -52,14 +52,14 @@ const columns = [
   },
   {
      field     : "fechaIngresoArea",
-    headerName : "Fecha de ingreso al area",
+    headerName : "Fecha de ingreso al área",
     width      : 200,
     renderCell : renderCellExpand,
   },
   {
     field      : "fechaSalida",
     headerName : "Fecha de salida de la institución",
-    width      : 200,
+    width      : 220,
     renderCell : renderCellExpand,
   },
 
@@ -119,7 +119,7 @@ export default function SearchDocumentsForm() {
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title: "Su sesion ha caducado",
+          title: "Su sesión ha caducado",
           message: "Por favor vuelva a ingresar al sistema",
           expirado: true,
         });

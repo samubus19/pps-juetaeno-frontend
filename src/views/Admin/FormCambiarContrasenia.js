@@ -5,14 +5,11 @@ import { Button, Divider, Grid, Typography } from "@mui/material";
 import Box                                   from "@mui/system/Box";
 import TextField                             from "@mui/material/TextField";
 import Paper                                 from "@mui/material/Paper";
-import Autocomplete                          from "@mui/material/Autocomplete";
 import { Stack }                             from "@mui/system";
-import { useLocation, useNavigate }          from "react-router-dom";
+import { useLocation }                       from "react-router-dom";
 import { useDispatch, useSelector }          from "react-redux";
-import { cambiarContraseniaAsync, editarUsuarioAsync,
+import { cambiarContraseniaAsync,
          getUsuarioPorIdAsync }              from "../../store/slices/usuarios/thunks";
-import { DateTime }                          from "luxon";
-import { editarPersonaAsync }                from "../../store/slices/personas/thunks";
 import { verificarTokenAsync }               from "../../store/slices/jwt/thunks";
 import AlertDialog                           from "../../components/Alert";
 import AlertDialogSlide                      from "../../components/Dialog";
@@ -51,8 +48,8 @@ export default function FormCambiarContraseniaUsuario() {
 
   const cancelar = () => {
     setDialogMessage({
-      title   : "¿Desea cancelar la operacion?",
-      message : "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+      title   : "¿Desea cancelar la operación?",
+      message : "Si cancela la operación los cambios se perderán y será redirigido al inbox",
     });
     setPopup(true);
   };
@@ -68,7 +65,7 @@ export default function FormCambiarContraseniaUsuario() {
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title: "Su sesion ha caducado",
+          title: "Su sesión ha caducado",
           message: "Por favor vuelva a ingresar al sistema",
           expirado: true,
         });
@@ -130,7 +127,6 @@ export default function FormCambiarContraseniaUsuario() {
 
     dispatch(cambiarContraseniaAsync(bodyCambiarContrasenia))
       .then((resp) => {
-        console.log(resp)
         if (resp.payload.status === 200) {
           setAlertMessage({
             type    : "success",
@@ -143,7 +139,7 @@ export default function FormCambiarContraseniaUsuario() {
           setAlertMessage({
             type    : "error",
             title   : "Error",
-            message : "Error al cambiar contraseña por favor revise los datos",
+            message : "Error al cambiar contraseña. Por favor revise los datos",
           });
           setOpenAlert(true);
 
@@ -151,7 +147,7 @@ export default function FormCambiarContraseniaUsuario() {
           setAlertMessage({
             type    : "error",
             title   : "Error",
-            message : "Hubo un problema, porfavor intente nuevamente o llame a personal tecnico",
+            message : "Hubo un problema, por favor intente nuevamente o llame a personal técnico",
           });
           setOpenAlert(true);
         }

@@ -27,7 +27,7 @@ const columns = [
   },
   {
     field      : "area",
-    headerName : "Area",
+    headerName : "Área",
     width      : 130,
     renderCell : renderCellExpand,
   },
@@ -56,7 +56,7 @@ const columns = [
   },
   {
     field      : "nroDocumento",
-    headerName : "Numero documento",
+    headerName : "Número documento",
     width      : 130,
     renderCell : renderCellExpand,
   },
@@ -68,7 +68,7 @@ const columns = [
   },
   {
     field      : "nroTelefono",
-    headerName : "Telefono",
+    headerName : "Teléfono",
     width      : 130,
     renderCell : renderCellExpand,
   },
@@ -80,7 +80,7 @@ const mainFeaturedPost = {
 
 export default function AdminMainForm() {
 
-  const { listadoUsuarios = [], requestStatus } = useSelector(
+  const { listadoUsuarios = [] } = useSelector(
     (state) => state.usuario
   );
 
@@ -109,7 +109,7 @@ export default function AdminMainForm() {
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title    : "Su sesion ha caducado",
+          title    : "Su sesión ha caducado",
           message  : "Por favor vuelva a ingresar al sistema",
           expirado : true,
         });
@@ -223,7 +223,7 @@ export default function AdminMainForm() {
                         });
                       }}
                     >
-                      Cambiar contrasenña
+                      Cambiar contraseña
                     </Button>
                   </Grid>
                   <Grid item xs={1} />

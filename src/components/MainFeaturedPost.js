@@ -51,7 +51,7 @@ function MainFeaturedPost(props) {
               Si.G.T.I.D.
             </Typography>
             <Typography variant="h6" color="inherit" paragraph>
-              (Sistema de Gestion de Trafico Interno de Documentos)
+              (Sistema de Gestión de Tráfico Interno de Documentos)
             </Typography>
             <Typography variant="h5" color="inherit" paragraph>
               {post.area}

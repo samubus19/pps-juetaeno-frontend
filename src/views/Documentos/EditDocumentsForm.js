@@ -16,7 +16,7 @@ import AlertDialog                           from "../../components/Alert";
 import SimpleBackdrop                        from "../../components/Backdrop";
 
 const mainFeaturedPost = {
-  area : "Area: Mesa de entrada - Editar Documento",
+  area : "Área: Mesa de entrada - Editar Documento",
 };
 
 const tiposDocumento = [
@@ -53,9 +53,9 @@ export default function EditDocumentsFrom() {
 
   const cancelar = () => {
     setDialogMessage({
-      title   : "¿Desea cancelar la operacion?",
+      title   : "¿Desea cancelar la operación?",
       message :
-        "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+        "Si cancela la operación los cambios se perderán y será redirigido al inbox",
     });
     setPopup(true);
   };
@@ -74,7 +74,7 @@ export default function EditDocumentsFrom() {
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title    : "Su sesion ha caducado",
+          title    : "Su sesión ha caducado",
           message  : "Por favor vuelva a ingresar al sistema",
           expirado : true,
         });
@@ -121,22 +121,22 @@ export default function EditDocumentsFrom() {
         if (resp.status === 200) {
           setAlertMessage({
             type    : "success",
-            title   : "El documento fue editado con exito",
-            message : "La operacion ha resultado exitosa, documento editado",
+            title   : "Éxito",
+            message : "El documento se ha editado correctamente",
           });
           setOpenAlert(true);
 
         } else if (resp.response.status === 500) {
             setAlertMessage({
               type    : "error",
-              title   : "Ocurrio un error",
-              message : "Intentelo mas tarde o llame a personal tecnico. ",
+              title   : "Error",
+              message : "Inténtelo más tarde o llame a personal técnico. ",
             });
             setOpenAlert(true);
         } else if (resp.response.status === 400) {
             setAlertMessage({
               type    : "error",
-              title   : "Ocurrio un error",
+              title   : "Error",
               message : "Los datos ingresados coinciden con el de un documento existente. ",
             });
             setOpenAlert(true);
@@ -208,7 +208,7 @@ export default function EditDocumentsFrom() {
                           required
                           defaultValue={selectionData.nroDocumento}
                           id     ="numeroDoc"
-                          label  ="Numero de documento"
+                          label  ="Número"
                           name   ="numeroDoc"
                           margin ="dense"
                         />

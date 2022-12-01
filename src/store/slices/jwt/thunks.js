@@ -1,6 +1,6 @@
-import { createAsyncThunk }            from "@reduxjs/toolkit";
-import { juetaenoApi }                 from "../../../api/juetaeno-backend-api";
-import { setRequestStatus, setValido } from "./JwtSlice";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { juetaenoApi }      from "../../../api/juetaeno-backend-api";
+import { setRequestStatus } from "./JwtSlice";
 
 export const verificarTokenAsync = createAsyncThunk(
   "token/verificarToken",

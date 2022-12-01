@@ -7,7 +7,6 @@ import TextField                             from "@mui/material/TextField";
 import Paper                                 from "@mui/material/Paper";
 import Autocomplete                          from "@mui/material/Autocomplete";
 import { Stack }                             from "@mui/system";
-import { useNavigate }                       from "react-router-dom";
 import { useDispatch, useSelector }          from "react-redux";
 import { crearNuevoUsuarioAsync }            from "../../../store/slices/usuarios";
 import { useEffect }                         from "react";
@@ -64,7 +63,7 @@ export default function FormDatosUsuario() {
     ).then((resp) => {
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title    : "Su sesion ha caducado",
+          title    : "Su sesión ha caducado",
           message  : "Por favor vuelva a ingresar al sistema",
           expirado : true,
         });
@@ -76,8 +75,8 @@ export default function FormDatosUsuario() {
   const cancelar = () => {
     
     setDialogMessage({
-      title     : "¿Desea cancelar la operacion?",
-      message   : "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+      title     : "¿Desea cancelar la operación?",
+      message   : "Si cancela la operación los cambios se perderán y será redirigido al inbox",
       eliminado : true,
       idPersona : persona.persona._id
     });
@@ -141,8 +140,8 @@ export default function FormDatosUsuario() {
         if (resp.payload.status === 201) {
           setAlertMessage({
             type    : "success",
-            title   : "Exito",
-            message : "El usuario fue registrado con exito",
+            title   : "Éxito",
+            message : "El usuario fue registrado con éxito",
           });
           setOpenAlert(true);
 
@@ -158,7 +157,7 @@ export default function FormDatosUsuario() {
           setAlertMessage({
             type    : "error",
             title   : "Error",
-            message : "Hubo un problema, porfavor intente nuevamente o llame a personal tecnico",
+            message : "Hubo un problema, porfavor intente nuevamente o llame a personal técnico",
           });
           setOpenAlert(true);
         }
@@ -230,7 +229,7 @@ export default function FormDatosUsuario() {
                       onInputChange = {areaChange}
                       options       = {area}
                       renderInput   = {(params) => (
-                        <TextField {...params} label="Area" />
+                        <TextField {...params} label="Área" />
                       )}
                     />
                     <Autocomplete

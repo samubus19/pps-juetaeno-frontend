@@ -53,13 +53,13 @@ export default function Search({ filterBySearch, filterType }) {
       <InputBase
         fullWidth
         sx          = {{ ml: 1, flex: 4 }}
-        placeholder = "Busqueda"
+        placeholder = "Búsqueda"
         inputProps  = {{ "aria-label": "search google maps" }}
         id          = "search"
         name        = "search"
       />
 
-      <IconButton type="sumbit" sx={{ p: "10px" }} aria-label="search">
+      <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
         <SearchIcon />
       </IconButton>
     </Box>

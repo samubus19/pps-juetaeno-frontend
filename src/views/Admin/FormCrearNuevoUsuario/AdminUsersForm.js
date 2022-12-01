@@ -8,7 +8,7 @@ import Paper                                 from "@mui/material/Paper";
 import Autocomplete                          from "@mui/material/Autocomplete";
 import { Stack }                             from "@mui/system";
 import { useNavigate }                       from "react-router-dom";
-import { useDispatch, useSelector }          from "react-redux";
+import { useDispatch }                       from "react-redux";
 import { crearNuevaPersonaAsync, 
          getPersonaPorNumeroAsync,}          from "../../../store/slices/personas";
 import { DateTime }                          from "luxon";
@@ -52,9 +52,9 @@ export default function NewUsersFrom() {
 
   const cancelar = () => {
     setDialogMessage({
-      title: "¿Desea cancelar la operacion?",
+      title: "¿Desea cancelar la operación?",
       message:
-        "Si cancela la operacion los cambios se perderan y sera redirigido al inbox",
+        "Si cancela la operación los cambios se perderán y será redirigido al inbox",
     });
     setPopup(true);
   };
@@ -70,7 +70,7 @@ export default function NewUsersFrom() {
 
       if (resp.payload.status === 403) {
         setDialogMessage({
-          title    : "Su sesion ha caducado",
+          title    : "Su sesián ha caducado",
           message  : "Por favor vuelva a ingresar al sistema",
           expirado : true,
         });
@@ -142,7 +142,7 @@ export default function NewUsersFrom() {
           setAlertMessage({
             type    : "success",
             title   : "Exito",
-            message : "Los datos de la persona fueron registrado con exito",
+            message : "Los datos de la persona fueron registrado con éxito",
           });
           setOpenAlert(true);
           if (openAlert === false) {
@@ -167,7 +167,7 @@ export default function NewUsersFrom() {
             type    : "error",
             title   : "Error",
             message :
-              "Hubo un problema, porfavor intente nuevamente o llame a personal tecnico",
+              "Hubo un problema, por favor intente nuevamente o llame a personal técnico",
           });
           setOpenAlert(true);
         }
@@ -257,7 +257,7 @@ export default function NewUsersFrom() {
                     />
                     <TextField
                       fullWidth
-                      label  ="Telefono"
+                      label  ="Teléfono"
                       id     ="telefono"
                       name   ="telefono"
                       margin ="dense"
