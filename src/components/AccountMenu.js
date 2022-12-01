@@ -23,7 +23,7 @@ export default function AccountMenu() {
 
   const logOut = () => {
     localStorage.clear();
-    window.location.href = window.location.href;
+    window.location.reload()
   };
 
   const handleClick = (event) => {
