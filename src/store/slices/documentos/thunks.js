@@ -4,6 +4,7 @@ import { setDocuments,
         startLoadingDocuments } from "./documentoSlice";
 import { formatearArea }        from "../../../helpers/Area-formatter";
 import desencriptarUsuario      from "../../../helpers/Desencriptador";
+import { createAsyncThunk }     from "@reduxjs/toolkit"; 
 
 const mToken = JSON.parse(localStorage.getItem("token"));
 
@@ -47,27 +48,6 @@ export const getDocumentos = () => {
     } catch (error) {
       dispatch(setRequestStatus({ requestStatus: error.response.status }));
       console.log(error);
-    }
-  };
-};
-
-export const getDocumentoPorNumero = (nroDocumento) => {
-  return async (dispatch, getState) => {
-    try {
-
-      dispatch(startLoadingDocuments());
-
-      const resp = await juetaenoApi.get(`/files/${nroDocumento}`, {
-        headers: {
-          Authorization: mToken,
-        },
-      });
-
-      dispatch(setDocuments({ documentos: resp.data }));
-      dispatch(setRequestStatus({ requestStatus: resp.status }));
-
-    } catch (error) {
-      dispatch(setRequestStatus({ requestStatus: error.response.status }));
     }
   };
 };
@@ -159,3 +139,45 @@ export const editarDocumento = (body) => {
     }
   };
 };
+
+export const getDocumentoPorIdAsync =  createAsyncThunk("documento/getDocumentoPorIdAsync", async (idDocumento, {getState, dispatch}) => {
+  try {
+
+    const resp = await juetaenoApi.get(`/files/${idDocumento}`, {
+      headers: {
+        Authorization: mToken,
+      },
+    });
+
+    let arreglo = []
+
+    let datosFijos = {
+      tipoDocumento : resp.data.mensaje.tipoDocumento,
+      nroDocumento  : resp.data.mensaje.nroDocumento,
+      descripcion   : resp.data.mensaje.descripcion
+    }
+
+    resp.data.mensaje.historial.map((elementoHistorial) => {
+      let datosPersona = {
+        firmante : `${elementoHistorial.idUsuarioFirmante.idPersona.nombre} ${elementoHistorial.idUsuarioFirmante.idPersona.apellido } - ${elementoHistorial.idUsuarioFirmante.idPersona.tipoDocumento}: ${elementoHistorial.idUsuarioFirmante.idPersona.nroDocumento}`
+      }
+      delete elementoHistorial.idUsuarioFirmante
+      let datosDocumento = Object.assign(datosPersona, elementoHistorial)
+      
+      let datosFinales = Object.assign(datosDocumento, datosFijos)
+      
+      arreglo.push(datosFinales)
+    })
+
+    const result = {
+      data   : {
+        mensaje : arreglo,
+      status : resp.status
+    }}
+    return result
+
+  } catch (error) {
+    dispatch(setRequestStatus({ requestStatus: error.response.status }));
+    return error
+  }
+});

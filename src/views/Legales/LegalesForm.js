@@ -302,6 +302,24 @@ export default function LegalesForm() {
                       </Button>
                     </Grid>
                     <Grid item xs={1} />
+                    <Grid item xs={2}>
+                      <Button
+                        disabled={!selectionId.length}
+                        variant="contained"
+                        fullWidth
+                        onClick={() => {
+                          navigate(`/documento/historial`, {
+                            state: [
+                              {
+                                _id : selectionId
+                              }
+                            ],
+                          });
+                        }}
+                      >
+                        Ver historial
+                      </Button>
+                    </Grid>
                   </Grid>
                 </TabPanel>
                 <TabPanel value={value} index={1}>

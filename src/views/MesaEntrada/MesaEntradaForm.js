@@ -290,7 +290,6 @@ export default function MesaEntradaForm() {
                     justifyContent="center"
                     p={3}
                   >
-                    <Grid item xs={1} />
                     <Grid item xs={2}>
                       <Button
                         variant="contained"
@@ -302,7 +301,6 @@ export default function MesaEntradaForm() {
                         Buscar Documento
                       </Button>
                     </Grid>
-                    <Grid item xs={1} />
                     <Grid item xs={2}>
                       <Button
                         variant="contained"
@@ -314,7 +312,6 @@ export default function MesaEntradaForm() {
                         Nuevo Documento
                       </Button>
                     </Grid>
-                    <Grid item xs={1} />
                     <Grid item xs={2}>
                       <Button
                         disabled={
@@ -335,7 +332,6 @@ export default function MesaEntradaForm() {
                         Editar Documento
                       </Button>
                     </Grid>
-                    <Grid item xs={1} />
                     <Grid item xs={2}>
                       <Button
                         variant="contained"
@@ -346,8 +342,22 @@ export default function MesaEntradaForm() {
                         Actualizar Estado
                       </Button>
                     </Grid>
-                    <Grid item xs={1} />
+                    <Grid item xs={2}>
+                      <Button
+                        disabled={!selectionRow.length}
+                        variant="contained"
+                        fullWidth
+                        onClick={() => {
+                          navigate(`/documento/historial`, {
+                            state: selectionRow,
+                          });
+                        }}
+                      >
+                        Ver historial
+                      </Button>
+                    </Grid>
                   </Grid>
+                  
                 </TabPanel>
                 <TabPanel value={value} index={1}>
                   <Box p={3}>
