@@ -68,6 +68,7 @@ export default function LoginForm() {
       .then((resp)=>{
 
         if(resp.payload.response.status === 400){
+
            setAlertMessage({
               type    : "error",
               title   : "Error",
@@ -76,6 +77,7 @@ export default function LoginForm() {
           setOpenAlert(true);
         }
       })
+      
     } else {
       completeFromAlert();
     }
